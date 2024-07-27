@@ -1,0 +1,223 @@
+.App {
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin: auto;
+  padding-top: 69px;
+  width: 100%;
+  height: 100%;
+  background-color: #F1F2F6;
+}
+
+* {
+  color: rgb(15, 21, 56) ;
+}
+
+.App-header {
+  display: flex;
+  justify-content: space-between;
+  margin: auto;
+  width: 92%;
+  height: 83px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 15px;
+  box-shadow: 0.2em 0.2em 0.8em rgba(107, 107, 107, 0.3);;
+}
+.Logo {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+}
+
+.User-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 30px;
+}
+
+.Dashboard {
+  display: block;
+  width: 92%;
+  margin: auto;
+}
+
+
+.MainContent {
+  padding: 1rem;
+}
+
+.MainContent2 {
+  min-height: 800px;
+}
+
+.TopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.Profile {
+  background-color: #f4f4f4;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.Cards {
+  display: flex;
+  flex-wrap: wrap;
+  width: 70%;
+  gap: 30px;
+}
+
+.DashboardContainer {
+  display: flex;
+  margin-top: 60px;
+}
+
+.Card {
+  display: flex;
+  justify-content: space-between;
+  height: 134px;
+  background-color: rgba(255, 255, 255, 1);
+  padding: 1rem;
+  border-radius: 15px;
+  flex: 1 1 20%;
+  min-width: 200px;
+  box-shadow: 0.2em 0.2em 0.8em rgba(135, 135, 135, 0.3);;
+}
+
+.data {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Card-amount {
+  margin: 0;
+  padding-left: 20px;
+  font-weight: 300;
+  font-size: 40px;
+}
+
+.Card-text {
+  margin: 0;
+  padding-left: 20px;
+  font-weight: 300;
+  font-size: 16px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  background-color:rgba(230, 234, 245, 1);
+  margin: 15px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+}
+
+.icon img {
+  margin: 0 auto;
+}
+
+.Charts {
+  display: flex;
+  gap: 3rem;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.Chart-1 {
+  background-color: rgb(255, 55, 255);
+  padding: 5px;
+  border-radius: 15px;
+  width: 60%;
+  box-shadow: 0.2em 0.2em 0.8em rgba(135, 135, 135, 0.3);;
+}
+
+.Chart-2 {
+  background-color: rgb(255, 255, 255);
+  border-radius: 15px;
+  margin-right: 30px;
+  width: 30%;
+  box-shadow: 0.2em 0.2em 0.8em rgba(135, 135, 135, 0.3);;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Chart-3 {
+  background-color: rgb(255, 55, 255);
+  border-radius: 15px;
+  margin-right: 30px;
+  width: 40%;
+  box-shadow: 0.2em 0.2em 0.8em rgba(135, 135, 135, 0.3);;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Chart-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.Chart-content {
+  background-color: rgb(255, 255, 255);
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+
+/* SideMenus */
+
+
+.sideMenu {
+  background-color: #fff; 
+  height: 100%;
+  padding: 20px 0; 
+}
+
+.sideMenu .MuiListItemButton-root { 
+  color: #333; 
+  transition: background-color 0.3s ease; 
+}
+
+.sideMenu .MuiListItemButton-root:hover { 
+  background-color: #e0e0e0; 
+}
+
+.sideMenu .Mui-selected { 
+  background-color: #e0e0e0; 
+  font-weight: bold;
+}
+
+.sideMenu .MuiListItemIcon-root { 
+  color: #007bff; 
+}
+
+
+/* Department and positions */
+
+.DepartmentPositionManagement {
+  padding: 20px; /* Добавляем отступы вокруг контента */
+}
+
+.DepartmentPositionManagement .MuiTabs-root {
+  margin-bottom: 20px; /* Отступ под вкладками */
+}
+
+.DepartmentPositionManagement .MuiTableContainer-root {
+  margin-bottom: 20px; /* Отступ под таблицей */
+}
+
+.DepartmentPositionManagement .MuiButton-root {
+  margin-bottom: 10px; /* Отступ под кнопкой */
+}
