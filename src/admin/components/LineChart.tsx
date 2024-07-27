@@ -59,7 +59,7 @@ function LineChartComponent() {
           exclusive
           onChange={handleFilterChange}
           aria-label="chart filter"
-          sx={{ marginBottom: 2 }}
+          sx={{ marginBottom: 2 , backgroundColor: "#F1F2F6"}}
         >
           <ToggleButton value="daily">Daily</ToggleButton>
           <ToggleButton value="monthly">Monthly</ToggleButton>

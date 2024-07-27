@@ -70,9 +70,7 @@ function AdminDashboardContent() {
       </div>
       <div className="Charts">
         <div className="Chart-1">
-          <div className="Chart-content">
             <LineChartComponent />
-          </div>
         </div>
         <div className="Chart-3">
             <SimpleBarChart />

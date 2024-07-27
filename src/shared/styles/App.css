@@ -135,6 +135,9 @@
   border-radius: 15px;
   width: 60%;
   box-shadow: 0.2em 0.2em 0.8em rgba(135, 135, 135, 0.3);;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .Chart-2 {
