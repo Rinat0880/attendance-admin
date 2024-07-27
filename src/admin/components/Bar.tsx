@@ -3,18 +3,18 @@ import { BarChart } from '@mui/x-charts/BarChart';
 
 const pData = [61, 77, 54, 99, 65, 86, ];
 const xLabels = [
-  'IT',
+  'Admstr',
   'Sales',
   'HR',
-  'Marketing',
+  'Mrkt',
   'Social',
-  'Administry',
+  'IT',
 ];
 
 export default function SimpleBarChart() {
   return (
     <BarChart
-      width={400}
+      width={430}
       height={350}
       series={[
         { data: pData, label: 'department attendance', id: 'pvId' },

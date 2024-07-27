@@ -52,7 +52,7 @@ function App() {
           <Route path="/admin/*" element={
             isLoggedIn && employeeData?.isAdmin ? (
               <Grid container>
-                <Grid item xs={2} style={{ minHeight: '100vh' }}>
+                <Grid item xs={2} style={{ minHeight: '100vh'}}>
                   <SideMenu />
                 </Grid>
                 <Grid item xs={10}> {/* Основной контент */}
