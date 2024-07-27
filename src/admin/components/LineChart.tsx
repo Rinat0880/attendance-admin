@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
+import { LineChart } from "@mui/x-charts/LineChart";
 import {
   Box,
   Typography,
