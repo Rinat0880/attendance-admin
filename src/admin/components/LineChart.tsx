@@ -92,8 +92,8 @@ function LineChartComponent() {
         sx={{
           backgroundColor: "#fff",
         }}
-        width={700}
-        height={400}
+        width={650}
+        height={300}
       />
     </Box>
   );
