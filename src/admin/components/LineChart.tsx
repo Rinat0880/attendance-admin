@@ -93,7 +93,7 @@ function LineChartComponent() {
           backgroundColor: "#fff",
         }}
         width={650}
-        height={300}
+        height={235}
       />
     </Box>
   );
