@@ -35,7 +35,7 @@ function SideMenu() {
           <ListItemIcon>
             <PeopleIcon />
           </ListItemIcon>
-          <ListItemText primary="Department and Position" />
+          <ListItemText primary="Department" />
         </ListItemButton>
       </ListItem>
       <Divider />

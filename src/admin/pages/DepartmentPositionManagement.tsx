@@ -137,7 +137,7 @@ function DepartmentPositionManagement() {
   };
 
   return (
-    <Box sx={{ width: '100%' }} className="DepartmentPositionManagement">
+    <Box sx={{ width: '100%', padding: 0, marginTop: 2}} className="DepartmentPositionManagement">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={activeTab} onChange={handleTabChange} aria-label="basic tabs example">
           <Tab label="Departments" />

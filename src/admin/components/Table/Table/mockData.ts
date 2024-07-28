@@ -1,6 +1,6 @@
-import { AttendanceData } from "./types";
+import { TableData } from "./types";
 
-const mockData: AttendanceData[] = [
+const mockData: TableData[] = [
   {
     id: '1',
     name: 'John Doe',

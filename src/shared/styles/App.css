@@ -7,6 +7,11 @@
   background-color: #F1F2F6;
 }
 
+html{
+  scrollbar-gutter: stable; 
+  background-color: #F1F2F6;
+}
+
 * {
   color: rgb(15, 21, 56) ;
 }
@@ -232,7 +237,7 @@
 
 
 .TableSection {
-  height: 700px;
   margin-bottom: 80px;
   margin-top: 40px;
+  flex-grow: 1;
 }

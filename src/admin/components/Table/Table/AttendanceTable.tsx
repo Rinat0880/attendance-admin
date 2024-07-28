@@ -10,31 +10,34 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import { AttendanceData, Column, FilterState } from "./types";
+import {TableData, Column, FilterState } from "./types";
 import AttendanceTableHead from "./AttendanceTableHead";
 import AttendanceTableBody from "./AttendanceTableBody";
 
 interface AttendanceTableProps {
-  data: AttendanceData[];
+  data: TableData[];
   columns: Column[];
+  onEdit?: (item: TableData) => void;
+  onDelete?: (id: string) => void;
 }
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns }) => {
+
+const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns, onEdit, onDelete }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
-  const [filteredData, setFilteredData] = useState<AttendanceData[]>(data);
+  const [filteredData, setFilteredData] = useState<TableData[]>(data);
 
   useEffect(() => {
     const filtered = data.filter((row) => {
       const matchesSearch = 
         row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         row.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const matchesFilters = Object.entries(filters).every(([key, value]) => {
         if (!value) return true;
-        return row[key as keyof AttendanceData]?.toString().toLowerCase() === value.toLowerCase();
+        return row[key as keyof TableData]?.toString().toLowerCase() === value.toLowerCase();
       });
 
       return matchesSearch && matchesFilters;
@@ -77,8 +80,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns }) => {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', borderRadius: 4, mb: 5 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+    <Paper sx={{ width: '100%', overflow: 'hidden', borderRadius: 5, mb: 5, padding: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <Typography variant="h6">Attendance Overview</Typography>
         <TextField
           variant="outlined"
@@ -99,7 +102,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns }) => {
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <AttendanceTableHead columns={columns} filters={filters} onFilterChange={handleFilterChange} />
-          <AttendanceTableBody columns={columns} filteredData={filteredData} onStatusChange={handleStatusChange} />
+          <AttendanceTableBody columns={columns} filteredData={filteredData} onStatusChange={handleStatusChange} onEdit={onEdit} onDelete={onDelete}/>
         </Table>
       </TableContainer>
       <TablePagination

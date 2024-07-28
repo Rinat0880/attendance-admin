@@ -1,25 +1,30 @@
 // src/admin/components/Table/types.ts
 
-export type DateOrString = Date | string | number;
+export type DateOrString = Date | string | number | undefined;
+
 export interface FilterState {
     [key: string]: string;
   }
 
-export interface AttendanceData {
-  id: string;
-  name: string;
-  department: string;
-  role: string;
-  date: DateOrString;  // Может быть Date или строкой
-  status: string;
-  checkIn: DateOrString;  // Может быть Date или строкой
-  checkOut: DateOrString;  // Может быть Date или строкой
-  totalHrs: number; // Суммарные часы как число
-}
+  export interface TableData {
+    id: string;
+    name: string;
+    department: string;
+    role?: string;
+    date?: DateOrString;
+    status?: string;
+    checkIn?: DateOrString;
+    checkOut?: DateOrString;
+    totalHrs?: number;
+    phone?: string;
+    email?: string;
+  }
 
-export interface Column {
-    id: keyof AttendanceData;
+  export interface Column {
+    id: keyof TableData | 'action';
     label: string;
     filterable?: boolean;
     filterValues?: string[];
   }
+
+ 

@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import { TableBody, TableRow, TableCell, Box, Select, MenuItem, SelectChangeEvent } from "@mui/material";
-import { AttendanceData, Column, DateOrString } from "./types";
+import { TableBody, TableRow, TableCell, Box, Select, MenuItem, SelectChangeEvent, Button } from "@mui/material";
+import { TableData, Column, DateOrString } from "./types";
 
 interface AttendanceTableBodyProps {
   columns: Column[];
-  filteredData: AttendanceData[];
+  filteredData: TableData[];
   onStatusChange: (rowId: string, newStatus: string) => void;
+  onEdit?: (item: TableData) => void;
+  onDelete?: (id: string) => void;
 }
 
 const formatValue = (value: DateOrString, key?: string): string => {
+  if (value === undefined) {
+    return '';
+  }
   if (value instanceof Date) {
     if (key === 'date') {
       return value.toISOString().split('T')[0];
@@ -44,7 +49,13 @@ const getStatusStyles = (status: string): { backgroundColor: string; color: stri
   }
 };
 
-const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({ columns, filteredData, onStatusChange }) => {
+const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({ 
+  columns, 
+  filteredData, 
+  onStatusChange, 
+  onEdit, 
+  onDelete 
+}) => {
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
 
   const handleStatusChange = (rowId: string, newStatus: string) => {
@@ -57,11 +68,33 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({ columns, filt
       {filteredData.map((row) => (
         <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
           {columns.map((column) => {
-            const value = row[column.id as keyof AttendanceData];
-            const { backgroundColor, color } = column.id === 'status' ? getStatusStyles(value as string) : { backgroundColor: '#fff', color: '#000' };
+            if (column.id === 'action') {
+              return (
+                <TableCell key={column.id} sx={{ padding: '8px 16px' }}>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    {onEdit && (
+                      <Button onClick={() => onEdit(row)} variant="outlined" size="small">
+                        Edit
+                      </Button>
+                    )}
+                    {onDelete && (
+                      <Button onClick={() => onDelete(row.id)} variant="outlined" size="small" color="error">
+                        Delete
+                      </Button>
+                    )}
+                  </Box>
+                </TableCell>
+              );
+            }
+
+            const value = row[column.id as keyof TableData];
+            const { backgroundColor, color } = column.id === 'status' && value !== undefined 
+              ? getStatusStyles(value as string) 
+              : { backgroundColor: '#fff', color: '#000' };
+            
             return (
               <TableCell key={column.id} sx={{ padding: '8px 16px' }}>
-                {column.id === 'status' ? (
+                {column.id === 'status' && value !== undefined ? (
                   editingRowId === row.id ? (
                     <Select
                       value={value as string}
