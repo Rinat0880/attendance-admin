@@ -19,10 +19,11 @@ interface AttendanceTableProps {
   columns: Column[];
   onEdit?: (item: TableData) => void;
   onDelete?: (id: string) => void;
+  tableTitle?: string;
 }
 
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns, onEdit, onDelete }) => {
+const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns, onEdit, onDelete, tableTitle }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,9 +81,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, columns, onEdit
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', borderRadius: 5, mb: 5, padding: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <Typography variant="h6">Attendance Overview</Typography>
+    <Paper sx={{ width: '100%', overflow: 'hidden', borderRadius: 4, mb: 5 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+        <Typography variant="h6">{tableTitle || 'Attendance Overview'}</Typography>
         <TextField
           variant="outlined"
           size="small"

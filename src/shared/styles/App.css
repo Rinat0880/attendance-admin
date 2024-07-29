@@ -219,7 +219,7 @@ html{
 /* Department and positions */
 
 .DepartmentPositionManagement {
-  padding: 20px; /* Добавляем отступы вокруг контента */
+  padding: 20px; 
 }
 
 .DepartmentPositionManagement .MuiTabs-root {

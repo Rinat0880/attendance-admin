@@ -15,7 +15,7 @@ interface DepartmentTableProps {
 
 function DepartmentTable({ departments, onEdit, onDelete }: DepartmentTableProps) {
   return (
-    <TableContainer component={Paper}>
+    <Paper sx={{  borderRadius: 4, boxShadow: 2, mb: 5}}>
       <Table>
         <TableHead>
           <TableRow>
@@ -35,7 +35,7 @@ function DepartmentTable({ departments, onEdit, onDelete }: DepartmentTableProps
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </Paper>
   );
 }
 

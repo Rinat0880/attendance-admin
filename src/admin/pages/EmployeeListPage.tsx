@@ -1,11 +1,10 @@
-// src/admin/pages/EmployeeListPage.tsx
-
-import React, { useState } from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import AttendanceTable from '../components/Table/Table/AttendanceTable';
-import { TableData, Column } from '../components/Table/Table/types';
-import employeeData from '../components/Table/Table/mockEmployees';
 import EditModal from '../components/Table/Table/EditModal';
+import CreateEmployeeModal from '../components/Table/Table/CreateEmployeeModal'; // Новый компонент
+import { TableData, Column } from '../components/Table/Table/types';
 
 const columns: Column[] = [
   { id: 'id', label: 'ID'},
@@ -19,7 +18,18 @@ const columns: Column[] = [
 
 const EmployeeListPage: React.FC = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<TableData | null>(null);
+  const [employeeData, setEmployeeData] = useState<TableData[]>([]);
+
+  useEffect(() => {
+    // Здесь вы можете загрузить данные о сотрудниках с сервера
+    // Для примера, используем фиктивные данные
+    setEmployeeData([
+      { id: '1', name: 'John Doe', department: 'IT', role: 'Developer', phone: '123-456-7890', email: 'john@example.com' },
+      { id: '2', name: 'Jane Smith', department: 'HR', role: 'Manager', phone: '098-765-4321', email: 'jane@example.com' },
+    ]);
+  }, []);
 
   const handleEditOpen = (employee: TableData) => {
     setSelectedEmployee(employee);
@@ -27,31 +37,50 @@ const EmployeeListPage: React.FC = () => {
   };
 
   const handleEditSave = (updatedEmployee: TableData) => {
-    // Логика сохранения обновленного сотрудника
-    console.log('Saving updated employee:', updatedEmployee);
+    setEmployeeData(prevData => 
+      prevData.map(emp => emp.id === updatedEmployee.id ? updatedEmployee : emp)
+    );
     setEditModalOpen(false);
   };
 
   const handleDeleteEmployee = (id: string) => {
-    // Логика удаления сотрудника
-    console.log('Deleting employee with id:', id);
-    // Здесь вы можете добавить логику для удаления сотрудника из вашего состояния или отправки запроса на сервер
+    setEmployeeData(prevData => prevData.filter(emp => emp.id !== id));
+  };
+
+  const handleCreateEmployee = (newEmployee: TableData) => {
+    setEmployeeData(prevData => [...prevData, { ...newEmployee, id: String(prevData.length + 1) }]);
+    setCreateModalOpen(false);
   };
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>Employee List</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4">Employee List</Typography>
+        <Button 
+          variant="contained" 
+          startIcon={<AddIcon />} 
+          onClick={() => setCreateModalOpen(true)}
+        >
+          Create
+        </Button>
+      </Box>
         <AttendanceTable 
           data={employeeData} 
           columns={columns} 
           onEdit={handleEditOpen}
           onDelete={handleDeleteEmployee}
+          tableTitle="Employee List"
         />
       <EditModal
         open={editModalOpen}
         data={selectedEmployee}
         onClose={() => setEditModalOpen(false)}
         onSave={handleEditSave}
+      />
+      <CreateEmployeeModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSave={handleCreateEmployee}
       />
     </Box>
   );

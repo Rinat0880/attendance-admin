@@ -4,6 +4,7 @@ import DepartmentTable from '../components/DepartmentTable';
 import PositionTable from '../components/PositionTable';
 import DepartmentDialog from '../components/DepartmentDialog';
 import PositionDialog from '../components/PositionDialog';
+import '../../shared/styles/App.css';
 
 export interface Department {
   id: number;
@@ -138,7 +139,7 @@ function DepartmentPositionManagement() {
 
   return (
     <Box sx={{ width: '100%', padding: 0, marginTop: 2}} className="DepartmentPositionManagement">
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs value={activeTab} onChange={handleTabChange} aria-label="basic tabs example">
           <Tab label="Departments" />
           <Tab label="Positions" />
@@ -150,7 +151,7 @@ function DepartmentPositionManagement() {
           <Button variant="outlined" onClick={handleOpenDepartmentDialog}>
             Add Department
           </Button>
-          <DepartmentTable
+          <DepartmentTable 
             departments={departments}
             onEdit={handleEditDepartment}
             onDelete={handleDeleteDepartment}
