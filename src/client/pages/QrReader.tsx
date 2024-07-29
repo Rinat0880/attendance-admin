@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-
-// Styles
 import "../components/QrStyles.css";
-
-// Qr Scanner
 import QrScanner from "qr-scanner";
 import QrFrame from "../assets/qr-frame.svg";
+import { Button } from "@mui/material";
+
+interface GeolocationCoordinates {
+    latitude: number;
+    longitude: number;
+  }
 
 const QrReader = () => {
   // QR States
@@ -16,12 +18,51 @@ const QrReader = () => {
 
   // Result
   const [scannedResult, setScannedResult] = useState<string | undefined>("");
+  const [checkInEnabled, setCheckInEnabled] = useState(false);
+  const [userId, setUserId] = useState(null); // Replace with actual user ID
+  const [geolocation, setGeolocation] = useState<GeolocationCoordinates | null>(
+    null
+  );
+
+
+  useEffect(() => {
+    // Get geolocation when component mounts
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setGeolocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,   
+
+          });
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
+
+  const handleCheckIn = () => {
+     // Here you would typically send userId and geolocation to your backend
+     if (geolocation) {
+       alert(
+         `Check-in successful!\nUser ID: ${userId}\nGeolocation: ${geolocation.latitude}, ${geolocation.longitude}`
+       );
+     } else {
+       alert("Geolocation not available.");
+     }
+   };
 
   // Success
   const onScanSuccess = (result: QrScanner.ScanResult) => {
+    console.log(result);
+
     if (result?.data === "i am here)") {
-      alert("You have successfully scanned the QR code!");
-      // Optionally, you can redirect to another page or trigger other actions here
+      setCheckInEnabled(true); // Enable check-in button
     } else {
       alert("This is not the correct QR code.");
     }
@@ -74,33 +115,22 @@ const QrReader = () => {
   }, [qrOn]);
 
   return (
-    <div className="qr-reader">
-      {/* QR */}
-      <video ref={videoEl}></video>
-      <div ref={qrBoxEl} className="qr-box">
-        <img
-          src={QrFrame}
-          alt="Qr Frame"
-          width={256}
-          height={256}
-          className="qr-frame"
-        />
+    <div className="qr-reader-container">
+      <div className="qr-reader">
+        <video ref={videoEl}></video>
+        <div ref={qrBoxEl} className="qr-box">
+          <img src={QrFrame} alt="Qr Frame" className="qr-frame" />
+        </div>
       </div>
-
-      {/* Show Data Result if scan is success */}
-      {scannedResult && (
-        <p
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            zIndex: 99999,
-            color: "white",
-          }}
-        >
-          Scanned Result: {scannedResult}
-        </p>
-      )}
+      <Button
+        variant="contained"
+        onClick={handleCheckIn}
+        disabled={!checkInEnabled}
+        className="check-in-button"
+        sx={{fontSize: 30, backgroundColor: "#d08553"}}
+      >
+        Check In
+      </Button>
     </div>
   );
 };
