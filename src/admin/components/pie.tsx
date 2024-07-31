@@ -20,7 +20,7 @@ const StyledText = styled('text')(({ theme }) => ({
   fill: theme.palette.text.primary,
   textAnchor: 'middle',
   dominantBaseline: 'central',
-  fontSize: 15,
+  fontSize: 30,
 }));
 
 function PieCenterLabel({ children } : PieCenterLabelProps) {
@@ -35,7 +35,7 @@ function PieCenterLabel({ children } : PieCenterLabelProps) {
 export default function PieChartWithCenterLabel() {
   return (
     <PieChart series={[{ data, innerRadius: 80 }]} {...size}>
-      <PieCenterLabel>Real time Attendance</PieCenterLabel>
+      <PieCenterLabel>{data[0].value}%</PieCenterLabel>
     </PieChart>
   );
 }
