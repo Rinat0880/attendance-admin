@@ -19,7 +19,7 @@ const QrReader = () => {
     const user_id = result.data;
     console.log(user_id);
   
-      if (result?.data === "user1") {
+      if (result?.data) {
         alert(
           user_id
         );
