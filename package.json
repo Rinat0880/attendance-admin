@@ -2,6 +2,7 @@
   "name": "my-attendance-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
@@ -19,7 +20,9 @@
     "@types/node": "^16.18.103",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "axios": "^1.7.2",
     "date-fns": "^3.6.0",
+    "json-server": "^1.0.0-beta.1",
     "qr-scanner": "^1.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

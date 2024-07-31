@@ -1,13 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import "../components/QrStyles.css";
+import "../styles/QrStyles.css";
 import QrScanner from "qr-scanner";
 import QrFrame from "../assets/qr-frame.svg";
 import { Button } from "@mui/material";
 
-interface GeolocationCoordinates {
-    latitude: number;
-    longitude: number;
-  }
 
 const QrReader = () => {
   // QR States
@@ -16,57 +12,22 @@ const QrReader = () => {
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState<boolean>(true);
 
-  // Result
-  const [scannedResult, setScannedResult] = useState<string | undefined>("");
-  const [checkInEnabled, setCheckInEnabled] = useState(false);
-  const [userId, setUserId] = useState(null); // Replace with actual user ID
-  const [geolocation, setGeolocation] = useState<GeolocationCoordinates | null>(
-    null
-  );
-
-
-  useEffect(() => {
-    // Get geolocation when component mounts
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setGeolocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,   
-
-          });
-        },
-        (error) => {
-          console.error("Error getting geolocation:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-  }, []);
-
-
-  const handleCheckIn = () => {
-     // Here you would typically send userId and geolocation to your backend
-     if (geolocation) {
-       alert(
-         `Check-in successful!\nUser ID: ${userId}\nGeolocation: ${geolocation.latitude}, ${geolocation.longitude}`
-       );
-     } else {
-       alert("Geolocation not available.");
-     }
-   };
 
   // Success
   const onScanSuccess = (result: QrScanner.ScanResult) => {
-    console.log(result);
 
-    if (result?.data === "i am here)") {
-      setCheckInEnabled(true); // Enable check-in button
-    } else {
-      alert("This is not the correct QR code.");
-    }
-  };
+    const user_id = result.data;
+    console.log(user_id);
+  
+      if (result?.data === "user1") {
+        alert(
+          user_id
+        );
+      } else {
+        alert("This is not the correct QR code.");
+      }
+    };
+
 
   // Fail
   const onScanFail = (err: string | Error) => {
@@ -89,7 +50,6 @@ const QrReader = () => {
         overlay: qrBoxEl?.current || undefined,
       });
 
-      //  Start QR Scanner
       scanner?.current
         ?.start()
         .then(() => setQrOn(true))
@@ -115,23 +75,9 @@ const QrReader = () => {
   }, [qrOn]);
 
   return (
-    <div className="qr-reader-container">
       <div className="qr-reader">
         <video ref={videoEl}></video>
-        <div ref={qrBoxEl} className="qr-box">
-          <img src={QrFrame} alt="Qr Frame" className="qr-frame" />
-        </div>
       </div>
-      <Button
-        variant="contained"
-        onClick={handleCheckIn}
-        disabled={!checkInEnabled}
-        className="check-in-button"
-        sx={{fontSize: 30, backgroundColor: "#d08553"}}
-      >
-        Check In
-      </Button>
-    </div>
   );
 };
 

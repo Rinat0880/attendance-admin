@@ -40,7 +40,7 @@ const mockData: TableData[] = [
     department: 'Marketing',
     role: 'Coordinator',
     date: new Date('2024-07-01T00:00:00Z'),
-    status: 'Late Arrival',
+    status: 'Excused Absence',
     checkIn: new Date('2024-07-01T09:45:00Z'),
     checkOut: new Date('2024-07-01T17:45:00Z'),
     totalHrs: 7
@@ -51,7 +51,7 @@ const mockData: TableData[] = [
     department: 'Sales',
     role: 'Sales Representative',
     date: new Date('2024-07-01T00:00:00Z'),
-    status: 'Work from Home',
+    status: 'Present',
     checkIn: new Date('2024-07-01T08:00:00Z'),
     checkOut: new Date('2024-07-01T16:00:00Z'),
     totalHrs: 8
@@ -95,7 +95,7 @@ const mockData: TableData[] = [
     department: 'HR',
     role: 'Recruiter',
     date: new Date('2024-07-01T00:00:00Z'),
-    status: 'Late Arrival',
+    status: 'Absent',
     checkIn: new Date('2024-07-01T10:00:00Z'),
     checkOut: new Date('2024-07-01T18:00:00Z'),
     totalHrs: 7
