@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import AttendanceTable from '../components/Table/Table/AttendanceTable';
-import EditModal from '../components/Table/Table/EditModal';
-import CreateEmployeeModal from '../components/Table/Table/CreateEmployeeModal'; // Новый компонент
-import { TableData, Column } from '../components/Table/Table/types';
+import AttendanceTable from '../components/Table/AttendanceTable';
+import EditModal from '../components/Table/EditModal';
+import CreateEmployeeModal from '../components/Table/CreateEmployeeModal'; // Новый компонент
+import { TableData, Column } from '../components/Table/types';
 
 const columns: Column[] = [
   { id: 'id', label: 'ID'},
@@ -60,6 +60,7 @@ const EmployeeListPage: React.FC = () => {
           variant="contained" 
           startIcon={<AddIcon />} 
           onClick={() => setCreateModalOpen(true)}
+          sx = {{ bgcolor: '#00D891', '&:hover': {bgcolor: '#00AB73'}}}
         >
           Create
         </Button>
@@ -70,6 +71,7 @@ const EmployeeListPage: React.FC = () => {
           onEdit={handleEditOpen}
           onDelete={handleDeleteEmployee}
           tableTitle="Employee List"
+          showCalendar={false}
         />
       <EditModal
         open={editModalOpen}

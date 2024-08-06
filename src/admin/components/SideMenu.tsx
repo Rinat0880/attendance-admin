@@ -14,7 +14,7 @@ function SideMenu() {
   };
 
   return (
-    <List className="sideMenu">
+    <List>
       <ListItem disablePadding>
         <ListItemButton
           selected={location.pathname === '/admin'}

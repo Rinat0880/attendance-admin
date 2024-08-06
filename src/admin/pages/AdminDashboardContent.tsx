@@ -2,9 +2,9 @@ import React from "react";
 import LineChartComponent from "../components/LineChart";
 import PieChartWithCustomizedLabel from "../components/pie";
 import SimpleBarChart from "../components/Bar";
-import AttendanceTable from "../components/Table/Table/AttendanceTable";
-import mockData from "../components/Table/Table/mockData";
-import { Column } from "../components/Table/Table/types";
+import AttendanceTable from "../components/Table/AttendanceTable";
+import mockData from "../components/Table/mockData";
+import { Column } from "../components/Table/types";
 
 
 function AdminDashboardContent() {
@@ -94,7 +94,7 @@ function AdminDashboardContent() {
         </div>
       </div>
       <div className="TableSection">
-        <AttendanceTable data={mockData} columns={columns} />
+        <AttendanceTable data={mockData} columns={columns} showCalendar={true}/>
       </div>
     </>
   );

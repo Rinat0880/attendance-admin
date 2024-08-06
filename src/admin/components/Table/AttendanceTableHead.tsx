@@ -14,7 +14,7 @@ const AttendanceTableHead: React.FC<AttendanceTableHeadProps> = ({ columns, filt
       <TableRow>
         {columns.map((column) => (
           <TableCell key={column.id}>
-            {['status', 'role', 'department', 'date'].includes(column.id) ? (
+            {['status', 'role', 'department'].includes(column.id) ? (
               <Select
                 value={filters[column.id] || ''}
                 onChange={(e: SelectChangeEvent<string>) => onFilterChange(column.id, e.target.value)}

@@ -38,6 +38,10 @@ const getStatusStyles = (status: string): { backgroundColor: string; color: stri
       return { backgroundColor: '#e6effc', color: '#0764e6' };
     case 'absent':
       return { backgroundColor: '#ffe5ee', color: '#aa0000' };
+    case 'late arrival':
+      return { backgroundColor: '#fff8e7', color: '#d5b500' };
+    case 'work from home':
+      return { backgroundColor: '#E0FFC6', color: '#112A46' };
     case 'excused absence':
       return { backgroundColor: '#efefef', color: '#8a8a8a' };
     default:
@@ -108,7 +112,7 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
                         justifyContent: 'center',
                       }}
                     >
-                      {['Present', 'Absent', 'Excused Absence'].map((status) => (
+                      {['Present', 'Absent', 'Late Arrival', 'Work From Home', 'Excused Absence'].map((status) => (
                         <MenuItem key={status} value={status}>{status}</MenuItem>
                       ))}
                     </Select>

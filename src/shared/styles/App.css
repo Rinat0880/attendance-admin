@@ -191,10 +191,21 @@
 /* SideMenus */
 
 
-.sideMenu {
-  background-color: #fff; 
-  height: 100%;
-  padding: 20px 0; 
+.Slayout{
+  position: relative;
+    display: flex;
+    /* overflow: hidden; */
+    width: 16.65%;
+}
+
+
+.Ssidebar{
+  position: sticky;
+  top: 0px;
+  height: 100vh;
+  width: 100%;
+  padding: 10px 0;
+  overflow: hidden;
 }
 
 .sideMenu .MuiListItemButton-root { 
