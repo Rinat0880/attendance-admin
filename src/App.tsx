@@ -6,8 +6,7 @@ import LoginPage from "./client/pages/LoginPage";
 import DashboardPage from "./client/pages/DashboardPage";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import { Employee } from "./employees";
-import SideMenu from "./admin/components/SideMenu";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import "./shared/styles/App.css";
 import QrReader from "./client/pages/QrReader";
 
@@ -29,8 +28,19 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [employeeData, setEmployeeData] = useState<Employee | null>(null);
 
-  const handleLoginSuccess = (employee: Employee) => {
-    console.log("Login successful:", employee);
+  const handleLoginSuccess = (token: string) => {
+    console.log("Login successful. Token:", token);
+    // Пример данных сотрудника. Обязательно включите все необходимые поля.
+    const employee: Employee = {
+      id: 1,
+      username: "exampleUser",
+      password: "hashed_password", // Обычно пароль будет захеширован
+      name: "John Doe",
+      role: "USER",
+      isAdmin: true,
+      photoUrl: 'images/kotek.png',
+      // Добавьте любые другие поля, которые требует ваш интерфейс Employee
+    };
     setIsLoggedIn(true);
     setEmployeeData(employee);
   };
@@ -38,6 +48,7 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setEmployeeData(null);
+    localStorage.removeItem('token');
   };
 
   return (
@@ -65,24 +76,9 @@ function App() {
             />
             <Route
               path="/admin/*"
-              element={
-                isLoggedIn && employeeData?.isAdmin ? (
-                  <Grid container>
-                    <div className="Slayout">
-                      <div className="Ssidebar">
-                        <SideMenu />
-                      </div>
-                    </div>
-                    <Grid item xs={10}>
-                      {" "}
-                      {/* Основной контент */}
+              element={ 
                       <AdminDashboard />
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
+                    }
             />
             <Route path="/qrreader" element={<QrReader />} />
           </Routes>
