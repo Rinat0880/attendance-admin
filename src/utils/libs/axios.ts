@@ -84,7 +84,9 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
     baseURL: "https://attendance-backend-24xu.onrender.com/api/v1/",
-    withCredentials: false,
+    headers: {
+          'Content-Type': 'multipart/form-data',
+        },
 });
 
 // Добавляем перехватчик для включения токена в заголовок
