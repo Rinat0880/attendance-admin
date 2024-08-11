@@ -28,19 +28,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [employeeData, setEmployeeData] = useState<Employee | null>(null);
 
-  const handleLoginSuccess = (token: string) => {
-    console.log("Login successful. Token:", token);
-    // Пример данных сотрудника. Обязательно включите все необходимые поля.
-    const employee: Employee = {
-      id: 1,
-      username: "exampleUser",
-      password: "hashed_password", // Обычно пароль будет захеширован
-      name: "John Doe",
-      role: "USER",
-      isAdmin: true,
-      photoUrl: 'images/kotek.png',
-      // Добавьте любые другие поля, которые требует ваш интерфейс Employee
-    };
+  const handleLoginSuccess = (employee: Employee) => {
+    console.log("Login successful:", employee);
     setIsLoggedIn(true);
     setEmployeeData(employee);
   };
@@ -48,7 +37,6 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setEmployeeData(null);
-    localStorage.removeItem('token');
   };
 
   return (
@@ -76,11 +64,8 @@ function App() {
             />
             <Route
               path="/admin/*"
-              element={ 
-                      <AdminDashboard />
-                    }
+              element={<AdminDashboard />}
             />
-            <Route path="/qrreader" element={<QrReader />} />
           </Routes>
         </Box>
       </BrowserRouter>

@@ -1,57 +1,69 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import axiosInstance from "../../utils/libs/axios";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Container,
-  useTheme,
-} from "@mui/material";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, TextField, Typography, Container, Box } from '@mui/material';
+import axiosInstance from '../../utils/libs/axios';
+import axios, { AxiosError } from 'axios';
+import { Employee } from '../../employees';
 
 interface LoginPageProps {
-  onLoginSuccess: (employee: any) => void;
+  onLoginSuccess: (employee: Employee) => void;
 }
 
-function LoginPage({ onLoginSuccess }: LoginPageProps) {
-  const [employeeId, setEmployeeId] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+  const [employeeId, setEmployeeId] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const theme = useTheme();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!employeeId || !password) {
+      setError('Пожалуйста, заполните все поля');
+      return;
+    }
+
     try {
-      const formData = new FormData();
-      formData.append("employee_id", employeeId);
-      formData.append("password", password);
-
-      console.log("Отправляемые данные:");
-      formData.forEach((value, key) => {
-        console.log(key, value);
+      console.log('Попытка входа с ID:', employeeId);
+      const response = await axiosInstance.post("sign-in", {
+        employee_id: employeeId,
+        password: password
       });
 
-      const response = await axiosInstance.post("sign-in", formData);
+      console.log('Ответ от сервера:', response);
 
       if (response.data && response.data.token) {
         localStorage.setItem("token", response.data.token);
-        onLoginSuccess(response.data.employee);
-
-        if (response.data.employee.isAdmin) {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+        console.log('Токен сохранен в localStorage');
+        
+        // Предполагаем, что сервер возвращает данные сотрудника вместе с токеном
+        const employeeData: Employee = response.data.employee;
+        onLoginSuccess(employeeData);
+        navigate("/");
       } else {
-        setError("Неверный ответ от сервера");
+        console.error('Токен отсутствует в ответе');
+        setError('Неверный ответ от сервера');
       }
     } catch (err) {
+      console.error('Ошибка при входе:', err);
+      
       if (axios.isAxiosError(err)) {
-        console.error("Ошибка запроса:", err.request);
-        console.error("Ошибка ответа:", err.response);
-        setError(err.response?.data?.message || "Ошибка при входе");
+        const axiosError = err as AxiosError;
+        console.error("Детали ошибки:", axiosError);
+        console.error("Статус ответа:", axiosError.response?.status);
+        console.error("Данные ответа:", axiosError.response?.data);
+        
+        if (axiosError.response) {
+          const errorMessage = typeof axiosError.response.data === 'object' && axiosError.response.data !== null
+            ? (axiosError.response.data as { message?: string }).message || 'Неизвестная ошибка'
+            : 'Неизвестная ошибка';
+          setError(`Ошибка ${axiosError.response.status}: ${errorMessage}`);
+        } else if (axiosError.request) {
+          setError('Нет ответа от сервера. Проверьте подключение к интернету.');
+        } else {
+          setError(`Ошибка: ${axiosError.message}`);
+        }
       } else {
         console.error("Неизвестная ошибка:", err);
         setError("Произошла неизвестная ошибка");
@@ -59,80 +71,63 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
     }
   };
 
+
+
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: 4,
-          borderRadius: 4,
-          boxShadow: 3,
-          backgroundColor: "#f0f8ff",
-          width: "100%",
-          maxWidth: 400,
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <Typography component="h1" variant="h5">
-          Вход
+          Вход в систему
         </Typography>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="employee_id"
-          label="ID сотрудника"
-          name="employee_id"
-          autoComplete="employee_id"
-          autoFocus
-          value={employeeId}
-          onChange={(e) => setEmployeeId(e.target.value)}
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Пароль"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && (
-          <Typography variant="body2" color="error">
-            {error}
-          </Typography>
-        )}
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{
-            mt: 3,
-            mb: 2,
-            backgroundColor: theme.palette.success.light,
-            "&:hover": {
-              backgroundColor: theme.palette.success.dark,
-            },
-          }}
-          onClick={handleLogin}
-        >
-          Войти
-        </Button>
+        <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="employee_id"
+            label="ID сотрудника"
+            name="employee_id"
+            autoComplete="employee_id"
+            autoFocus
+            value={employeeId}
+            onChange={(e) => setEmployeeId(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Пароль"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Войти
+          </Button>
+          {error && (
+            <Typography color="error" align="center">
+              {error}
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Container>
   );
-}
+};
 
 export default LoginPage;

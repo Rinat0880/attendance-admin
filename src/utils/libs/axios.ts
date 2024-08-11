@@ -99,20 +99,27 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 axiosInstance.interceptors.request.use(request => {
-    console.log('Отправляемый запрос:', request);
-    return request;
-  }, error => {
-    console.error('Ошибка запроса:', error);
-    return Promise.reject(error);
-  });
-  
+  console.log('Отправляемый запрос:', request);
+  console.log('URL запроса:', request.url);
+  console.log('Метод запроса:', request.method);
+  console.log('Данные запроса:', request.data);
+  return request;
+}, error => {
+  console.error('Ошибка запроса:', error);
+  return Promise.reject(error);
+});
+
 axiosInstance.interceptors.response.use(response => {
-    console.log('Получен ответ:', response);
-    return response;
-  }, error => {
-    console.error('Ошибка ответа:', error);
-    return Promise.reject(error);
-  });
+  console.log('Получен ответ:', response);
+  return response;
+}, error => {
+  console.error('Ошибка ответа:', error);
+  if (error.response) {
+    console.error('Статус ответа:', error.response.status);
+    console.error('Данные ответа:', error.response.data);
+  }
+  return Promise.reject(error);
+});
 
 export default axiosInstance;
 
