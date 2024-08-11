@@ -131,7 +131,13 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
   const handleLogin = async () => {
     try {
-      const response = await axiosInstance.post('', {employee_id: username, password: password});
+      const loginData = {
+        employee_id: username,
+        password: password
+      }
+
+      console.log("Отправляемые данные", loginData);
+      const response = await axiosInstance.post('', loginData);   
       
       if (response.data && response.data.token) {
         localStorage.setItem('token', response.data.token);
