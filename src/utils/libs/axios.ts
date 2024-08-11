@@ -98,4 +98,20 @@ axiosInstance.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
+axiosInstance.interceptors.request.use(request => {
+    console.log('Отправляемый запрос:', request);
+    return request;
+  }, error => {
+    console.error('Ошибка запроса:', error);
+    return Promise.reject(error);
+  });
+  
+  axiosInstance.interceptors.response.use(response => {
+    console.log('Получен ответ:', response);
+    return response;
+  }, error => {
+    console.error('Ошибка ответа:', error);
+    return Promise.reject(error);
+  });
+
 export default axiosInstance;

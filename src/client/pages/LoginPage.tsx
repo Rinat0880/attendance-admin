@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import axiosInstance from '../../utils/libs/axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import axiosInstance from "../../utils/libs/axios";
 import {
   Box,
   TextField,
@@ -9,49 +9,53 @@ import {
   Typography,
   Container,
   useTheme,
-} from '@mui/material';
+} from "@mui/material";
 
 interface LoginPageProps {
   onLoginSuccess: (employee: any) => void;
 }
 
 function LoginPage({ onLoginSuccess }: LoginPageProps) {
-  const [employeeId, setEmployeeId] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [employeeId, setEmployeeId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const theme = useTheme();
 
   const handleLogin = async () => {
     try {
       const formData = new FormData();
-      formData.append('employee_id', employeeId);
-      formData.append('password', password);
-      console.log(formData);
+      formData.append("employee_id", employeeId);
+      formData.append("password", password);
 
-      const response = await axiosInstance.post('sign-in', formData, {
+      console.log("Отправляемые данные:");
+      formData.forEach((value, key) => {
+        console.log(key, value);
+      });
+
+      const response = await axiosInstance.post("sign-in", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-      
+
       if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem("token", response.data.token);
         onLoginSuccess(response.data.employee);
-        
+
         if (response.data.employee.isAdmin) {
-          navigate('/admin');
+          navigate("/admin");
         } else {
-          navigate('/');
+          navigate("/");
         }
       } else {
-        setError('Неверный ответ от сервера');
+        setError("Неверный ответ от сервера");
       }
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.message || 'Ошибка при входе');
+        setError(err.response.data.message || "Ошибка при входе");
       } else {
-        setError('Произошла неизвестная ошибка');
+        setError("Произошла неизвестная ошибка");
       }
     }
   };
@@ -60,22 +64,22 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
     <Container
       maxWidth="sm"
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           padding: 4,
           borderRadius: 4,
           boxShadow: 3,
-          backgroundColor: '#f0f8ff',
-          width: '100%',
+          backgroundColor: "#f0f8ff",
+          width: "100%",
           maxWidth: 400,
         }}
       >
@@ -119,7 +123,7 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
             mt: 3,
             mb: 2,
             backgroundColor: theme.palette.success.light,
-            '&:hover': {
+            "&:hover": {
               backgroundColor: theme.palette.success.dark,
             },
           }}
