@@ -27,6 +27,7 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
       const formData = new FormData();
       formData.append('employee_id', employeeId);
       formData.append('password', password);
+      console.log(formData);
 
       const response = await axiosInstance.post('sign-in', formData, {
         headers: {
