@@ -83,21 +83,20 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "https://attendance-backend-24xu.onrender.com/api/v1/",
-    headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+  baseURL: "https://attendance-backend-24xu.onrender.com/api/v1",
+  headers: {
+      'Content-Type': 'application/json',
+  },
 });
 
-// Добавляем перехватчик для включения токена в заголовок
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token && config.url !== "sign-in") {
-        config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
+  const token = localStorage.getItem('token');
+  if (token && config.url !== "sign-in") {
+      config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
 }, (error) => {
-    return Promise.reject(error);
+  return Promise.reject(error);
 });
 
 axiosInstance.interceptors.request.use(request => {
@@ -121,6 +120,11 @@ axiosInstance.interceptors.response.use(response => {
     console.error('Данные ответа:', error.response.data);
   }
   return Promise.reject(error);
+});
+
+axiosInstance.interceptors.request.use(request => {
+  console.log('Отправляемые данные:', request.data);
+  return request;
 });
 
 export default axiosInstance;

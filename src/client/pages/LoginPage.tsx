@@ -26,7 +26,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     try {
       console.log('Попытка входа c ID:', employeeId);
-      const response = await axiosInstance.post("sign-in", {
+      const response = await axiosInstance.post("/sign-in", {
         employee_id: employeeId,
         password: password
       });
