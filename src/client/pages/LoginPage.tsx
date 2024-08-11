@@ -33,11 +33,7 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
         console.log(key, value);
       });
 
-      const response = await axiosInstance.post("sign-in", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axiosInstance.post("sign-in", formData);
 
       if (response.data && response.data.token) {
         localStorage.setItem("token", response.data.token);
@@ -52,9 +48,12 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
         setError("Неверный ответ от сервера");
       }
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.message || "Ошибка при входе");
+      if (axios.isAxiosError(err)) {
+        console.error("Ошибка запроса:", err.request);
+        console.error("Ошибка ответа:", err.response);
+        setError(err.response?.data?.message || "Ошибка при входе");
       } else {
+        console.error("Неизвестная ошибка:", err);
         setError("Произошла неизвестная ошибка");
       }
     }

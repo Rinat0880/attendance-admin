@@ -83,14 +83,14 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "https://attendance-backend-24xu.onrender.com/api/v1/", // Замените на ваш реальный API URL
+    baseURL: "https://attendance-backend-24xu.onrender.com/api/v1/",
     withCredentials: false,
 });
 
 // Добавляем перехватчик для включения токена в заголовок
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token'); // Предполагается, что токен хранится в localStorage после входа
-    if (token) {
+    const token = localStorage.getItem('token');
+    if (token && config.url !== "sign-in") {
         config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
@@ -106,7 +106,7 @@ axiosInstance.interceptors.request.use(request => {
     return Promise.reject(error);
   });
   
-  axiosInstance.interceptors.response.use(response => {
+axiosInstance.interceptors.response.use(response => {
     console.log('Получен ответ:', response);
     return response;
   }, error => {
@@ -115,3 +115,4 @@ axiosInstance.interceptors.request.use(request => {
   });
 
 export default axiosInstance;
+
