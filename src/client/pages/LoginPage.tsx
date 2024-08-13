@@ -16,6 +16,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
+    console.log(typeof employeeId);
     e.preventDefault();
     setError('');
 
@@ -26,27 +27,28 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     try {
       console.log('Попытка входа c ID:', employeeId);
-      const response = await axiosInstance.post("/sign-in", {
+      const {data} = await axiosInstance.post("/sign-in/", {
         employee_id: employeeId,
         password: password
       });
 
-      console.log('Ответ от сервера:', response);
+      console.log('Ответ от сервера:' );
 
-      if (response.data && response.data.token) {
-        localStorage.setItem("token", response.data.token);
+      if (data && data.token) {
+        localStorage.setItem("token", data.token);
         console.log('Токен сохранен в localStorage');
         
         // Предполагаем, что сервер возвращает данные сотрудника вместе с токеном
-        const employeeData: Employee = response.data.employee;
+        const employeeData: Employee = data.employee;
         onLoginSuccess(employeeData);
         navigate("/");
       } else {
-        console.error('Токен отсутствует в ответе');
+        console.log('Токен отсутствует в ответе');
+        console.log('Токен ', data.data.token);
         setError('Неверный ответ от сервера');
       }
     } catch (err) {
-      console.error('Ошибка при входе:', err);
+      console.log('Ошибка при входе:', err);
       
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;

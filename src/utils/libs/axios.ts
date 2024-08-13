@@ -85,19 +85,21 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL: "https://attendance-backend-24xu.onrender.com/api/v1",
   headers: {
-      'Content-Type': 'application/json',
+    'Content-Type': 'application/json',
   },
 });
 
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token && config.url !== "sign-in") {
-      config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers['Authorization'] = `Bearer ${token}`; // Fixed template string
   }
   return config;
 }, (error) => {
   return Promise.reject(error);
 });
+
+
 
 axiosInstance.interceptors.request.use(request => {
   console.log('Отправляемый запрос:', request);
