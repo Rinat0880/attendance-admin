@@ -1,36 +1,38 @@
-// import * as React from 'react';
-// import { BarChart } from '@mui/x-charts/BarChart';
-
-// const pData = [61, 77, 54, 89, 65, 86, ];
-// const xLabels = [
-//   'Admstr',
-//   'Sales',
-//   'HR',
-//   'Mrkt',
-//   'Social',
-//   'IT',
-// ];
-
-// export default function SimpleBarChart() {
-//   return (
-//     <BarChart
-//       width={430}
-//       height={300}
-//       series={[
-//         { data: pData, label: 'department attendance', id: 'pvId' },
-//       ]}
-//       xAxis={[{ data: xLabels, scaleType: 'band' }]}
-//     />
-//   );
-// }
-
-import * as React from "react";
+import React, { useEffect, useState } from 'react';
 import { BarChart } from "@mui/x-charts";
+import axiosInstance from '../../utils/libs/axios';
 
-const data = [61, 77, 54, 89, 65, 86];
-const xLabels = ["Admstr", "Sales", "HR", "Mrkt", "Social", "IT"];
+interface BarData {
+  department: string;
+  percentage: number;
+}
 
 export default function SimpleBarChart() {
+  const [data, setData] = useState<number[]>([]);
+  const [xLabels, setXLabels] = useState<string[]>([]);
+
+  useEffect(() => {
+    getBarData();
+  }, []);
+
+  const getBarData = async () => {
+    try {
+      const response = await axiosInstance().get('/attendance/barchart');
+      const barData: BarData[] = response.data.data;
+      console.log(response.data.data);
+      
+
+      // Маппинг данных для графика
+      const percentages = barData.map(item => item.percentage);
+      const labels = barData.map(item => item.department);
+
+      setData(percentages);
+      setXLabels(labels);
+    } catch (err) {
+      console.log('Error fetching bar data:', err);
+    }
+  };
+
   return (
     <BarChart
       width={430}
@@ -48,13 +50,13 @@ export default function SimpleBarChart() {
       {data.map((value, index) => (
         <text
           key={index}
-          x={index * 55 + 80} // Adjust positioning as needed
-          y={236} // Adjust positioning as needed
+          x={index * (430 / data.length) + 80} // Подстроить позиционирование по оси X
+          y={236} // Подстроить позиционирование по оси Y
           textAnchor="middle"
           dominantBaseline="central"
           fill="black"
         >
-          {((value / 100) * 100).toFixed(0)}%
+          {value.toFixed(0)}%
         </text>
       ))}
     </BarChart>

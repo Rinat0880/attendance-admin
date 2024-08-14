@@ -1,15 +1,17 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useDrawingArea } from '@mui/x-charts/hooks';
 import { styled } from '@mui/material/styles';
+import axiosInstance from '../../utils/libs/axios';
+
+interface PieData {
+  absent: number;
+  come: number;
+}
+
 interface PieCenterLabelProps {
   children: React.ReactNode;
 }
-
-const data = [
-  { value: 88, label: '出席' },
-  { value: 12, label: '欠席' },
-];
 
 const size = {
   width: 300,
@@ -23,7 +25,7 @@ const StyledText = styled('text')(({ theme }) => ({
   fontSize: 30,
 }));
 
-function PieCenterLabel({ children } : PieCenterLabelProps) {
+function PieCenterLabel({ children }: PieCenterLabelProps) {
   const { width, height, left, top } = useDrawingArea();
   return (
     <StyledText x={left + width / 2} y={top + height / 2}>
@@ -33,9 +35,29 @@ function PieCenterLabel({ children } : PieCenterLabelProps) {
 }
 
 export default function PieChartWithCenterLabel() {
+  const [data, setData] = useState<{ value: number; label: string }[]>([]);
+
+  useEffect(() => {
+    getPieData();
+  }, []);
+
+  const getPieData = async () => {
+    try {
+      const response = await axiosInstance().get('/attendance/piechart');
+      const pieValue: PieData = response.data.data;
+      
+      setData([
+        { value: pieValue.come, label: '出席' },
+        { value: pieValue.absent, label: '欠席' },
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <PieChart series={[{ data, innerRadius: 80 }]} {...size}>
-      <PieCenterLabel>{data[0].value}%</PieCenterLabel>
+      {data.length > 0 && <PieCenterLabel>{data[0].value}%</PieCenterLabel>}
     </PieChart>
   );
 }
