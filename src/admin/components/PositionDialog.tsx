@@ -4,7 +4,7 @@ import {
   Select, MenuItem, FormControl, InputLabel,
 } from '@mui/material';
 import { Department, Position } from '../pages/DepartmentPositionManagement'; 
-
+import { createPosition, updatePosition } from '../../utils/libs/axios'; 
 
 interface PositionDialogProps {
   open: boolean;
@@ -14,21 +14,29 @@ interface PositionDialogProps {
   onSave: (position: Position) => void;
 }
 
-
-
 function PositionDialog({ open, onClose, position, departments, onSave }: PositionDialogProps) {
-    const [name, setName] = useState(position?.name || '');
-    const [departmentId, setDepartmentId] = useState<number | string>(position?.departmentId || ''); // Изменение типа
-  
-    const handleSave = () => {
-      if (name.trim() !== '' && departmentId) {
-        onSave({ id: position?.id || 0, name, departmentId: Number(departmentId) }); // Приведение к числу
-        onClose();
+  const [name, setName] = useState(position?.name || '');
+  const [departmentId, setDepartmentId] = useState<number | string>(position?.department_id || '');
+
+  const handleSave = async () => {
+    if (name.trim() !== '' && departmentId) {
+      let savedPosition;
+      const department = departments.find((dept) => dept.id === Number(departmentId))?.name || 'Unknown';
+
+      if (position) {
+        await updatePosition(position.id, name, Number(departmentId));
+        savedPosition = { id: position.id, name, department_id: Number(departmentId), department };
       } else {
-        alert('Please enter a position name and select a department.');
+        const response = await createPosition(name, Number(departmentId));
+        savedPosition = { id: response.data.id, name: response.data.name, department_id: response.data.department_id, department };
       }
-    };
-  
+
+      onSave(savedPosition);
+      onClose();
+    } else {
+      alert('Please enter a position name and select a department.');
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>

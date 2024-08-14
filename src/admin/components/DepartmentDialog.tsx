@@ -3,7 +3,7 @@ import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
 import { Department } from '../pages/DepartmentPositionManagement'; 
-
+import { createDepartment, updateDepartment } from '../../utils/libs/axios';
 
 interface DepartmentDialogProps {
   open: boolean;
@@ -15,9 +15,17 @@ interface DepartmentDialogProps {
 function DepartmentDialog({ open, onClose, department, onSave }: DepartmentDialogProps) {
   const [name, setName] = useState(department?.name || '');
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (name.trim() !== '') {
-      onSave({ id: department?.id || 0, name }); 
+      let savedDepartment;
+      if (department) {
+        await updateDepartment(department.id, name);
+        savedDepartment = { id: department.id, name };
+      } else {
+        const response = await createDepartment(name);
+        savedDepartment = { id: response.data.id, name: response.data.name };
+      }
+      onSave(savedDepartment);
       onClose();
     } else {
       alert('Please enter a department name.');

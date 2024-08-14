@@ -1,19 +1,30 @@
 import React from 'react';
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box
 } from '@mui/material';
-import { Department, Position } from '../pages/DepartmentPositionManagement'; 
+import { Position, Department } from '../pages/DepartmentPositionManagement'; 
+import { deletePosition } from '../../utils/libs/axios';
 
 interface PositionTableProps {
   positions: Position[];
-  departments: Department[];
   onEdit: (position: Position) => void;
   onDelete: (positionId: number) => void;
+  departments: Department[];
 }
 
-function PositionTable({ positions, departments, onEdit, onDelete }: PositionTableProps) {
+function PositionTable({ positions, onEdit, onDelete, departments }: PositionTableProps) {
+  const handleDelete = async (id: number) => {
+    await deletePosition(id);
+    onDelete(id);
+  };
+
+  const getDepartmentName = (departmentId: number) => {
+    const department = departments.find((dept) => dept.id === departmentId);
+    return department ? department.name : 'Unknown';
+  };
+
   return (
-    <TableContainer component={Paper}>
+    <Paper sx={{  borderRadius: 4, boxShadow: 2, mb: 5}}>
       <Table>
         <TableHead>
           <TableRow>
@@ -26,18 +37,18 @@ function PositionTable({ positions, departments, onEdit, onDelete }: PositionTab
           {positions.map((position) => (
             <TableRow key={position.id}>
               <TableCell>{position.name}</TableCell>
+              <TableCell>{getDepartmentName(position.department_id)}</TableCell>
               <TableCell>
-                {departments.find(d => d.id === position.departmentId)?.name || 'Unknown'}
-              </TableCell>
-              <TableCell>
-                <Button onClick={() => onEdit(position)}>Edit</Button>
-                <Button onClick={() => onDelete(position.id)}>Delete</Button>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button onClick={() => onEdit(position)} variant="outlined" size='small'>Edit</Button>
+                <Button onClick={() => handleDelete(position.id)} variant="outlined" size='small' color="error">Delete</Button>
+                </Box>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </Paper>
   );
 }
 

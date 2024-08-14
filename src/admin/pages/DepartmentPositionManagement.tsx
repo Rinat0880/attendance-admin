@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Tabs, Tab } from '@mui/material';
 import DepartmentTable from '../components/DepartmentTable';
 import PositionTable from '../components/PositionTable';
 import DepartmentDialog from '../components/DepartmentDialog';
 import PositionDialog from '../components/PositionDialog';
 import '../../shared/styles/App.css';
+import axiosInstance from '../../utils/libs/axios';
 
 export interface Department {
   id: number;
@@ -14,21 +15,14 @@ export interface Department {
 export interface Position {
   id: number;
   name: string;
-  departmentId: number;
+  department_id: number;
+  department: string;
 }
 
 function DepartmentPositionManagement() {
   const [activeTab, setActiveTab] = useState(0);
-  const [departments, setDepartments] = useState<Department[]>([
-    { id: 1, name: 'Sales' },
-    { id: 2, name: 'Marketing' },
-    { id: 3, name: 'IT' },
-  ]);
-  const [positions, setPositions] = useState<Position[]>([
-    { id: 1, name: 'Sales Manager', departmentId: 1 },
-    { id: 2, name: 'Marketing Specialist', departmentId: 2 },
-    { id: 3, name: 'Software Engineer', departmentId: 3 },
-  ]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [openDepartmentDialog, setOpenDepartmentDialog] = useState(false);
   const [openPositionDialog, setOpenPositionDialog] = useState(false);
   const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
@@ -36,6 +30,35 @@ function DepartmentPositionManagement() {
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [newPositionName, setNewPositionName] = useState('');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | null>(null);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  
+  
+  useEffect(() => {
+    fetchDepartments();
+    fetchPositions();
+  }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const response = await axiosInstance().get('/department/list');
+      if (response.data.status) {
+        setDepartments(response.data.data.results);
+      }
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+    }
+  };
+
+  const fetchPositions = async () => {
+    try {
+      const response = await axiosInstance().get('/position/list');
+      if (response.data.status) {
+        setPositions(response.data.data.results);
+      }
+    } catch (error) {
+      console.error('Error fetching positions:', error);
+    }
+  };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -91,7 +114,8 @@ function DepartmentPositionManagement() {
       const newPosition: Position = {
         id: positions.length + 1,
         name: newPositionName,
-        departmentId: selectedDepartmentId,
+        department_id: selectedDepartmentId,
+        department: selectedDepartment,
       };
       setPositions([...positions, newPosition]);
       handleClosePositionDialog();
@@ -114,7 +138,7 @@ function DepartmentPositionManagement() {
   const handleDeleteDepartment = (departmentId: number) => {
     if (window.confirm('Are you sure you want to delete this department?')) {
       setDepartments(departments.filter(d => d.id !== departmentId));
-      setPositions(positions.filter(p => p.departmentId !== departmentId));
+      setPositions(positions.filter(p => p.department_id !== departmentId));
     }
   };
 
@@ -133,7 +157,7 @@ function DepartmentPositionManagement() {
   const handleEditPosition = (position: Position) => {
     setEditingPosition(position);
     setNewPositionName(position.name);
-    setSelectedDepartmentId(position.departmentId);
+    setSelectedDepartmentId(position.department_id);
     setOpenPositionDialog(true);
   };
 

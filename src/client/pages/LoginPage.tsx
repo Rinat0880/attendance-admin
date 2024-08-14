@@ -16,39 +16,44 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
-    console.log(typeof employeeId);
     e.preventDefault();
     setError('');
-
+  
     if (!employeeId || !password) {
       setError('Пожалуйста, заполните все поля');
       return;
     }
-
+  
+    const instance = axiosInstance();
     try {
       console.log('Попытка входа c ID:', employeeId);
-      const {data} = await axiosInstance.post("/sign-in/", {
+      const response = await instance.post("/sign-in", {
         employee_id: employeeId,
         password: password
       });
-
-      console.log('Ответ от сервера:' );
-
-      if (data && data.token) {
-        localStorage.setItem("token", data.token);
-        console.log('Токен сохранен в localStorage');
-        
-        // Предполагаем, что сервер возвращает данные сотрудника вместе с токеном
-        const employeeData: Employee = data.employee;
+  
+      console.log('Ответ от сервера:', response);
+  
+      if (response.data && response.data.data && response.data.data.access_token) {
+        // Сохраняем токены в localStorage
+        localStorage.setItem("access_token", response.data.data.access_token);
+        localStorage.setItem("refresh_token", response.data.data.refresh_token);
+        console.log('Токены сохранены в localStorage');
+  
+        // Если ваш сервер возвращает данные сотрудника, получите их
+        const employeeData: Employee = response.data.employee;
         onLoginSuccess(employeeData);
-        navigate("/");
+        if (response.data.data.role == "ADMIN"){
+        navigate("/admin");
       } else {
-        console.log('Токен отсутствует в ответе');
-        console.log('Токен ', data.data.token);
+        navigate("/");
+      }
+      } else {
+        console.error('Токены отсутствуют в ответе');
         setError('Неверный ответ от сервера');
       }
     } catch (err) {
-      console.log('Ошибка при входе:', err);
+      console.error('Ошибка при входе:', err);
       
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
@@ -72,7 +77,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
     }
   };
-
 
 
   return (
