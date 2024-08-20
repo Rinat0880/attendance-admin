@@ -1,15 +1,19 @@
 export interface Employee {
-  id: number; 
+  id: string;
   username: string;
   password: string;
-  name: string;
-  photoUrl: string;
-  isAdmin: boolean;
-  // checkInTime: Date | null;
-  // checkOutTime: Date | null;
-  // location: string;
-  role: string;
-  // status: 'Present' | 'Absent' | 'EarlyLeave';
+  role: 'ADMIN' | 'EMPLOYEE'; 
+  checkInTime: Date | null;
+  checkOutTime: Date | null;
+  location: string;
+  position: string; // Новый тип для позиции
+  status: 'Present' | 'Absent' | 'EarlyLeave'; // Оставляем как есть
+  attendanceSummary: {
+    earlyLeaves: number;
+    absences: number;
+    lateIns: number;
+    leaves: number;
+  };
 }
 
 // export const employees: Employee[] = [

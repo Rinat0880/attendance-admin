@@ -3,7 +3,6 @@ import LineChartComponent from "../components/LineChart";
 import PieChartWithCustomizedLabel from "../components/pie";
 import SimpleBarChart from "../components/Bar";
 import AttendanceTable from "../components/Table/AttendanceTable";
-import mockData from "../components/Table/mockData";
 import { Column } from "../components/Table/types";
 import axiosInstance from '../../utils/libs/axios';
 
@@ -19,25 +18,20 @@ function AdminDashboardContent() {
 
   const columns: Column[] = [
     { id: 'id', label: 'ID' },
-    { id: 'name', label: 'Name', filterable: true },
+    { id: 'full_name', label: 'Full Name', filterable: true },
     { id: 'department', label: 'Department', filterable: true, filterValues: ['IT', 'HR'] },
-    { id: 'role', label: 'Role', filterable: true, filterValues: ['Developer', 'Manager'] },
-    { id: 'date', label: 'Date' },
+    { id: 'position', label: 'Role', filterable: true, filterValues: ['Developer', 'Manager'] },
+    { id: 'work_day', label: 'Work day' },
     { id: 'status', label: 'Status', filterable: true, filterValues: ['Present', 'Absent'] },
-    { id: 'checkIn', label: 'Check In' },
-    { id: 'checkOut', label: 'Check Out' },
-    { id: 'totalHrs', label: 'Total Hours' },
+    { id: 'come_time', label: 'Check In' },
+    { id: 'leave_time', label: 'Check Out' },
+    { id: 'total_hourse', label: 'Total Hours' },
   ] as Column[];
 
   useEffect(() => {
     const fetchAttendanceStats = async () => {
       try {
-        const instance = axiosInstance();
-        const token = localStorage.getItem('access_token');
-        console.log(token);
-        const response = await instance.get("/attendance", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axiosInstance().get("/attendance");
         if (response.status === 200 && response.data.status) {
           setAttendanceStats(response.data.data);
         }
@@ -122,7 +116,7 @@ function AdminDashboardContent() {
         </div>
       </div>
       <div className="TableSection">
-        <AttendanceTable data={mockData} columns={columns} showCalendar={true}/>
+        <AttendanceTable columns={columns} showCalendar={true}/>
       </div>
     </>
   );

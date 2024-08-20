@@ -1,6 +1,19 @@
-import React, { useState } from 'react';
-import { Modal, Box, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
-import { TableData } from './types';
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+} from "@mui/material";
+import { TableData } from "./types";
+import { createUser } from "../../../utils/libs/axios"; // Импортируем функцию createUser
+import axiosInstance from "../../../utils/libs/axios";
 
 interface CreateEmployeeModalProps {
   open: boolean;
@@ -8,10 +21,56 @@ interface CreateEmployeeModalProps {
   onSave: (newEmployee: TableData) => void;
 }
 
-const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ open, onClose, onSave }) => {
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface Position {
+  id: number;
+  name: string;
+  department_id: number;
+  department: string;
+}
+
+const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
+  open,
+  onClose,
+  onSave,
+}) => {
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
+
+  useEffect(() => {
+    fetchDepartments();
+    fetchPositions();
+  }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const response = await axiosInstance().get("/department/list");
+      if (response.data.status) {
+        setDepartments(response.data.data.results);
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  const fetchPositions = async () => {
+    try {
+      const response = await axiosInstance().get("/position/list");
+      if (response.data.status) {
+        setPositions(response.data.data.results);
+      }
+    } catch (error) {
+      console.error("Error fetching positions:", error);
+    }
+  };
+
   const [newEmployee, setNewEmployee] = useState<Partial<TableData>>({
-    role: '',
-    department: ''
+    position: "",
+    department: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,61 +83,131 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ open, onClose
     setNewEmployee({ ...newEmployee, [name as string]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(newEmployee as TableData);
+
+    // Делаем запрос на создание пользователя через API
+    try {
+      const createdEmployee = await createUser(
+        newEmployee.employee_id!,
+        newEmployee.password!,
+        newEmployee.role!,
+        newEmployee.full_name!,
+        departments.find((d) => d.name === newEmployee.department)?.id!,
+        positions.find((p) => p.name === newEmployee.position)?.id!,
+        newEmployee.phone!,
+        newEmployee.email!
+      );
+
+      // Сохраняем нового пользователя в родительском компоненте
+      onSave(createdEmployee);
+
+      // Закрываем модальное окно
+      onClose();
+    } catch (error) {
+      console.error("Error creating employee:", error);
+    }
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-      }}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
           Create New Employee
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <TextField
             fullWidth
             margin="normal"
-            name="name"
-            label="Name"
-            value={newEmployee.name || ''}
+            name="full_name"
+            label="Full Name"
+            value={newEmployee.full_name || ""}
             onChange={handleInputChange}
+            autoComplete="off"
+            required
           />
-          <FormControl fullWidth margin="normal">
-            <InputLabel shrink={Boolean(newEmployee.department)}>Department</InputLabel>
-            <Select
-              name="department"
-              value={newEmployee.department || ''}
-              onChange={handleSelectChange}
-            >
-              <MenuItem value=""><em>None</em></MenuItem>
-              <MenuItem value="HR">HR</MenuItem>
-              <MenuItem value="Engineering">Engineering</MenuItem>
-              <MenuItem value="Sales">Sales</MenuItem>
-              <MenuItem value="Marketing">Marketing</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="normal">
+          <TextField
+            fullWidth
+            margin="normal"
+            name="employee_id"
+            label="Employee ID"
+            value={newEmployee.employee_id || ""}
+            onChange={handleInputChange}
+            autoComplete="off"
+            required
+          />
+          <TextField
+            required
+            fullWidth
+            margin="normal"
+            name="password"
+            label="Password"
+            type="password"
+            value={newEmployee.password || ""}
+            onChange={handleInputChange}
+            autoComplete="new-password"
+          />
+          <FormControl fullWidth margin="normal" required>
             <InputLabel shrink={Boolean(newEmployee.role)}>Role</InputLabel>
             <Select
               name="role"
-              value={newEmployee.role || ''}
+              value={newEmployee.role || ""}
               onChange={handleSelectChange}
             >
-              <MenuItem value=""><em>None</em></MenuItem>
-              <MenuItem value="Manager">Manager</MenuItem>
-              <MenuItem value="Developer">Developer</MenuItem>
-              <MenuItem value="Designer">Designer</MenuItem>
-              <MenuItem value="Salesperson">Salesperson</MenuItem>
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="Admin">Admin</MenuItem>
+              <MenuItem value="Employee">Employee</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal" required>
+            <InputLabel shrink={Boolean(newEmployee.department)}>
+              Department
+            </InputLabel>
+            <Select
+              name="department"
+              value={newEmployee.department || ""}
+              onChange={handleSelectChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {departments.map((department) => (
+                <MenuItem key={department.id} value={department.name}>
+                  {department.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal" required>
+            <InputLabel shrink={Boolean(newEmployee.position)}>
+              Position
+            </InputLabel>
+            <Select
+              name="position"
+              value={newEmployee.position || ""}
+              onChange={handleSelectChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {positions.map((position) => (
+                <MenuItem key={position.id} value={position.name}>
+                  {position.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <TextField
@@ -86,20 +215,26 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({ open, onClose
             margin="normal"
             name="phone"
             label="Phone"
-            value={newEmployee.phone || ''}
+            value={newEmployee.phone || ""}
             onChange={handleInputChange}
+            required
           />
           <TextField
             fullWidth
             margin="normal"
             name="email"
             label="Email"
-            value={newEmployee.email || ''}
+            value={newEmployee.email || ""}
             onChange={handleInputChange}
+            required
           />
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button onClick={onClose} sx={{ mr: 1 }}>Cancel</Button>
-            <Button type="submit" variant="contained">Save</Button>
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={onClose} sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained">
+              Save
+            </Button>
           </Box>
         </form>
       </Box>

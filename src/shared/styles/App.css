@@ -13,14 +13,10 @@
   height: 100%;
 }
 
-html{
+/* html{
   scrollbar-gutter: stable; 
   background-color: #F1F2F6;
-}
-
-* {
-  color: rgb(15, 21, 56) ;
-}
+} */
 
 
 .App-header {

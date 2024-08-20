@@ -46,6 +46,7 @@ export default function PieChartWithCenterLabel() {
       const response = await axiosInstance().get('/attendance/piechart');
       const pieValue: PieData = response.data.data;
       
+      
       setData([
         { value: pieValue.come, label: '出席' },
         { value: pieValue.absent, label: '欠席' },

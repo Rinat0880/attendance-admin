@@ -66,6 +66,7 @@ function App() {
               path="/admin/*"
               element={<AdminDashboard />}
             />
+            <Route path="/qrreader" element={<QrReader />} />
           </Routes>
         </Box>
       </BrowserRouter>

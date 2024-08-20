@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, TextField, Typography, Container, Box } from '@mui/material';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import {
+  Button,
+  TextField,
+  Typography,
+  Container,
+  Box,
+  useTheme,
+  Link,
+} from '@mui/material';
 import axiosInstance from '../../utils/libs/axios';
 import axios, { AxiosError } from 'axios';
 import { Employee } from '../../employees';
@@ -10,44 +18,64 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [employeeId, setEmployeeId] = useState('');
+  const [employee_id, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-  
-    if (!employeeId || !password) {
-      setError('Пожалуйста, заполните все поля');
+
+    if (!employee_id || !password) {
+      setError('Please fill in all fields');
       return;
     }
-  
-    const instance = axiosInstance();
+
     try {
-      console.log('Попытка входа c ID:', employeeId);
-      const response = await instance.post("/sign-in", {
-        employee_id: employeeId,
-        password: password
+      console.log('Попытка входа с ID:', employee_id);
+      const response = await axiosInstance().post("/sign-in", {
+        employee_id: employee_id,
+        password: password,
       });
-  
+
       console.log('Ответ от сервера:', response);
-  
+
       if (response.data && response.data.data && response.data.data.access_token) {
-        // Сохраняем токены в localStorage
-        localStorage.setItem("access_token", response.data.data.access_token);
-        localStorage.setItem("refresh_token", response.data.data.refresh_token);
-        console.log('Токены сохранены в localStorage');
-  
-        // Если ваш сервер возвращает данные сотрудника, получите их
-        const employeeData: Employee = response.data.employee;
-        onLoginSuccess(employeeData);
-        if (response.data.data.role == "ADMIN"){
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
+        // const accessToken = response.data.data.access_token;
+        // const refreshToken = response.data.data.refresh_token;
+        
+        // localStorage.setItem("access_token", accessToken);
+        // localStorage.setItem("refresh_token", refreshToken);
+        // console.log('Токены сохранены в localStorage');
+
+        const tempEmployeeData: Employee = {
+          id: employee_id,
+          username: response.data.employee_id || 'Unknown',
+          password: '',
+          role: response.data.data.role || 'employee',
+          position: response.data.position || 'Unknown',
+          checkInTime: null,
+          checkOutTime: null,
+          location: 'Unknown',
+          status: 'Absent',
+          attendanceSummary: {
+            earlyLeaves: 0,
+            absences: 0,
+            lateIns: 0,
+            leaves: 0,
+          },
+        };
+
+        console.log('Временные данные сотрудника:', tempEmployeeData);
+        onLoginSuccess(tempEmployeeData);
+        
+        if (tempEmployeeData.role === 'ADMIN') {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       } else {
         console.error('Токены отсутствуют в ответе');
         setError('Неверный ответ от сервера');
@@ -78,31 +106,43 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     }
   };
 
-
   return (
-    <Container component="main" maxWidth="xs">
+    <Container
+      maxWidth="sm"
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          padding: 4,
+          borderRadius: 4,
+          boxShadow: 3,
+          backgroundColor: '#f0f8ff',
+          width: '100%',
+          maxWidth: 400,
         }}
       >
         <Typography component="h1" variant="h5">
-          Вход в систему
+          Sign in
         </Typography>
-        <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1, }}>
           <TextField
             margin="normal"
             required
             fullWidth
             id="employee_id"
-            label="ID сотрудника"
+            label="User ID"
             name="employee_id"
             autoComplete="employee_id"
             autoFocus
-            value={employeeId}
+            value={employee_id}
             onChange={(e) => setEmployeeId(e.target.value)}
           />
           <TextField
@@ -110,26 +150,41 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             required
             fullWidth
             name="password"
-            label="Пароль"
+            label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && (
+            <Typography variant="body2" color="error">
+              {error}
+            </Typography>
+          )}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              mt: 3,
+              mb: 2,
+              backgroundColor: theme.palette.success.light,
+              '&:hover': {
+                backgroundColor: theme.palette.success.dark,
+              },
+            }}
           >
-            Войти
+            Sign in
           </Button>
-          {error && (
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
-          )}
+          <Link
+            component={RouterLink}
+            to="/qrreader"
+            variant="body2"
+            sx={{ mt: 2 }}
+          >
+            Перейти к QR-код ридеру
+          </Link>
         </Box>
       </Box>
     </Container>

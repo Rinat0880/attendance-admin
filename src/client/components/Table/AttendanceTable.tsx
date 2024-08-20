@@ -54,7 +54,13 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     // Fetch data from API when component mounts
     const fetchEmployeeData = async () => {
       try {
+        const token = localStorage.getItem('access_token');
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json', // Убедитесь, что указали тип контента как JSON
+        };
         const response = await axiosInstance().get('/attendance/list');
+        
 
         const formattedData = response.data.data.results.map((item: any) => ({
           id: item.id,

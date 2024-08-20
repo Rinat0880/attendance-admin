@@ -1,232 +1,81 @@
-import React, { useState, useEffect } from "react";
-import { Employee } from "../../employees";
-import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  Container,
-  Typography,
-  Avatar,
-  Box,
-  Grid,
-  Paper,
-  useTheme,
-  Divider,
-} from "@mui/material";
-import { format, intervalToDuration } from "date-fns";
-import "@fontsource/poppins/500.css";
+// DashboardPage.tsx
+
+import React, { useState } from 'react';
+import { Container, Box } from '@mui/material';
+import Header from '../components/Header';
+import MainContent from '../components/MainContent';
+import '@fontsource/poppins/500.css';
+import { Employee } from '../../employees';
+import { Column } from "../components/Table/types";
 
 interface DashboardPageProps {
-  employeeData: Employee;
+  employeeData: Employee | null;
   onLogout: () => void;
 }
 
-function DashboardPage({ employeeData, onLogout }: DashboardPageProps) {
-  const [checkInTime, setCheckInTime] = useState<Date | null>(null);
-  const [checkOutTime, setCheckOutTime] = useState<Date | null>(null);
-  const [totalHours, setTotalHours] = useState<string>("--:--");
-  const [message, setMessage] = useState<string | null>(null);
-  const theme = useTheme();
-  const navigate = useNavigate();
+// Пример данных для колонок
+const columns: Column[] = [
+  { id: 'id', label: 'ID' },
+  { id: 'status', label: 'Status', filterable: true, filterValues: ['Present', 'Absent', 'Excused Absence'] },
+];
 
-  useEffect(() => {
-    console.log("Dashboard data:", employeeData);
-  }, [employeeData]);
+const DashboardPage: React.FC<DashboardPageProps> = ({ employeeData, onLogout }) => {
+  const [tabIndex, setTabIndex] = useState<number>(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   if (!employeeData) {
-    return <Typography variant="h6">Loading...</Typography>;
+    return <div>Загрузка данных сотрудника...</div>;
   }
 
-  const handleLeaveClick = () => {
-    navigate("/qrreader");
+  if (!employeeData.id) {
+    return <div>Данные сотрудника не найдены.</div>;
+  }
+
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setTabIndex(newValue);
   };
 
-  const handleAdminClick = () => {
-    if (employeeData.isAdmin) {
-      navigate("/admin");
-    } else {
-      setMessage("You do not have admin access.");
-    }
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const attendanceSummary = {
-    earlyLeaves: 2,
-    absences: 5,
-    lateIns: 0,
-    leaves: 8,
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      {employeeData ? (
-        <Box
-          sx={{
-            mb: 4,
-            p: 3,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            borderRadius: 4,
-            backgroundColor: "#f0f8ff",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              mb: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-              {employeeData.isAdmin && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAdminClick}
-                  size="small"
-                >
-                  Admin
-                </Button>
-              )}
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={onLogout}
-                size="small"
-                sx={{
-                  backgroundColor: theme.palette.secondary.main,
-                  "&:hover": { backgroundColor: theme.palette.error.main },
-                }}
-              >
-                Logout
-              </Button>
-            </Box>
-          </Box>
-          <Avatar
-            src={employeeData.photoUrl}
-            alt="Фото сотрудника"
-            sx={{ width: 100, height: 100, mb: 2 }}
-          />
-          <Typography
-            variant="h5"
-            component="h2"
-            align="center"
-            color={theme.palette.primary.main}
-            fontWeight="bold"
-          >
-            Welcome, {employeeData.name}!
-          </Typography>
-
-          <Box
-            sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="h6">
-                {checkInTime ? format(checkInTime, "HH:mm") : "--:--"}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Check In
-              </Typography>
-            </Box>
-            <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="h6">
-                {checkOutTime ? format(checkOutTime, "HH:mm") : "--:--"}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Check Out
-              </Typography>
-            </Box>
-            <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="h6">{totalHours}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                Total Hours
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
-            <Button
-              variant="contained"
-              onClick={handleLeaveClick}
-              sx={{
-                borderRadius: 28,
-                backgroundColor: theme.palette.warning.light,
-                "&:hover": { backgroundColor: theme.palette.warning.main },
-              }}
-            >
-              QrCode
-            </Button>
-          </Box>
-
-          {message && (
-            <Typography
-              variant="body1"
-              align="center"
-              sx={{ mt: 2, color: "primary.main" }}
-            >
-              {message}
-            </Typography>
-          )}
-        </Box>
-      ) : (
-        <Typography variant="h6">Loading...</Typography>
-      )}
-
-      <Box sx={{ p: 3, borderRadius: 4, backgroundColor: "#f8f9fa" }}>
-        <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-          Attendance Summary
-        </Typography>
-        <Grid container spacing={2}>
-          {Object.entries(attendanceSummary).map(([key, value]) => (
-            <Grid item xs={12} sm={6} key={key}>
-              <Paper
-                elevation={3}
-                sx={{
-                  p: 2,
-                  borderRadius: 4,
-                  backgroundColor:
-                    key === "earlyLeaves"
-                      ? "#e0ffff"
-                      : key === "absences"
-                      ? "#f5f5dc"
-                      : key === "lateIns"
-                      ? "#f0fff0"
-                      : "#fff5ee",
-                }}
-              >
-                <Typography variant="h5">{value}</Typography>
-                <Typography variant="body2">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+    <Container 
+      maxWidth="xs" 
+      sx={{ 
+        background: '#f4f4f4',
+        minHeight: '100vh',
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflow: 'hidden', 
+        p: 2,
+        paddingBottom: '20px',
+        pt: 4,
+      }}
+    >
+      <Header
+        onLogout={onLogout}
+        employeeId={employeeData.id} // Изменено на employeeId
+        anchorEl={anchorEl}
+        handleMenuOpen={handleMenuOpen}
+        handleMenuClose={handleMenuClose}
+      />
+      <Box sx={{ flexGrow: 1 }}>
+        <MainContent 
+          tabIndex={tabIndex} 
+          handleTabChange={handleTabChange}
+          attendanceSummary={employeeData.attendanceSummary}
+          employeeId={employeeData.id}
+          username={employeeData.username} // Этот пропс можно удалить из MainContent, если он не используется
+          tableColumns={columns}
+        />
       </Box>
     </Container>
   );
-}
+};
 
 export default DashboardPage;
