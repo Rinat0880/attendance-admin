@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 interface CalendarModalProps {
   onClose: (selectedDate: Date | null) => void;
-  open: boolean; // This prop controls modal visibility
+  open: boolean; // Add 'open' prop to control modal visibility
 }
 
 const CalendarModal: React.FC<CalendarModalProps> = ({ onClose, open }) => {
@@ -22,7 +22,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ onClose, open }) => {
   };
 
   if (!open) {
-    return null; // Modal won't render if not open
+    return null;
   }
 
   return (
@@ -37,7 +37,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ onClose, open }) => {
           bgcolor: "background.paper",
           p: 4,
           borderRadius: 2,
-          boxShadow: 24, // Adding shadow to the modal for better visibility
+          boxShadow: 24,
         }}
       >
         <Typography variant="h6">Выберите дату</Typography>
