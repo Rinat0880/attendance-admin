@@ -29,23 +29,25 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!selectedFile) {
-      alert("Please select a file first.");
+      alert("Пожалуйста, выберите файл.");
       return;
     }
-
+  
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
-      await uploadExcelFile(formData);
-
+      console.log("Загружаемый файл:", selectedFile);
+  
+      const excell = new FormData();
+      excell.append("excell", selectedFile);  // Используем 'excell' как имя поля
+  
+      await uploadExcelFile(excell);
+  
       onUpload(selectedFile);
-
+  
       onClose();
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Ошибка при загрузке файла:", error);
     }
   };
 

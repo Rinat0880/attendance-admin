@@ -120,6 +120,9 @@ const EmployeeListPage: React.FC = () => {
 
       const response = await uploadExcelFile(formData);
 
+
+      
+
       // Обработайте ответ после успешной загрузки
       console.log('Файл успешно загружен:', response);
 
@@ -187,3 +190,4 @@ const EmployeeListPage: React.FC = () => {
 };
 
 export default EmployeeListPage;
+

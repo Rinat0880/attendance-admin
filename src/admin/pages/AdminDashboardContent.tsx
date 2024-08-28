@@ -32,14 +32,14 @@ function AdminDashboardContent() {
 
   const columns: Column[] = [
     { id: 'employee_id', label: 'ID' },
-    { id: 'full_name', label: 'Full Name', filterable: true },
-    { id: 'department', label: 'Department', filterable: true, filterValues: ['1-stage', '2-stage','3-stage','4-stage',] },
-    { id: 'position', label: 'Position', filterable: true, filterValues: ['Developer', 'Marketolog', 'Cloud Enginer', 'Software engineer', 'CEO'] },
-    { id: 'work_day', label: 'Work day' },
-    { id: 'status', label: 'Status', filterable: true, filterValues: ['Present', 'Absent'] },
-    { id: 'come_time', label: 'Check In' },
-    { id: 'leave_time', label: 'Check Out' },
-    { id: 'total_hourse', label: 'Total Hours' },
+    { id: 'full_name', label: '名前', filterable: true },
+    { id: 'department', label: '部署', filterable: true},
+    { id: 'position', label: '役職', filterable: true},
+    { id: 'work_day', label: '勤務日' },
+    { id: 'status', label: '状態', filterable: true},
+    { id: 'come_time', label: '出勤時間' },
+    { id: 'leave_time', label: '退勤時間' },
+    { id: 'total_hourse', label: '総労働時間' },
   ] as Column[];
 
   useEffect(() => {
@@ -75,6 +75,7 @@ function AdminDashboardContent() {
         console.error("Failed to fetch positions", error);
       }
     };
+
 
     loadDepartments();
     loadPositions();

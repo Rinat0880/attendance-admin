@@ -2,12 +2,12 @@ export interface Employee {
   id: string;
   username: string;
   password: string;
-  role: 'ADMIN' | 'EMPLOYEE' | 'QRCODE';
+  role: 'ADMIN' | 'EMPLOYEE' | 'QRCODE' |'DASHBOARD'; 
   checkInTime: Date | null;
   checkOutTime: Date | null;
   location: string;
   position: string; // Новый тип для позиции
-  status: 'Present' | 'Absent' | 'EarlyLeave'; // Оставляем как есть
+  status: 'Present' | 'Absent' | 'EarlyLeave' ; // Оставляем как есть
   attendanceSummary: {
     earlyLeaves: number;
     absences: number;

@@ -148,69 +148,70 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
               Department
             </InputLabel>
             <Select
-              name="department"
-              value={newEmployee.department || ""}
-              onChange={handleSelectChange}
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              {departments.map((department) => (
-                <MenuItem key={department.id} value={department.name}>
-                  {department.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="normal" required>
-            <InputLabel shrink={Boolean(newEmployee.position)}>
-              Position
-            </InputLabel>
-            <Select
-              name="position"
-              value={newEmployee.position || ""}
-              onChange={handleSelectChange}
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              {positions.map((position) => (
-                <MenuItem key={position.id} value={position.name}>
-                  {position.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            fullWidth
-            margin="normal"
-            name="phone"
-            label="Phone"
-            value={newEmployee.phone || ""}
-            onChange={handleInputChange}
-            required
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="email"
-            label="Email"
-            value={newEmployee.email || ""}
-            onChange={handleInputChange}
-            required
-          />
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={onClose} sx={{ mr: 1 }}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained">
-              Save
-            </Button>
-          </Box>
-        </form>
-      </Box>
-    </Modal>
-  );
+
+name="department"
+value={newEmployee.department || ""}
+onChange={handleSelectChange}
+>
+<MenuItem value="">
+  <em>None</em>
+</MenuItem>
+{departments.map((department) => (
+  <MenuItem key={department.id} value={department.name}>
+    {department.name}
+  </MenuItem>
+))}
+</Select>
+</FormControl>
+<FormControl fullWidth margin="normal" required>
+<InputLabel shrink={Boolean(newEmployee.position)}>
+Position
+</InputLabel>
+<Select
+name="position"
+value={newEmployee.position || ""}
+onChange={handleSelectChange}
+>
+<MenuItem value="">
+  <em>None</em>
+</MenuItem>
+{positions.map((position) => (
+  <MenuItem key={position.id} value={position.name}>
+    {position.name}
+  </MenuItem>
+))}
+</Select>
+</FormControl>
+<TextField
+fullWidth
+margin="normal"
+name="phone"
+label="Phone"
+value={newEmployee.phone || ""}
+onChange={handleInputChange}
+required
+/>
+<TextField
+fullWidth
+margin="normal"
+name="email"
+label="Email"
+value={newEmployee.email || ""}
+onChange={handleInputChange}
+required
+/>
+<Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+<Button onClick={onClose} sx={{ mr: 1 }}>
+Cancel
+</Button>
+<Button type="submit" variant="contained">
+Save
+</Button>
+</Box>
+</form>
+</Box>
+</Modal>
+);
 };
 
 export default CreateEmployeeModal;

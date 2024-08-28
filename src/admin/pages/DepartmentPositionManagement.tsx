@@ -123,6 +123,8 @@ useEffect(() => {
     }
   };
 
+  
+
   const handleUpdatePosition = () => {
     if (editingPosition && newPositionName.trim() !== '' && selectedDepartmentId) {
       setPositions(positions.map(p =>

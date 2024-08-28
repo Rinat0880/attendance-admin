@@ -9,7 +9,6 @@ import {
   Box,
   Typography,
   IconButton,
-  Modal,
   Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -28,6 +27,8 @@ interface AttendanceTableProps {
   showCalendar?: boolean;
   positions: Position[];
   departments: Department[];
+  width?: string;
+  height?: string;
 }
 
 export interface Department {
@@ -50,6 +51,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   showCalendar = true,
   positions,
   departments,
+  width = "100%",  
+  height = "auto", 
 }) => {
   const [data, setData] = useState<TableData[]>([]);
   const [page, setPage] = useState(0);
@@ -57,6 +60,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
   const [filteredData, setFilteredData] = useState<TableData[]>(data);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [pendingSearch, setPendingSearch] = useState("");
 
@@ -145,10 +149,15 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const handleCalendarOpen = () => {
     setCalendarOpen(true);
   };
+  
 
-  const handleCalendarClose = (selectedDate: Date | null) => {
-    // Optionally handle selected date here
+  const handleCalendarClose = (date: Date | null) => {
     setCalendarOpen(false);
+    if (date) {
+      setSelectedDate(date);
+      // Здесь вы можете добавить логику для фильтрации данных по выбранной дате
+      console.log("Selected date:", date);
+    }
   };
 
   // Вычисляем данные для текущей страницы
@@ -236,3 +245,4 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 };
 
 export default AttendanceTable;
+

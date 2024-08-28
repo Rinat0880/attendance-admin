@@ -6,7 +6,7 @@ import TabsComponent from './TabsComponent';
 import { Column } from './Table/types';
 import axiosInstance from '../../utils/libs/axios';
 import axios from 'axios';
-import AttendanceTable from './Table/AttendanceTable';
+import AttendanceTable from '../../admin/components/Table/AttendanceTable';
 
 
 
@@ -27,6 +27,18 @@ interface DashboardData {
   total_hours: string;
 }
 
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface Position {
+  id: number;
+  name: string;
+  department_id: number;
+  department: string;
+}
+
 const MainContent: React.FC<MainContentProps> = ({
   tabIndex,
   handleTabChange,
@@ -40,38 +52,43 @@ const MainContent: React.FC<MainContentProps> = ({
   const [message, setMessage] = useState<string | null>(null);
   const [messageColor, setMessageColor] = useState<string>('#000'); // Черный по умолчанию
   const [currentTime, setCurrentTime] = useState<string>(format(new Date(), 'HH:mm:ss'));
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
 
   const columns: Column[] = [
-    { id: 'id', label: 'ID' },
-    { id: 'full_name', label: 'Name', filterable: true },
-    { id: 'status', label: 'Status', filterable: true, filterValues: ['Present', 'Absent'] }
+    { id: 'employee_id', label: 'ID' },
+    { id: 'full_name', label: 'フルネーム', filterable: true },
+    { id: 'status', label: '状態', filterable: true, filterValues: ['出席', '欠席'] },
   ] as Column[];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(format(new Date(), 'HH:mm:ss'));
-    }, 1000);
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentTime(format(new Date(), 'HH:mm:ss'));
+  }, 1000);
 
-    fetchDashboardData();
 
-    return () => clearInterval(interval);
-  }, []);
+  fetchDashboardData();
 
-  const fetchDashboardData = async () => {
-    try {
-      const response = await axiosInstance().get<{ data: DashboardData, status: boolean }>('/user/dashboard');
-      console.log('Ответ от сервера:', response);
-      
-      if (response.data.status) {
-        const { come_time, leave_time, total_hours } = response.data.data;
-        setCheckInTime(come_time);
-        setCheckOutTime(leave_time);
-        setTotalHours(total_hours);
-      }
-    } catch (error) {
-      console.error('Ошибка при получении данных дашборда:', error);
+  return () => clearInterval(interval);
+}, []);
+
+const fetchDashboardData = async () => {
+  try {
+    const response = await axiosInstance().get<{ data: DashboardData, status: boolean }>('/user/dashboard');
+    console.log('DashboardResponse:', response);
+
+    if (response.data.status) {
+      const { come_time, leave_time, total_hours } = response.data.data;
+
+   
+      setCheckInTime(come_time || '--:--');
+      setCheckOutTime(leave_time || '--:--');
+      setTotalHours(total_hours || '--:--');
     }
-  };
+  } catch (error) {
+    console.error('Ошибка при получении данных дашборда:', error);
+  }
+};
 
   const getCurrentPosition = (): Promise<GeolocationPosition> => {
     return new Promise((resolve, reject) => {
@@ -150,7 +167,7 @@ const MainContent: React.FC<MainContentProps> = ({
       // Отправляем данные в теле запроса (body) с использованием PATCH
       const response = await axiosInstance().patch(endpoint, data);
   
-      console.log(`Ответ сервера (${type}):`, response.data);
+      console.log(`CheckResponce (${type}):`, response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -307,7 +324,8 @@ const MainContent: React.FC<MainContentProps> = ({
 
       {tabIndex === 2 && (
         <Box sx={{ overflowX: 'auto' }}>
-          <AttendanceTable columns={columns} showCalendar={false} tableTitle=' '/>
+          <AttendanceTable columns={columns} showCalendar={false} tableTitle=' ' departments={departments}
+            positions={positions}/>
         </Box>
       )}
     </Box>

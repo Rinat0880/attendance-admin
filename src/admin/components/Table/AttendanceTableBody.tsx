@@ -83,6 +83,8 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
               ? getStatusStyles(value as boolean)
               : { backgroundColor: '#fff', color: '#000' };
 
+              
+
             return (
               <TableCell key={column.id} sx={{ padding: '8px 16px' }}>
                 {column.id === 'status' && value !== undefined ? (
@@ -141,3 +143,4 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
 };
 
 export default AttendanceTableBody;
+

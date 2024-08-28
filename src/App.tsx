@@ -52,7 +52,7 @@ function App() {
               element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
             />
             <Route
-              path="/"
+              path="/employee"
               element={
                 isLoggedIn ? (
                   <DashboardPage
@@ -81,4 +81,3 @@ function App() {
 }
 
 export default App;
-

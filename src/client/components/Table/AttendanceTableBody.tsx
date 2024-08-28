@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { TableBody, TableRow, TableCell, Box, Select, MenuItem, SelectChangeEvent, Button } from "@mui/material";
+import React from "react";
+import { TableBody, TableRow, TableCell, Box, Button } from "@mui/material";
 import { TableData, Column, DateOrString } from "./types";
 
 interface AttendanceTableBodyProps {
@@ -42,13 +42,6 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
   onEdit, 
   onDelete 
 }) => {
-  const [editingRowId, setEditingRowId] = useState<number | null>(null);
-
-  const handleStatusChange = (rowId: number, newStatus: string) => {
-    // onStatusChange(rowId, newStatus);
-    setEditingRowId(null);
-  };
-
   return (
     <TableBody>
       {filteredData.map((row) => (
@@ -85,52 +78,20 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
 
             return (
               <TableCell key={column.id} sx={{ padding: '8px 16px' }}>
-                {column.id === 'status' && value !== undefined ? (
-                  editingRowId === row.id ? (
-                    <Select
-                      value={value.toString()} // Convert boolean to string for the select value
-                      onChange={(e: SelectChangeEvent<string>) => handleStatusChange(row.id, e.target.value)}
-                      displayEmpty
-                      sx={{
-                        backgroundColor,
-                        color,
-                        px: 1,
-                        borderRadius: 1,
-                        minWidth: 120,
-                        height: 36,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {[
-                        { label: 'Present', value: 'true' },
-                        { label: 'Absent', value: 'false' },
-                      ].map(({ label, value }) => (
-                        <MenuItem key={value} value={value}>{label}</MenuItem>
-                      ))}
-                    </Select>
-                  ) : (
-                    <Box
-                      sx={{
-                        backgroundColor,
-                        color,
-                        borderRadius: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: 36,
-                        minWidth: 120,
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => setEditingRowId(row.id)}
-                    >
-                      {formatValue(value, column.id)}
-                    </Box>
-                  )
-                ) : (
-                  formatValue(value, column.id)
-                )}
+                <Box
+                  sx={{
+                    backgroundColor,
+                    color,
+                    borderRadius: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 36,
+                    minWidth: 120,
+                  }}
+                >
+                  {formatValue(value, column.id)}
+                </Box>
               </TableCell>
             );
           })}

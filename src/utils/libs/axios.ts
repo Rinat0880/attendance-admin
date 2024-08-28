@@ -94,9 +94,14 @@ export const updateUser = async (id: number, employee_id: string, password: stri
   return response.data;
 };
 
-export const uploadExcelFile = async (formData: FormData) => {
+// Обновленная функция uploadExcelFile
+export const uploadExcelFile = async (excell: FormData) => {
   try {
-    const response = await axiosInstance().post('/upload/excel', formData, {
+    excell.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+
+    const response = await axiosInstance().post('user/create', excell, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -108,6 +113,7 @@ export const uploadExcelFile = async (formData: FormData) => {
     throw error;
   }
 };
+
 
 export const createByQRCode = async (employee_id: string, latitude: number, longitude: number) => {
   try {

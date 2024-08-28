@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import jsQR from 'jsqr';
 import { Box, Typography, Paper, Snackbar } from '@mui/material';
-import { createByQRCode } from '../../utils/libs/axios'; // Путь может отличаться в зависимости от структуры вашего проекта
+import { createByQRCode } from '../../utils/libs/axios';
 
 const QRCodeScanner: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
@@ -31,10 +31,8 @@ const QRCodeScanner: React.FC = () => {
       console.log(position.coords.latitude, position.coords.longitude);
       console.log(employeeId);
       
-      
       const response = await createByQRCode(employeeId, position.coords.latitude, position.coords.longitude);
       console.log(response);
-      
       
       setSnackbarMessage('Запись успешно создана');
       setSnackbarOpen(true);
@@ -155,6 +153,12 @@ const QRCodeScanner: React.FC = () => {
           )}
         </Paper>
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </Box>
   );
 };

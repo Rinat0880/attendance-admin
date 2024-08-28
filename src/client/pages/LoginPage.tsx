@@ -76,8 +76,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           navigate("/admin");
         } else if (tempEmployeeData.role === 'QRCODE') {
           navigate("/qrscanner");
+        } else if (tempEmployeeData.role === 'DASHBOARD') {
+          navigate("/bigTable");
         } else {
-          navigate("/");
+          navigate("/employee");
         }
       } else {
         console.error('Токены отсутствуют в ответе');
@@ -108,7 +110,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
     }
   };
-
 
   return (
     <Container

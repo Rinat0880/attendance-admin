@@ -145,7 +145,8 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
             onChange={handleSelectChange}
           >
             <MenuItem value="">
-              <em>None</em>
+
+            <em>None</em>
             </MenuItem>
             {positions.map((position) => (
               <MenuItem key={position.id} value={position.name}>
