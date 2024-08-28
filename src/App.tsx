@@ -72,7 +72,16 @@ function App() {
             />
             <Route path="/qrscanner" element={<QRCodeScanner />} />
             <Route path="/bigTable" element={<BigTablePage />} />
-            
+            {/* Добавьте этот маршрут для перенаправления на страницу логина */}
+            <Route
+              path="/"
+              element={<Navigate to="/login" replace />}
+            />
+            {/* Можно также добавить маршрут для несуществующих путей */}
+            <Route
+              path="*"
+              element={<Navigate to="/login" replace />}
+            />
           </Routes>
         </Box>
       </BrowserRouter>
