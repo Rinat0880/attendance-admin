@@ -3,8 +3,6 @@
   background-color: #F1F2F6;
 }
 
-
-
 .App {
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   margin: 0;
@@ -13,10 +11,9 @@
   height: 100%;
 }
 
-/* html{
-  scrollbar-gutter: stable; 
-  background-color: #F1F2F6;
-} */
+html {
+  overflow-y: scroll;
+}
 
 
 .App-header {
@@ -192,7 +189,6 @@
 
 /* SideMenus */
 
-
 .Slayout{
   position: relative;
     display: flex;
@@ -200,7 +196,6 @@
     width: 20.65%;
     background-color: rgba(255, 255, 255, 1);
 }
-
 
 .Ssidebar{
   position: sticky;
@@ -247,8 +242,6 @@
 .DepartmentPositionManagement .MuiButton-root {
   margin-bottom: 10px; /* Отступ под кнопкой */
 }
-
-
 
 .TableSection {
   margin-bottom: 80px;

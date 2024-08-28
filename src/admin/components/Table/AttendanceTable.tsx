@@ -12,8 +12,8 @@ import {
   Modal,
   Button,
 } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SearchIcon from "@mui/icons-material/Search";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { TableData, Column, FilterState } from "./types";
 import AttendanceTableHead from "./AttendanceTableHead";
 import AttendanceTableBody from "./AttendanceTableBody";
@@ -26,13 +26,21 @@ interface AttendanceTableProps {
   onDelete?: (id: number) => void;
   tableTitle?: string;
   showCalendar?: boolean;
+  positions: Position[];
+  departments: Department[];
 }
 
-// Function to format time from API format
-const formatTime = (timeString: string): string => {
-  const date = new Date(timeString);
-  return date.toTimeString().split(' ')[0]; // Returns time in HH:MM:SS format
-};
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface Position {
+  id: number;
+  name: string;
+  department_id: number;
+  department: string;
+}
 
 const AttendanceTable: React.FC<AttendanceTableProps> = ({
   columns,
@@ -40,6 +48,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   onDelete,
   tableTitle,
   showCalendar = true,
+  positions,
+  departments,
 }) => {
   const [data, setData] = useState<TableData[]>([]);
   const [page, setPage] = useState(0);
@@ -54,7 +64,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     // Fetch data from API when component mounts
     const fetchEmployeeData = async () => {
       try {
-        const response = await axiosInstance().get('/attendance/list');
+        const response = await axiosInstance().get("/attendance/list");
 
         const formattedData = response.data.data.results.map((item: any) => ({
           id: item.id,
@@ -64,16 +74,15 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           full_name: item.full_name,
           status: item.status,
           work_day: item.work_day,
-          come_time: formatTime(item.come_time), // Apply formatting
-          leave_time: formatTime(item.leave_time), // Apply formatting
+          come_time: item.come_time,
+          leave_time: item.leave_time,
           total_hourse: item.total_hourse,
         }));
 
         setData(formattedData);
         console.log(formattedData);
-
       } catch (error) {
-        console.error('Ошибка при загрузке данных:', error);
+        console.error("Ошибка при загрузке данных:", error);
       }
     };
 
@@ -82,12 +91,16 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
   useEffect(() => {
     const filtered = data.filter((row) => {
-      const matchesSearch = 
-        row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = row.full_name
+        ? row.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+        : false;
 
       const matchesFilters = Object.entries(filters).every(([key, value]) => {
         if (!value) return true;
-        return row[key as keyof TableData]?.toString().toLowerCase() === value.toLowerCase();
+        const rowValue = row[key as keyof TableData];
+        return rowValue
+          ? rowValue.toString().toLowerCase() === value.toLowerCase()
+          : false;
       });
 
       return matchesSearch && matchesFilters;
@@ -101,7 +114,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -115,15 +130,15 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSearchSubmit();
     }
   };
 
   const handleFilterChange = (columnId: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [columnId]: value
+      [columnId]: value,
     }));
   };
 
@@ -131,15 +146,31 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     setCalendarOpen(true);
   };
 
-  const handleCalendarClose = () => {
+  const handleCalendarClose = (selectedDate: Date | null) => {
+    // Optionally handle selected date here
     setCalendarOpen(false);
   };
 
+  // Вычисляем данные для текущей страницы
+  const paginatedData = filteredData.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: 4, mb: 5 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 2}}>
-        <Typography variant="h6">{tableTitle || "Attendance Overview"}</Typography>
-        <Box sx={{ display: "flex", justifyContent: "space-between", }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          p: 2,
+        }}
+      >
+        <Typography variant="h6">
+          {tableTitle || "Attendance Overview"}
+        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           {showCalendar && (
             <IconButton onClick={handleCalendarOpen}>
               <CalendarTodayIcon />
@@ -159,26 +190,36 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 </InputAdornment>
               ),
             }}
-            sx={{ width: '75%' }}
+            sx={{ width: "75%" }}
           />
-          <Button onClick={handleSearchSubmit} variant="contained" sx={{ ml: 1, width: '20%', bgcolor:'#111111', fontSize: '12px'}}>
+          <Button
+            onClick={handleSearchSubmit}
+            variant="contained"
+            sx={{ ml: 1, width: "20%", bgcolor: "#111111", fontSize: "12px" }}
+          >
             Search
           </Button>
         </Box>
       </Box>
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
-          <AttendanceTableHead columns={columns} filters={filters} onFilterChange={handleFilterChange} />
+          <AttendanceTableHead
+            departments={departments}
+            positions={positions}
+            columns={columns}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+          />
           <AttendanceTableBody
             columns={columns}
-            filteredData={filteredData}
+            filteredData={paginatedData}
             onEdit={onEdit}
             onDelete={onDelete}
           />
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10, 20]}
         component="div"
         count={filteredData.length}
         rowsPerPage={rowsPerPage}
@@ -186,11 +227,10 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <Modal open={isCalendarOpen} onClose={handleCalendarClose}>
-        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", p: 4, borderRadius: 2 }}>
-          <CalendarModal open={false} onClose={handleCalendarClose} />
-        </Box>
-      </Modal>
+      <CalendarModal
+        open={isCalendarOpen}
+        onClose={handleCalendarClose}
+      />
     </Paper>
   );
 };

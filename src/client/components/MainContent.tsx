@@ -134,6 +134,7 @@ const MainContent: React.FC<MainContentProps> = ({
       };
   
       const token = localStorage.getItem('access_token');
+      
       const headers = {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json', // Убедитесь, что указали тип контента как JSON

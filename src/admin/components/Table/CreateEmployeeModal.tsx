@@ -19,6 +19,8 @@ interface CreateEmployeeModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (newEmployee: TableData) => void;
+  positions: Position[]; 
+  departments: Department[];
 }
 
 export interface Department {
@@ -37,37 +39,9 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
   open,
   onClose,
   onSave,
+  positions,
+  departments,
 }) => {
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [positions, setPositions] = useState<Position[]>([]);
-
-  useEffect(() => {
-    fetchDepartments();
-    fetchPositions();
-  }, []);
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axiosInstance().get("/department/list");
-      if (response.data.status) {
-        setDepartments(response.data.data.results);
-      }
-    } catch (error) {
-      console.error("Error fetching departments:", error);
-    }
-  };
-
-  const fetchPositions = async () => {
-    try {
-      const response = await axiosInstance().get("/position/list");
-      if (response.data.status) {
-        setPositions(response.data.data.results);
-      }
-    } catch (error) {
-      console.error("Error fetching positions:", error);
-    }
-  };
-
   const [newEmployee, setNewEmployee] = useState<Partial<TableData>>({
     position: "",
     department: "",
@@ -86,7 +60,6 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Делаем запрос на создание пользователя через API
     try {
       const createdEmployee = await createUser(
         newEmployee.employee_id!,
@@ -99,15 +72,13 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
         newEmployee.email!
       );
 
-      // Сохраняем нового пользователя в родительском компоненте
       onSave(createdEmployee);
-
-      // Закрываем модальное окно
       onClose();
     } catch (error) {
       console.error("Error creating employee:", error);
     }
   };
+
 
   return (
     <Modal open={open} onClose={onClose}>

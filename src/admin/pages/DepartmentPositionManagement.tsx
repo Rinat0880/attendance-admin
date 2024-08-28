@@ -5,7 +5,7 @@ import PositionTable from '../components/PositionTable';
 import DepartmentDialog from '../components/DepartmentDialog';
 import PositionDialog from '../components/PositionDialog';
 import '../../shared/styles/App.css';
-import axiosInstance from '../../utils/libs/axios';
+import { fetchDepartments, fetchPositions } from '../../utils/libs/axios';
 
 export interface Department {
   id: number;
@@ -19,6 +19,7 @@ export interface Position {
   department: string;
 }
 
+
 function DepartmentPositionManagement() {
   const [activeTab, setActiveTab] = useState(0);
   const [departments, setDepartments] = useState<Department[]>([]);
@@ -30,35 +31,33 @@ function DepartmentPositionManagement() {
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [newPositionName, setNewPositionName] = useState('');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | null>(null);
-  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedDepartment] = useState('');
   
   
-  useEffect(() => {
-    fetchDepartments();
-    fetchPositions();
+  
+useEffect(() => {
+    const loadDepartments = async () => {
+      try {
+        const response = await fetchDepartments();
+        setDepartments(response); 
+      } catch (error) {
+        console.error("Failed to fetch departments", error);
+      }
+    };
+
+    const loadPositions = async () => {
+      try {
+        const response = await fetchPositions();
+        setPositions(response); 
+      } catch (error) {
+        console.error("Failed to fetch positions", error);
+      }
+    };
+
+    loadDepartments();
+    loadPositions();
   }, []);
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axiosInstance().get('/department/list');
-      if (response.data.status) {
-        setDepartments(response.data.data.results);
-      }
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    }
-  };
-
-  const fetchPositions = async () => {
-    try {
-      const response = await axiosInstance().get('/position/list');
-      if (response.data.status) {
-        setPositions(response.data.data.results);
-      }
-    } catch (error) {
-      console.error('Error fetching positions:', error);
-    }
-  };
+  
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -161,7 +160,7 @@ function DepartmentPositionManagement() {
     setOpenPositionDialog(true);
   };
 
-  return (
+  return (   
     <Box sx={{ width: '100%', padding: 0, marginTop: 2}} className="DepartmentPositionManagement">
       <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs value={activeTab} onChange={handleTabChange} aria-label="basic tabs example">
@@ -169,7 +168,6 @@ function DepartmentPositionManagement() {
           <Tab label="Positions" />
         </Tabs>
       </Box>
-
       {activeTab === 0 && (
         <>
           <Button variant="outlined" onClick={handleOpenDepartmentDialog}>

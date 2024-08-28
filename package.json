@@ -2,18 +2,12 @@
   "name": "my-attendance-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3001",
   "dependencies": {
-    "@emotion/react": "^11.13.0",
-    "@emotion/styled": "^11.13.0",
     "@faker-js/faker": "^8.4.1",
     "@fontsource/nunito-sans": "^5.0.13",
     "@fontsource/poppins": "^5.0.14",
     "@mui/base": "^5.0.0-beta.40",
-    "@mui/icons-material": "^5.16.4",
-    "@mui/material": "^5.16.6",
     "@mui/x-charts": "^7.11.0",
-    "@mui/x-date-pickers": "^7.12.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -22,14 +16,17 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "axios": "^1.7.2",
-    "date-fns": "^3.6.0",
-    "dayjs": "^1.11.12",
+    "date-fns": "^2.29.3",
     "json-server": "^1.0.0-beta.1",
+    "jsqr": "^1.4.0",
     "qr-scanner": "^1.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-qr-code": "^2.0.15",
+    "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
+    "react-webcam": "^7.2.0",
     "typescript": "^4.9.5",
     "uuid": "^10.0.0",
     "web-vitals": "^2.1.4"
@@ -59,7 +56,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-proposal-private-property-in-object": "^7.18.6",
     "@types/date-fns": "^2.6.0",
     "@types/uuid": "^10.0.0"
   }

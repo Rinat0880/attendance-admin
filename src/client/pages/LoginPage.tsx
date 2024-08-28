@@ -71,8 +71,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         console.log('Временные данные сотрудника:', tempEmployeeData);
         onLoginSuccess(tempEmployeeData);
         
+        // Обновленная логика перенаправления
         if (tempEmployeeData.role === 'ADMIN') {
           navigate("/admin");
+        } else if (tempEmployeeData.role === 'QRCODE') {
+          navigate("/qrscanner");
         } else {
           navigate("/");
         }
@@ -105,6 +108,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
     }
   };
+
 
   return (
     <Container
@@ -178,13 +182,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             Sign in
           </Button>
           <Link
-            component={RouterLink}
-            to="/qrreader"
-            variant="body2"
-            sx={{ mt: 2 }}
-          >
-            Перейти к QR-код ридеру
-          </Link>
+  component={RouterLink}
+  to="/qrscanner"
+  variant="body2"
+  sx={{ mt: 2, display: 'block' }} // display: 'block' переводит ссылку на новую строку
+>
+  QRcode-Reader
+</Link>
+<Link
+  component={RouterLink}
+  to="/bigTable"
+  variant="body2"
+  sx={{ mt: 2, display: 'block' }} // display: 'block' переводит ссылку на новую строку
+>
+  AttendanceTable
+</Link>
         </Box>
       </Box>
     </Container>

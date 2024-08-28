@@ -8,6 +8,8 @@ interface EditModalProps {
   data: TableData | null;
   onClose: () => void;
   onSave: (updatedData: TableData) => void;
+  positions: Position[]; 
+  departments: Department[];
 }
 
 export interface Department {
@@ -22,40 +24,14 @@ export interface Position {
   department: string;
 }
 
-const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave }) => {
+const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, positions, departments }) => {
   const [formData, setFormData] = useState<TableData | null>(data);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [positions, setPositions] = useState<Position[]>([]);
 
   useEffect(() => {
     if (data) {
       setFormData(data);
     }
-    fetchDepartments();
-    fetchPositions();
   }, [data]);
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axiosInstance().get('/department/list');
-      if (response.data.status) {
-        setDepartments(response.data.data.results);
-      }
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    }
-  };
-
-  const fetchPositions = async () => {
-    try {
-      const response = await axiosInstance().get('/position/list');
-      if (response.data.status) {
-        setPositions(response.data.data.results);
-      }
-    } catch (error) {
-      console.error('Error fetching positions:', error);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (formData) {
@@ -81,16 +57,17 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave }) =>
     if (formData) {
       try {
         await updateUser(
-          formData.id,             // ID пользователя
-          formData.employee_id!,     // Employee ID
-          formData.password!,        // Пароль
-          formData.role!,            // Роль
-          formData.full_name,       // Полное имя
-          formData.department_id!,   // ID департамента
-          formData.position_id!,     // ID позиции
-          formData.phone!,           // Телефон
-          formData.email!            // Email
+          formData.id,
+          formData.employee_id!,
+          formData.password!,
+          formData.role!,
+          formData.full_name,
+          departments.find((d) => d.name === formData.department)?.id!,
+          positions.find((p) => p.name === formData.position)?.id!,
+          formData.phone!,
+          formData.email!
         );
+
         onSave(formData);
         onClose();
       } catch (error) {
@@ -100,6 +77,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave }) =>
   };
 
   if (!formData) return null;
+
 
   return (
     <Modal open={open} onClose={onClose}>

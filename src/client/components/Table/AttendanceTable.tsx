@@ -26,6 +26,8 @@ interface AttendanceTableProps {
   onDelete?: (id: number) => void;
   tableTitle?: string;
   showCalendar?: boolean;
+  width?: string;
+  height?: string;
 }
 
 // Function to format time from API format
@@ -40,6 +42,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   onDelete,
   tableTitle,
   showCalendar = true,
+  width = "100%",  
+  height = "auto", 
 }) => {
   const [data, setData] = useState<TableData[]>([]);
   const [page, setPage] = useState(0);
@@ -142,10 +146,10 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: 4, mb: 5 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 2}}>
+    <Paper sx={{ width, height, overflow: "hidden", borderRadius: 4, mb: 5 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 2 }}>
         <Typography variant="h6">{tableTitle || "Attendance Overview"}</Typography>
-        <Box sx={{ display: "flex", justifyContent: "space-between", }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           {showCalendar && (
             <IconButton onClick={handleCalendarOpen}>
               <CalendarTodayIcon />
@@ -172,7 +176,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           </Button>
         </Box>
       </Box>
-      <TableContainer>
+      <TableContainer sx={{ maxHeight: height }}> {/* Задать высоту контейнеру таблицы */}
         <Table stickyHeader aria-label="sticky table">
           <AttendanceTableHead columns={columns} filters={filters} onFilterChange={handleFilterChange} />
           <AttendanceTableBody
@@ -200,5 +204,4 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     </Paper>
   );
 };
-
 export default AttendanceTable;

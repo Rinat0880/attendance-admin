@@ -14,6 +14,10 @@ const axiosInstance = () => {
   instance.interceptors.request.use(function (config) {
     const token = localStorage.getItem('access_token');
     config.headers.Authorization =  token ? `Bearer ${token}` : '';
+
+    // console.log('Токен:', token);
+    // console.log('Данные запроса:', config.data);
+
     return config;
   });
 
@@ -22,6 +26,33 @@ const axiosInstance = () => {
 };
 
 export default axiosInstance;
+
+export const fetchDepartments = async () => {
+  try {
+    const response = await axiosInstance().get('/department/list');
+    if (response.data.status) {
+      const departments = response.data.data.results;
+      console.log('Fetched Departments:', departments);
+      return departments;
+    }
+  } catch (error) {
+    console.error('Error fetching departments:', error);
+  }
+};
+
+ export const fetchPositions = async () => {
+  try {
+    const response = await axiosInstance().get('/position/list');
+    if (response.data.status) {
+      const positions = response.data.data.results;
+      console.log('Fetched Positions:', positions);
+      return positions;
+    }
+  } catch (error) {
+    console.error('Error fetching positions:', error);
+  }
+};
+
 
 export const createDepartment = async (name: string) => {
   const response = await axiosInstance().post('/department/create', { name });
@@ -59,7 +90,35 @@ export const createUser = async (employee_id: string, password: string, role: st
 };
 
 export const updateUser = async (id: number, employee_id: string, password: string, role: string, full_name: string, department_id: number, position_id: number, phone: string, email: string) => {
-  const response = await axiosInstance().put(`/user/${id}`, {employee_id, password, role, full_name, department_id, position_id, phone, email});
+  const response = await axiosInstance().patch(`/user/${id}`, {employee_id, password, role, full_name, department_id, position_id, phone, email});
   return response.data;
 };
 
+export const uploadExcelFile = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance().post('/upload/excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при загрузке файла:', error);
+    throw error;
+  }
+};
+
+export const createByQRCode = async (employee_id: string, latitude: number, longitude: number) => {
+  try {
+    const response = await axiosInstance().post('/attendance/createbyqrcode', {
+      employee_id,
+      latitude,
+      longitude
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating record by QR code:', error);
+    throw error;
+  }
+};

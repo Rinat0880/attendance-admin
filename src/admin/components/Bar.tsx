@@ -19,6 +19,8 @@ export default function SimpleBarChart() {
     try {
       const response = await axiosInstance().get('/attendance/barchart');
       const barData: BarData[] = response.data.data;
+      console.log(response);
+      
       
 
       // Маппинг данных для графика
@@ -37,7 +39,7 @@ export default function SimpleBarChart() {
     barLabel={(item, context) => {
       return context.bar.height < 60 ? null : item.value?.toString();
     }}
-      width={430}
+      width={530}
       height={300} 
       borderRadius={10}
       series={[

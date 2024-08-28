@@ -1,0 +1,104 @@
+import React, { useState } from "react";
+import {
+  Modal,
+  Box,
+  Button,
+  Typography,
+  Stack,
+} from "@mui/material";
+import { uploadExcelFile } from "../../../utils/libs/axios";
+
+interface UploadExcelModalProps {
+  open: boolean;
+  onClose: () => void;
+  onUpload: (file: File) => void;
+}
+
+const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
+  open,
+  onClose,
+  onUpload,
+}) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedFile) {
+      alert("Please select a file first.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      await uploadExcelFile(formData);
+
+      onUpload(selectedFile);
+
+      onClose();
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  return (
+    <Modal open={open} onClose={onClose}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+          Upload Excel File
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ mb: 3 }}> {/* Added spacing */}
+            <Button
+              variant="contained"
+              component="label"
+            >
+              Select File
+              <input
+                type="file"
+                hidden
+                accept=".xlsx, .xls"
+                onChange={handleFileChange}
+                required
+              />
+            </Button>
+            {selectedFile && (
+              <Typography variant="body2" sx={{ mt: 2 }}>
+                Selected file: {selectedFile.name}
+              </Typography>
+            )}
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Stack direction="row" spacing={1}>
+              <Button onClick={onClose}>Cancel</Button>
+              <Button type="submit" variant="contained" disabled={!selectedFile}>
+                Upload
+              </Button>
+            </Stack>
+          </Box>
+        </form>
+      </Box>
+    </Modal>
+  );
+};
+
+export default UploadExcelModal;

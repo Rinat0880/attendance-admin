@@ -6,9 +6,11 @@ import LoginPage from "./client/pages/LoginPage";
 import DashboardPage from "./client/pages/DashboardPage";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import { Employee } from "./employees";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import "./shared/styles/App.css";
-import QrReader from "./client/pages/QrReader";
+import QRCodeScanner from "./client/pages/QrCodeScanner";
+import BigTablePage from "./client/pages/BigTable";
+
 
 const theme = createTheme({
   palette: {
@@ -64,9 +66,13 @@ function App() {
             />
             <Route
               path="/admin/*"
-              element={<AdminDashboard />}
+              element={ 
+                      <AdminDashboard />
+                    }
             />
-            <Route path="/qrreader" element={<QrReader />} />
+            <Route path="/qrscanner" element={<QRCodeScanner />} />
+            <Route path="/bigTable" element={<BigTablePage />} />
+            
           </Routes>
         </Box>
       </BrowserRouter>
@@ -75,3 +81,4 @@ function App() {
 }
 
 export default App;
+

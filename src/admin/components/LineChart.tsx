@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import {
   Box,
@@ -37,7 +37,7 @@ function LineChartComponent() {
 
   const [attendanceData, setAttendanceData] = useState<number[]>([]);
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
-  const [month, setMonth] = useState("2024-08");
+  const [month, setMonth] = useState<string>(getCurrentMonth());
   const [interval, setInterval] = useState<number>(0);
   const [openIntervalDialog, setOpenIntervalDialog] = useState(false);
   const [openMonthDialog, setOpenMonthDialog] = useState(false);
@@ -51,8 +51,18 @@ function LineChartComponent() {
     }
   }, []);
 
+  useEffect(() => {
+    fetchData(); // Fetch data when component mounts
+  }, [month, interval]); // Dependencies to refetch when month or interval changes
+
   const fetchData = async () => {
     try {
+      // Log the request parameters
+      console.log('Requesting data with parameters:', {
+        month: `${month}-01`,
+        interval: interval,
+      });
+
       const response = await axiosInstance().get(
         `https://attendance-backend-24xu.onrender.com/api/v1/attendance/graph`,
         {
@@ -62,9 +72,13 @@ function LineChartComponent() {
           },
         }
       );
+
+      // Log the response data
+      console.log('Fetched data:', response.data);
+
       const results: LineData[] = response.data.data.results;
 
-      // Если данных нет, заполняем дни в зависимости от интервала
+      // If no data, populate days based on interval
       if (results.length === 0) {
         let days: string[] = [];
         switch (interval) {
@@ -81,10 +95,10 @@ function LineChartComponent() {
             days = [];
         }
         setDaysOfWeek(days);
-        setAttendanceData(Array(10).fill(0)); // Заполняем данными по умолчанию (например, нулями)
+        setAttendanceData(Array(10).fill(0)); // Default data (e.g., zeros)
       } else {
         const days = results.map(result => {
-          // Форматируем день
+          // Format the day
           const day = new Date(result.work_day).getDate();
           return `${day}日`;
         });
@@ -124,6 +138,14 @@ function LineChartComponent() {
     fetchData(); // Fetch data when dialog closes
   };
 
+  // Utility function to get the current month in YYYY-MM format
+  function getCurrentMonth(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  }
+
   return (
     <Box sx={{ backgroundColor: "#fff", padding: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -144,14 +166,14 @@ function LineChartComponent() {
         xAxis={[
           {
             scaleType: "point",
-            data: daysOfWeek, // Данные для оси X
+            data: daysOfWeek, // Data for the X axis
           },
         ]}
         yAxis={[
           {
             colorMap: {
               type: "continuous",
-              min: 0,
+              min: 1,
               max: 100,
               color: ["transparent", "rgba(51, 84, 244, 0.6)"],
             },
@@ -159,7 +181,7 @@ function LineChartComponent() {
         ]}
         series={[
           {
-            data: attendanceData, // Данные для оси Y
+            data: attendanceData, // Data for the Y axis
             area: true,
           },
         ]}
