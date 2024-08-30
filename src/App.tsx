@@ -67,7 +67,7 @@ function App() {
             <Route
               path="/admin/*"
               element={ 
-                      <AdminDashboard />
+                      <AdminDashboard onLogout={handleLogout}/>
                     }
             />
             <Route path="/qrscanner" element={<QRCodeScanner />} />
@@ -78,10 +78,6 @@ function App() {
               element={<Navigate to="/login" replace />}
             />
             {/* Можно также добавить маршрут для несуществующих путей */}
-            <Route
-              path="*"
-              element={<Navigate to="/login" replace />}
-            />
           </Routes>
         </Box>
       </BrowserRouter>

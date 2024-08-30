@@ -172,7 +172,7 @@ useEffect(() => {
       </Box>
       {activeTab === 0 && (
         <>
-          <Button variant="outlined" onClick={handleOpenDepartmentDialog}>
+          <Button variant="outlined" onClick={handleOpenDepartmentDialog} sx={{marginTop: 2}}> 
             Add Department
           </Button>
           <DepartmentTable 
@@ -191,7 +191,7 @@ useEffect(() => {
 
       {activeTab === 1 && (
         <>
-          <Button variant="outlined" onClick={handleOpenPositionDialog}>
+          <Button variant="outlined" onClick={handleOpenPositionDialog} sx={{marginTop: 2}}>
             Add Position
           </Button>
           <PositionTable

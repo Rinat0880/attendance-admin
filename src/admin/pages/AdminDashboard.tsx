@@ -1,13 +1,24 @@
 import React from "react";
 import "../../shared/styles/App.css";
 import DashboardContent from "./AdminDashboardContent";
-import { Grid } from "@mui/material"; // Импорт Grid из Material UI
-import { Routes, Route } from "react-router-dom";
+import { Grid, Button } from "@mui/material"; // Добавляем Button
+import { Routes, Route, useNavigate } from "react-router-dom";
 import DepartmentPositionManagement from "./DepartmentPositionManagement";
 import EmployeeListPage from "./EmployeeListPage";
 import SideMenu from "../components/SideMenu";
 
-function AdminDashboard() {
+interface AdminDashboardProps {
+  onLogout: () => void; // Пропс для передачи функции logout
+}
+
+function AdminDashboard({ onLogout }: AdminDashboardProps) {
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    onLogout(); // Вызываем функцию logout
+    navigate("/login"); // Перенаправляем на страницу логина
+  };
+
   return (
     <div className="Container">
       <div className="Slayout">
@@ -19,7 +30,13 @@ function AdminDashboard() {
         <header className="App-header">
           <h1 className="Logo">Company X</h1>
           <div className="User-info">
-            <p>Userinfo</p>
+            <Button
+              variant="contained"
+              sx={{backgroundColor: "black", ":hover": {backgroundColor: "#424242"}}}
+              onClick={handleLogoutClick}
+            >
+              Logout
+            </Button>
           </div>
         </header>
         <Grid container>

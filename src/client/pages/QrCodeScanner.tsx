@@ -178,7 +178,7 @@ const QRCodeScanner: React.FC = () => {
             textAlign: 'center',
             zIndex: 2
           }}>
-            Point the camera at the QR code
+            Point the QR code at the camera
           </Typography>
         </>
       ) : (

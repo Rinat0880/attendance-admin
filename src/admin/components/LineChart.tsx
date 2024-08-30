@@ -15,7 +15,7 @@ import {
   ListItem,
 } from "@mui/material";
 import line from "./Line.module.css";
-import axiosInstance from '../../utils/libs/axios';
+import axiosInstance from "../../utils/libs/axios";
 
 interface LineData {
   percentage: number;
@@ -94,11 +94,11 @@ function LineChartComponent() {
         setDaysOfWeek(days);
         setAttendanceData(Array(10).fill(0)); // Default data (e.g., zeros)
       } else {
-        const days = results.map(result => {
+        const days = results.map((result) => {
           const day = new Date(result.work_day).getDate();
           return `${day}日`;
         });
-        const percentages = results.map(result => result.percentage);
+        const percentages = results.map((result) => result.percentage);
 
         setDaysOfWeek(days);
         setAttendanceData(percentages);
@@ -147,7 +147,17 @@ function LineChartComponent() {
             <MenuItem value={1}>Interval 2</MenuItem>
             <MenuItem value={2}>Interval 3</MenuItem>
           </Select>
-          <Button sx={{ paddingTop: "15px", paddingBottom: "15px", color: "black", borderColor: "#c6c4c4", ":hover": { borderColor: "black", backgroundColor: "#FFFFFF" }}} variant="outlined" onClick={handleMonthDialogOpen}>
+          <Button
+            sx={{
+              paddingTop: "15px",
+              paddingBottom: "15px",
+              color: "black",
+              borderColor: "#c6c4c4",
+              ":hover": { borderColor: "black", backgroundColor: "#FFFFFF" },
+            }}
+            variant="outlined"
+            onClick={handleMonthDialogOpen}
+          >
             {selectedMonth} {selectedYear} {/* Выбранный месяц и год */}
           </Button>
         </div>
@@ -161,9 +171,11 @@ function LineChartComponent() {
         ]}
         yAxis={[
           {
+            min: 0, // Задаем минимальное значение оси Y
+            max: 100,
             colorMap: {
               type: "continuous",
-              min: -20,
+              min:-20,
               max: 80,
               color: ["transparent", "rgba(51, 84, 244, 0.6)"],
             },
