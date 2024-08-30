@@ -8,6 +8,7 @@ import {
   Box,
   useTheme,
   Link,
+  CircularProgress,
 } from '@mui/material';
 import axiosInstance from '../../utils/libs/axios';
 import axios, { AxiosError } from 'axios';
@@ -21,15 +22,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [employee_id, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     if (!employee_id || !password) {
       setError('Please fill in all fields');
+      setIsLoading(false);
       return;
     }
 
@@ -108,8 +112,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         console.error("Неизвестная ошибка:", err);
         setError("Произошла неизвестная ошибка");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   return (
     <Container
@@ -143,7 +150,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             required
             fullWidth
             id="employee_id"
-            label="User ID"
+            label="Employee ID"
             name="employee_id"
             autoComplete="employee_id"
             autoFocus
@@ -171,6 +178,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             type="submit"
             fullWidth
             variant="contained"
+            disabled={isLoading}
             sx={{
               mt: 3,
               mb: 2,
@@ -180,7 +188,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               },
             }}
           >
-            Sign in
+            {isLoading ? <CircularProgress size={24} /> : 'Sign in'}
           </Button>
         </Box>
       </Box>

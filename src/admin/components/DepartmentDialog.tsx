@@ -28,7 +28,7 @@ function DepartmentDialog({ open, onClose, department, onSave }: DepartmentDialo
       onSave(savedDepartment);
       onClose();
     } else {
-      alert('Please enter a department name.');
+      
     }
   };
 

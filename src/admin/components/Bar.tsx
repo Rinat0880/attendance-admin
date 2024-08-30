@@ -37,7 +37,7 @@ export default function SimpleBarChart() {
   return (
     <BarChart
     barLabel={(item, context) => {
-      return context.bar.height < 60 ? null : item.value?.toString();
+      return context.bar.height < 20 ? null : item.value?.toString();
     }}
       width={530}
       height={300} 
