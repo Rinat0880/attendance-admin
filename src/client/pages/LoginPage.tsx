@@ -117,7 +117,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     }
   };
 
-
   return (
     <Container
       maxWidth="sm"
@@ -142,7 +141,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign in
+        ログイン
         </Typography>
         <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1, }}>
           <TextField
@@ -150,7 +149,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             required
             fullWidth
             id="employee_id"
-            label="Employee ID"
+            label="社員ID"
             name="employee_id"
             autoComplete="employee_id"
             autoFocus
@@ -162,7 +161,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label="パスワード"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -188,7 +187,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               },
             }}
           >
-            {isLoading ? <CircularProgress size={24} /> : 'Sign in'}
+            {isLoading ? <CircularProgress size={24} /> : 'ログイン'}
           </Button>
         </Box>
       </Box>

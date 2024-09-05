@@ -12,21 +12,21 @@ interface TabsComponentProps {
 
 const StyledTabs = styled(Tabs)({
   '& .MuiTabs-indicator': {
-    backgroundColor: '#111111',
+    backgroundColor: '#105e82',
   },
 });
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   '&.Mui-selected': {
-    color: '#111111',
+    color: '#105e82',
     '& .MuiSvgIcon-root': {
-      color: '#111111',
+      color: '#105e82',
       opacity: 1,
     },
   },
   '& .MuiSvgIcon-root': {
     fontSize: 28,
-    color: '#111111',
+    color: '#105e82',
     opacity: 0.5, // Полупрозрачные неактивные иконки
   },
   transition: 'background-color 0.3s ease, transform 0.3s ease',

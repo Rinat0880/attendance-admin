@@ -1,24 +1,19 @@
-// MonthSelectorModal.tsx
-
 import React from 'react';
 import { Box, Typography, IconButton, Modal, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface MonthSelectorModalProps {
-  open: boolean; // Определяет, открыто ли модальное окно
-  onClose: () => void; // Обработчик закрытия модального окна
-  selectedMonth: number; // Выбранный месяц
-  onMonthChange: (event: SelectChangeEvent<number>) => void; // Обработчик изменения месяца
-  selectedYear: number; // Выбранный год
-  onYearChange: (event: SelectChangeEvent<number>) => void; // Обработчик изменения года
+  open: boolean;
+  onClose: () => void;
+  selectedMonth: number;
+  onMonthChange: (event: SelectChangeEvent<number>) => void;
+  selectedYear: number;
+  onYearChange: (event: SelectChangeEvent<number>) => void;
 }
 
-// Массив с названиями месяцев
-const months = [
-  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-];
+// Массив с названиями месяцев на японском
+const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
-// Массив с годами
 const years = [2024, 2023, 2022, 2021]; // Добавьте нужные годы
 
 const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, selectedMonth, onMonthChange, selectedYear, onYearChange }) => {
@@ -55,7 +50,7 @@ const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, 
         </IconButton>
 
         <Typography variant="h6" sx={{ mb: 2 }}>
-          Select month and year
+          月と年を選択
         </Typography>
 
         <Box sx={{ mb: 2 }}>
@@ -67,7 +62,7 @@ const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, 
           >
             {years.map(year => (
               <MenuItem key={year} value={year}>
-                {year} 
+                {year}年
               </MenuItem>
             ))}
           </Select>
@@ -86,11 +81,11 @@ const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, 
                 '&:hover': {
                   bgcolor: '#e0e0e0'
                 },
-                backgroundColor: selectedMonth === index + 1 ? '#d0d0d0' : '#f0f0f0' // Сравниваем с index + 1
+                backgroundColor: selectedMonth === index + 1 ? '#d0d0d0' : '#f0f0f0'
               }}
-              onClick={() => onMonthChange({ target: { value: index + 1 } } as SelectChangeEvent<number>)} // Добавляем 1 к индексу месяца
+              onClick={() => onMonthChange({ target: { value: index + 1 } } as SelectChangeEvent<number>)}
             >
-              {month} 
+              {month}
             </Box>
           ))}
         </Box>

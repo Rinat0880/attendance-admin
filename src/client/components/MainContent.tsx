@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Divider } from '@mui/material';
 import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 import AttendanceSummary from './AttendanceSummary';
 import TabsComponent from './TabsComponent';
 import { Column } from './Table/types';
@@ -50,7 +51,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const [checkOutTime, setCheckOutTime] = useState<string>('--:--');
   const [totalHours, setTotalHours] = useState<string>('--:--');
   const [message, setMessage] = useState<string | null>(null);
-  const [messageColor, setMessageColor] = useState<string>('#000'); // Черный по умолчанию
+  const [messageColor, setMessageColor] = useState<string>('#000');
   const [currentTime, setCurrentTime] = useState<string>(format(new Date(), 'HH:mm:ss'));
   const [departments, setDepartments] = useState<Department[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
@@ -254,7 +255,7 @@ const fetchDashboardData = async () => {
             {currentTime}
           </Typography>
           <Typography variant="h6" color="#666666" sx={{ fontSize: '0.70rem' }}>
-            {format(new Date(), 'PPP - EEEE')}
+            {format(new Date(), 'yyyy年MM月dd日 (EEEE)', { locale: ja })}
           </Typography>
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 2 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -262,7 +263,7 @@ const fetchDashboardData = async () => {
                 {checkInTime}
               </Typography>
               <Typography variant="body2" color="#666666" sx={{ mt: 1 }}>
-                Check In
+              出勤時間
               </Typography>
             </Box>
             <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: '#d6d6d6' }} />
@@ -271,7 +272,7 @@ const fetchDashboardData = async () => {
                 {checkOutTime}
               </Typography>
               <Typography variant="body2" color="#666666" sx={{ mt: 1 }}>
-                Check Out
+              退勤時間
               </Typography>
             </Box>
             <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: '#d6d6d6' }} />
@@ -280,7 +281,7 @@ const fetchDashboardData = async () => {
                 {totalHours}
               </Typography>
               <Typography variant="body2" color="#666666" sx={{ mt: 1 }}>
-                Total Hours
+              総労働時間
               </Typography>
             </Box>
           </Box>
@@ -296,7 +297,7 @@ const fetchDashboardData = async () => {
                 },
               }}
             >
-              Come
+              出勤
             </Button>
             <Button
               variant="contained"
@@ -309,7 +310,7 @@ const fetchDashboardData = async () => {
                 },
               }}
             >
-              Leave
+              退勤
             </Button>
           </Box>
           {message && (

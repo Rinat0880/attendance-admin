@@ -17,26 +17,30 @@ const statusColors = {
     background: '#f1f1ff',
     textColor: '#7c7cf8',
     lineColor: '#7c7cf8',
+    japaneseText: '早出',
   },
   early_leave: {
     background: '#fff5e6',
     textColor: '#ffbd5e',
     lineColor: '#ffbd5e',
+    japaneseText: '早退',
   },
   absent: {
     background: '#ffeceb',
     textColor: '#ff847d',
     lineColor: '#ff847d',
+    japaneseText: '欠勤',
   },
   late: {
     background: '#e8eff3',
     textColor: '#2d7392',
     lineColor: '#2d7392',
+    japaneseText: '遅刻',
   },
 };
 
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+  '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'
 ];
 
 const AttendanceSummary: React.FC<AttendanceSummaryProps> = ({ attendanceSummary }) => {
@@ -57,25 +61,21 @@ const AttendanceSummary: React.FC<AttendanceSummaryProps> = ({ attendanceSummary
     setSelectedYear(event.target.value as number);
   };
 
-useEffect(() => {
-  const fetchMonthlyData = async () => {
-    try {
-      const data = await getMonthlyAttendanceData(selectedYear, selectedMonth);
+  useEffect(() => {
+    const fetchMonthlyData = async () => {
+      try {
+        const data = await getMonthlyAttendanceData(selectedYear, selectedMonth);
+        const processedData: { [key: string]: number } = Object.fromEntries(
+          Object.entries(data.data.results || {}).map(([key, value]) => [key, typeof value === 'number' ? value : 0])
+        );
+        setMonthlyData(processedData);
+      } catch (error) {
+        console.error('Ошибка при загрузке месячных данных:', error);
+      }
+    };
 
-      // Преобразование null в 0 и приведение типов
-      const processedData: { [key: string]: number } = Object.fromEntries(
-        Object.entries(data.data.results || {}).map(([key, value]) => [key, typeof value === 'number' ? value : 0])
-      );
-
-      setMonthlyData(processedData);
-    } catch (error) {
-      console.error('Ошибка при загрузке месячных данных:', error);
-    }
-  };
-
-  fetchMonthlyData();
-}, [selectedYear, selectedMonth]);
-
+    fetchMonthlyData();
+  }, [selectedYear, selectedMonth]);
 
   return (
     <Box sx={{ p: 3, borderRadius: 4, backgroundColor: '#ffffff', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
@@ -85,7 +85,7 @@ useEffect(() => {
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', mb: 0 }}>
           <Typography variant="h6" sx={{ color: '#111111', fontSize: '22px', fontWeight: 'medium' }}>
-            {months[selectedMonth - 1]} {selectedYear}
+            {selectedYear}年 {months[selectedMonth - 1]}
           </Typography>
           <IconButton onClick={handleOpen} sx={{ color: '#111111' }}>
             <CalendarTodayIcon />
@@ -130,11 +130,11 @@ useEffect(() => {
                   },
                 }}
               >
-                <Typography variant="body1" sx={{ color: '#1c1f26', fontSize: '1.2rem' }}>
+                <Typography variant="body1" sx={{ color: status.textColor, fontSize: '1.2rem' }}>
                   {String(value)}
                 </Typography>
                 <Typography variant="body2" sx={{ color: status.textColor }}>
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
+                  {status.japaneseText}
                 </Typography>
               </Paper>
             </Grid>

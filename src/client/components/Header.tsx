@@ -15,7 +15,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleMenuOpen, handleMenuClose }) => {
   return (
     <Box sx={{
-      bgcolor: '#111111', color: 'white', p: 2, display: 'flex',
+      bgcolor: '#105e82', color: 'white', p: 2, display: 'flex',
       alignItems: 'center', justifyContent: 'space-between', mb: 2,
       position: 'sticky',
       top: 0,
@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleM
       borderRadius: 3,
     }}>
       <Typography variant="h6" sx={{ ml: 2, color: '#ffffff', textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
-        Hey {employeeId}!
+        こんにちは {employeeId}!
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton 
@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleM
             horizontal: 'right',
           }}
         >
-          <MenuItem onClick={onLogout}>Logout</MenuItem>
+          <MenuItem onClick={onLogout}>ログアウト</MenuItem>
         </Menu>
       </Box>
     </Box>

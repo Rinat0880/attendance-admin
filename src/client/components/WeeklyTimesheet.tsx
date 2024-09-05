@@ -52,12 +52,27 @@ const isWeekend = (weekday: string): boolean => {
 
 const getWeekday = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-EN', { weekday: 'short' });
+  return date.toLocaleDateString('ja-JP', { weekday: 'short' });
+};
+
+const getJapaneseDateRange = (interval: string, daysInMonth: number): string => {
+  switch (interval) {
+    case '0':
+      return '1日-10日';
+    case '1':
+      return '11日-20日';
+    case '2':
+      return `21日-${daysInMonth}日`;
+    default:
+      return '';
+  }
 };
 
 const WeeklyTimesheet: React.FC<WeeklyTimesheetProps> = ({ year, month }) => {
   const [selectedInterval, setSelectedInterval] = useState<string>(intervals[0]);
   const [timesheetData, setTimesheetData] = useState<TimesheetDay[] | null>(null);
+
+  const daysInMonth = new Date(year, month, 0).getDate();
 
   const handleIntervalChange = (event: SelectChangeEvent<string>) => {
     setSelectedInterval(event.target.value);
@@ -81,7 +96,7 @@ const WeeklyTimesheet: React.FC<WeeklyTimesheetProps> = ({ year, month }) => {
     fetchData();
   }, [year, month, selectedInterval]);
 
-  const intervalDisplayNames = intervals.map((_, index) => `Interval ${index + 1}`);
+  const intervalDisplayNames = intervals.map(interval => getJapaneseDateRange(interval, daysInMonth));
 
   const selectedDays = useMemo(() => {
     if (!timesheetData) return [];
@@ -106,7 +121,7 @@ const WeeklyTimesheet: React.FC<WeeklyTimesheetProps> = ({ year, month }) => {
         mb: 1,
         boxShadow: 1,
       }}>
-        <Typography variant="h6">Intervals</Typography>
+        <Typography variant="h6">期間</Typography>
         <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
           <Select
             value={selectedInterval}
