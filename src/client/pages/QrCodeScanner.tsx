@@ -2,6 +2,8 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import jsQR from 'jsqr';
 import { Box, Typography, Paper, Snackbar, CircularProgress } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 import { createByQRCode } from '../../utils/libs/axios';
 
 interface ServerResponse {
@@ -11,9 +13,10 @@ interface ServerResponse {
     full_name: string;
     work_day: string;
     come_time: string;
-  };
+  } | null;
   message: string;
   status: boolean;
+  error?: string;
 }
 
 const QRCodeScanner: React.FC = () => {
@@ -24,13 +27,13 @@ const QRCodeScanner: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [serverMessage, setServerMessage] = useState('');
   const [employeeName, setEmployeeName] = useState('');
-  const [messageType, setMessageType] = useState<'check-in' | 'check-out' | null>(null);
+  const [messageType, setMessageType] = useState<'check-in' | 'check-out' | 'error' | null>(null);
   const webcamRef = useRef<Webcam | null>(null);
 
   const getCurrentPosition = (): Promise<GeolocationPosition> => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error('Geolocation is not supported by your browser'));
+        reject(new Error('お使いのブラウザは位置情報をサポートしていません'));
       } else {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
@@ -45,71 +48,77 @@ const QRCodeScanner: React.FC = () => {
     setIsProcessing(true);
     try {
       const position = await getCurrentPosition();
-      console.log('Sending request to server:', {
+      console.log('サーバーにリクエストを送信中:', {
         employeeId,
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       });
       
       const response: ServerResponse = await createByQRCode(employeeId, position.coords.latitude, position.coords.longitude);
-      console.log('Server response:', response);
+      console.log('サーバーからのレスポンス:', response);
       
-      setServerMessage(response.message);
-      setEmployeeName(response.data.full_name);
-      setResult(response.data.employee_id);
-      setSnackbarMessage('Record created successfully');
-      setSnackbarOpen(true);
-      
-      // Determine message type based on the server message
-      if (response.message.toLowerCase().includes('welcome')) {
-        setMessageType('check-in');
-      } else if (response.message.toLowerCase().includes('get home safely') || 
-                 response.message.toLowerCase().includes('goodbye')) {
-        setMessageType('check-out');
+      if (response.status) {
+        setServerMessage(response.message);
+        setEmployeeName(response.data?.full_name || '');
+        setResult(response.data?.employee_id || '');
+        setSnackbarMessage('記録が正常に作成されました');
+        
+        if (response.message.toLowerCase().includes('welcome')) {
+          setMessageType('check-in');
+        } else if (response.message.toLowerCase().includes('get home safely') || 
+                   response.message.toLowerCase().includes('goodbye')) {
+          setMessageType('check-out');
+        } else {
+          setMessageType(null);
+        }
       } else {
-        setMessageType(null);
+        setServerMessage('位置情報エラー：許可されたスキャンエリアから離れすぎています。オフィス/大学内にいることを確認してください。');
+        setMessageType('error');
+        setSnackbarMessage('記録の作成エラー：位置情報が無効です');
       }
     } catch (error) {
-      console.error('Error sending data:', error);
-      setSnackbarMessage('Error creating record');
-      setSnackbarOpen(true);
+      console.error('データ送信エラー:', error);
+      setServerMessage('リクエストの処理中にエラーが発生しました。もう一度お試しください。');
+      setMessageType('error');
+      setSnackbarMessage('記録の作成エラー');
     } finally {
       setIsProcessing(false);
+      setSnackbarOpen(true);
     }
   };
 
   const capture = useCallback(() => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      if (imageSrc) {
-        const image = new Image();
-        image.src = imageSrc;
-        image.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = image.width;
-          canvas.height = image.height;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(image, 0, 0, image.width, image.height);
-            const imageData = ctx.getImageData(0, 0, image.width, image.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-            if (code) {
-              console.log('QR Code detected:', code.data);
-              setIsScanning(false);
-              sendEmployeeIdWithLocation(code.data);
-            }
-          }
-        };
-      }
-    }
-  }, [webcamRef]);
+    if (isProcessing || !isScanning || !webcamRef.current) return;
 
+
+    const imageSrc = webcamRef.current.getScreenshot();
+    if (imageSrc) {
+      const image = new Image();
+      image.src = imageSrc;
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(image, 0, 0, image.width, image.height);
+          const imageData = ctx.getImageData(0, 0, image.width, image.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          if (code) {
+            console.log('QRコードを検出しました:', code.data);
+            setIsScanning(false);
+            sendEmployeeIdWithLocation(code.data);
+          }
+        }
+      };
+    }
+  }, [isProcessing, isScanning, webcamRef]);
 
   useEffect(() => {
     if (isScanning) {
       const interval = setInterval(() => {
         capture();
-      }, 500);
+      }, 4000);
       return () => clearInterval(interval);
     } else {
       const timer = setTimeout(() => {
@@ -130,9 +139,10 @@ const QRCodeScanner: React.FC = () => {
   const getMessageColor = () => {
     switch (messageType) {
       case 'check-in':
-        return 'green';
       case 'check-out':
-        return 'orange';
+        return 'green';
+      case 'error':
+        return 'red';
       default:
         return 'inherit';
     }
@@ -163,13 +173,13 @@ const QRCodeScanner: React.FC = () => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '80%',
-            height: '80%',
-            border: '2px solid white',
+            width: '90%',
+            height: '90%',
+            border: '4px solid white',
             boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
             zIndex: 1
           }} />
-          <Typography variant="h6" sx={{
+          <Typography variant="h4" sx={{
             position: 'absolute',
             bottom: '10%',
             left: '50%',
@@ -178,7 +188,7 @@ const QRCodeScanner: React.FC = () => {
             textAlign: 'center',
             zIndex: 2
           }}>
-            Point the QR code at the camera
+            QRコードにカメラを向けてください
           </Typography>
         </>
       ) : (
@@ -188,50 +198,73 @@ const QRCodeScanner: React.FC = () => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           padding: 4,
-          textAlign: 'center'
+          textAlign: 'center',
+          width: '90%',
+          maxWidth: '600px',
+          height: '80%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}>
           {isProcessing ? (
             <>
-              <CircularProgress sx={{ marginBottom: 2 }} />
-              <Typography variant="h5" gutterBottom>
-                Processing...
+              <CircularProgress size={120} sx={{ marginBottom: 4 }} />
+              <Typography variant="h3" gutterBottom>
+                処理中...
               </Typography>
-              <Typography variant="body1">
-                Please wait a moment
+              <Typography variant="h5">
+                お待ちください
               </Typography>
             </>
           ) : (
             <>
-              <Typography variant="h5" gutterBottom sx={{ color: getMessageColor() }}>
-                {messageType === 'check-in' ? 'Check-in Successful' : 'Check-out Successful'}
-              </Typography>
-              {serverMessage && (
-                <Typography variant="body1" sx={{ marginTop: 2, color: getMessageColor() }}>
-                  {serverMessage}
-                </Typography>
+              {messageType === 'error' ? (
+                <ErrorIcon sx={{ 
+                  fontSize: 180, 
+                  color: 'red',
+                  marginBottom: 3 
+                }} />
+              ) : (
+                <CheckCircleIcon sx={{ 
+                  fontSize: 180, 
+                  color: 'green',
+                  marginBottom: 3 
+                }} />
               )}
-              {employeeName && (
-                <Typography variant="h5" sx={{ marginTop: 2, color: getMessageColor() }}>
-                  {messageType === 'check-in' ? 'Welcome' : 'Get home safely'}, {employeeName}!
-                </Typography>
-              )}
-              {result && (
-                <Typography variant="body2" sx={{ marginTop: 2 }}>
-                  Employee ID: {result}
-                </Typography>
-              )}
-            </>
-          )}
-        </Paper>
-      )}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
-    </Box>
-  );
+              <Typography variant="h3" gutterBottom sx={{ color: getMessageColor() }}>
+                {messageType === 'check-in' ? 'チェックイン成功' :
+
+messageType === 'check-out' ? 'チェックアウト成功' : 
+'エラー'}
+</Typography>
+{serverMessage && (
+<Typography variant="h5" sx={{ marginTop: 2, color: getMessageColor() }}>
+ {serverMessage}
+</Typography>
+)}
+{employeeName && messageType !== 'error' && (
+<Typography variant="h3" sx={{ marginTop: 2, color: 'green' }}>
+ {messageType === 'check-in' ? 'ようこそ' : 'お気をつけて'}, {employeeName}さん！
+</Typography>
+)}
+{result && messageType !== 'error' && (
+<Typography variant="h5" sx={{ marginTop: 2 }}>
+ 従業員ID: {result}
+</Typography>
+)}
+</>
+)}
+</Paper>
+)}
+<Snackbar
+open={snackbarOpen}
+autoHideDuration={6000}
+onClose={handleSnackbarClose}
+message={snackbarMessage}
+/>
+</Box>
+);
 };
 
 export default QRCodeScanner;
