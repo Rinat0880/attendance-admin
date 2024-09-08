@@ -9,8 +9,6 @@ import axiosInstance from '../../utils/libs/axios';
 import axios from 'axios';
 import AttendanceTable from '../../admin/components/Table/AttendanceTable';
 
-
-
 interface MainContentProps {
   tabIndex: number;
   handleTabChange: (event: React.ChangeEvent<{}>, newValue: number) => void;
@@ -40,6 +38,10 @@ export interface Position {
   department: string;
 }
 
+const OFFICE_LATITUDE = 41.3171712;
+const OFFICE_LONGITUDE = 69.3108736;
+const ALLOWED_DISTANCE_KM = 1;
+
 const MainContent: React.FC<MainContentProps> = ({
   tabIndex,
   handleTabChange,
@@ -62,174 +64,223 @@ const MainContent: React.FC<MainContentProps> = ({
     { id: 'status', label: '状態', filterable: true, filterValues: ['出席', '欠席'] },
   ] as Column[];
 
-useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentTime(format(new Date(), 'HH:mm:ss'));
-  }, 1000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(format(new Date(), 'HH:mm:ss'));
+    }, 1000);
 
+    fetchDashboardData();
 
-  fetchDashboardData();
+    return () => clearInterval(interval);
+  }, []);
 
-  return () => clearInterval(interval);
-}, []);
+  const fetchDashboardData = async () => {
+    try {
+      const response = await axiosInstance().get<{ data: DashboardData, status: boolean }>('/user/dashboard');
+      console.log('DashboardResponse:', response);
 
-const fetchDashboardData = async () => {
-  try {
-    const response = await axiosInstance().get<{ data: DashboardData, status: boolean }>('/user/dashboard');
-    console.log('DashboardResponse:', response);
+      if (response.data.status) {
+        const { come_time, leave_time, total_hours } = response.data.data;
 
-    if (response.data.status) {
-      const { come_time, leave_time, total_hours } = response.data.data;
-
-   
-      setCheckInTime(come_time || '--:--');
-      setCheckOutTime(leave_time || '--:--');
-      setTotalHours(total_hours || '--:--');
+        setCheckInTime(come_time || '--:--');
+        setCheckOutTime(leave_time || '--:--');
+        setTotalHours(total_hours || '--:--');
+      }
+    } catch (error) {
+      console.error('Ошибка при получении данных дашборда:', error);
     }
-  } catch (error) {
-    console.error('Ошибка при получении данных дашборда:', error);
-  }
-};
+  };
 
   const getCurrentPosition = (): Promise<GeolocationPosition> => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         reject(new Error('Геолокация не поддерживается вашим браузером'));
       } else {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        });
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log('Получены координаты:', position.coords.latitude, position.coords.longitude);
+            resolve(position);
+          },
+          (error) => {
+            console.error('Ошибка получения геолокации:', error);
+            reject(new Error('Ошибка получения геолокации. Убедитесь, что разрешения установлены и попробуйте снова.'));
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          }
+        );
       }
     });
   };
+
+  const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Радиус Земли в километрах
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+      Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    const distance = R * c;
+    return distance;
+  };
+
+  const checkLocation = async (type: 'checkIn' | 'checkOut') => {
+    const position = await getCurrentPosition();
+    const distance = getDistanceFromLatLonInKm(
+      position.coords.latitude, 
+      position.coords.longitude, 
+      OFFICE_LATITUDE, 
+      OFFICE_LONGITUDE
+    );
   
-  const sendComeData = async (type: 'checkIn' | 'checkOut') => {
+    if (distance > ALLOWED_DISTANCE_KM) {
+      setMessage(`You are ${distance.toFixed(2)} km away from the office. ${type === 'checkIn' ? 'Check-in not registered.' : 'Check-out not registered.'}`);
+      setMessageColor('#ff0000');
+      return false;
+    }
+    return true;
+  };
+  
+
+  const sendComeData = async () => {
     try {
+      const isInRange = await checkLocation('checkIn');
+      if (!isInRange) return;
+
       const position = await getCurrentPosition();
       const data = {
         employee_id: employeeId,
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
-  
+
       const token = localStorage.getItem('access_token');
       const headers = {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json', // Убедитесь, что указали тип контента как JSON
+        'Content-Type': 'application/json',
       };
-  
+
       console.log('Отправляемые данные:', data);
-      console.log('URL запроса:', type === 'checkIn' ? '/attendance/createbyphone' : '/attendance/exitbyphone');
+      console.log('URL запроса:', '/attendance/createbyphone');
       console.log('Токен авторизации:', token ? 'Присутствует' : 'Отсутствует');
       console.log('Заголовки запроса:', headers);
-  
-      const endpoint = type === 'checkIn' ? '/attendance/createbyphone' : '/attendance/exitbyphone';
-  
-      // Отправляем данные в теле запроса (body) с использованием PATCH
-      const response = await axiosInstance().post(endpoint, data);
-  
-      console.log(`Ответ сервера (${type}):`, response.data);
+
+      const response = await axiosInstance().post('/attendance/createbyphone', data);
+
+      console.log(`Ответ сервера (checkIn):`, response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error(`Ошибка при отправке данных ${type}:`, error.response?.data || error.message);
+        console.error(`Ошибка при отправке данных checkIn:`, error.response?.data || error.message);
       } else {
-        console.error(`Неизвестная ошибка при отправке данных ${type}:`, error);
+        console.error(`Неизвестная ошибка при отправке данных checkIn:`, error);
       }
       throw error;
     }
   };
 
-  const sendLeaveData = async (type: 'checkIn' | 'checkOut') => {
+  const sendLeaveData = async () => {
     try {
+      const isInRange = await checkLocation('checkOut');
+      if (!isInRange) return;
+
       const position = await getCurrentPosition();
       const data = {
         employee_id: employeeId,
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
-  
+
       const token = localStorage.getItem('access_token');
-      
       const headers = {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json', // Убедитесь, что указали тип контента как JSON
+        'Content-Type': 'application/json',
       };
-  
+
       console.log('Отправляемые данные:', data);
-      console.log('URL запроса:', type === 'checkIn' ? '/attendance/createbyphone' : '/attendance/exitbyphone');
+      console.log('URL запроса:', '/attendance/exitbyphone');
       console.log('Токен авторизации:', token ? 'Присутствует' : 'Отсутствует');
       console.log('Заголовки запроса:', headers);
-  
-      const endpoint = type === 'checkIn' ? '/attendance/createbyphone' : '/attendance/exitbyphone';
-  
-      // Отправляем данные в теле запроса (body) с использованием PATCH
-      const response = await axiosInstance().patch(endpoint, data);
-  
-      console.log(`CheckResponce (${type}):`, response.data);
+
+      const response = await axiosInstance().patch('/attendance/exitbyphone', data);
+
+      console.log(`Ответ сервера (checkOut):`, response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error(`Ошибка при отправке данных ${type}:`, error.response?.data || error.message);
+        console.error(`Ошибка при отправке данных checkOut:`, error.response?.data || error.message);
       } else {
-        console.error(`Неизвестная ошибка при отправке данных ${type}:`, error);
+        console.error(`Неизвестная ошибка при отправке данных checkOut:`, error);
       }
       throw error;
     }
   };
-  
-  
-  
 
   const handleComeClick = async () => {
     try {
-      const result = await sendComeData('checkIn');
-      if (result.status) {
-        setCheckInTime(result.data.come_time);
-        setMessage(`Добро пожаловать! Вы отметились в ${result.data.come_time}`);
-        setMessageColor('#000'); // Черный для успешного сообщения
+      const isInRange = await checkLocation('checkIn');
+      if (!isInRange) return;
+  
+      const position = await getCurrentPosition();
+      const data = {
+        employee_id: employeeId,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+  
+      const token = localStorage.getItem('access_token');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+  
+      console.log('Отправляемые данные:', data);
+      console.log('URL запроса:', '/attendance/createbyphone');
+      console.log('Токен авторизации:', token ? 'Присутствует' : 'Отсутствует');
+      console.log('Заголовки запроса:', headers);
+  
+      const response = await axiosInstance().post('/attendance/createbyphone', data);
+  
+      console.log(`Ответ сервера (checkIn):`, response.data);
+      if (response.data.status) {
+        setCheckInTime(response.data.data.come_time);
+        setMessage(`Добро пожаловать! Вы отметились в ${response.data.data.come_time}`);
+        setMessageColor('#000');
       } else {
-        setMessage(result.error || 'Произошла ошибка при отметке прихода.');
-        setMessageColor(result.error === 'distance from office is greater than office radius' ? '#ff0000' : '#000'); // Красный для определенной ошибки
+        setMessage(response.data.error || 'Произошла ошибка при отметке прихода.');
+        setMessageColor(response.data.error === 'distance from office is greater than office radius' ? '#ff0000' : '#000');
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          setMessage('Ошибка аутентификации. Пожалуйста, войдите в систему заново.');
-          setMessageColor('#ff0000'); // Красный для ошибки аутентификации
-        } else {
-          setMessage(error.response.data.error || 'Произошла ошибка при отметке прихода.');
-          setMessageColor('#ff0000'); // Красный для других ошибок
-        }
-      } else {
-        setMessage('Ошибка при отметке прихода. Пожалуйста, проверьте разрешения на геолокацию и попробуйте снова.');
-        setMessageColor('#ff0000'); // Красный для непредвиденной ошибки
-      }
+      console.error('Ошибка при отправке запроса на отметку прихода:', error);
+      setMessageColor('#ff0000');
     }
   };
 
   const handleLeaveClick = async () => {
     if (checkInTime !== '--:--') {
       try {
-        const result = await sendLeaveData('checkOut');
-        if (result.status) {
+        const result = await sendLeaveData();
+        if (result && result.status) {
           setCheckOutTime(result.data.leave_time);
-          setMessage(`До свидания! Вы отметились в ${result.data.leave_time}`);
-          setMessageColor('#000'); // Черный для успешного сообщения
+          setTotalHours(result.data.total_hours);
+          setMessage(`Вы отметились на выход в ${result.data.leave_time}`);
+          setMessageColor('#000');
         } else {
-          setMessage(result.error || 'Произошла ошибка при отметке ухода.');
-          setMessageColor(result.error === 'distance from office is greater than office radius' ? '#ff0000' : '#000'); // Красный для определенной ошибки
+          setMessage(result.error || 'Произошла ошибка при отметке выхода.');
+          setMessageColor(result.error === 'distance from office is greater than office radius' ? '#ff0000' : '#000');
         }
       } catch (error) {
-        console.error('Ошибка при отметке ухода:', error);
-        setMessage('Ошибка при отметке ухода. Пожалуйста, проверьте разрешения на геолокацию и попробуйте снова.');
-        setMessageColor('#ff0000'); // Красный для ошибки
+        console.error('Ошибка при отправке запроса на отметку выхода:', error);
+        setMessage('Ошибка при отметке выхода. Пожалуйста, проверьте разрешения на геолокацию и попробуйте снова.');
+        setMessageColor('#ff0000');
       }
     } else {
-      setMessage('Сначала нужно отметить приход!');
-      setMessageColor('#ff0000'); // Красный для предупреждения
+      setMessage('Сначала отметьтесь на приход.');
+      setMessageColor('#ff0000');
     }
   };
 

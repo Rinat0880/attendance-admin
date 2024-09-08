@@ -19,7 +19,7 @@ export default function SimpleBarChart() {
     try {
       const response = await axiosInstance().get('/attendance/barchart');
       const barData: BarData[] = response.data.data;
-      console.log(response);
+      // console.log(response);
       
       
 

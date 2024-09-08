@@ -52,7 +52,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         
         localStorage.setItem("access_token", accessToken);
         localStorage.setItem("refresh_token", refreshToken);
-        console.log('Токены сохранены в localStorage');
+        // console.log('Токены сохранены в localStorage:', { accessToken, refreshToken });
 
         const tempEmployeeData: Employee = {
           id: employee_id,
@@ -72,10 +72,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           },
         };
 
-        console.log('Временные данные сотрудника:', tempEmployeeData);
+
+        // console.log('Сохранение данных сотрудника в localStorage:', tempEmployeeData);
+        localStorage.setItem("employeeData", JSON.stringify(tempEmployeeData));
         onLoginSuccess(tempEmployeeData);
         
         // Обновленная логика перенаправления
+        console.log('Перенаправление на основе роли:', tempEmployeeData.role);
         if (tempEmployeeData.role === 'ADMIN') {
           navigate("/admin");
         } else if (tempEmployeeData.role === 'QRCODE') {

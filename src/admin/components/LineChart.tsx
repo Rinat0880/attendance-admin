@@ -23,7 +23,6 @@ interface LineData {
 }
 
 function LineChartComponent() {
-  const years: string[] = ["2024", "2023", "2022"]; // Добавьте другие года, если нужно
   const monthsOfYear: string[] = [
     "January",
     "February",
@@ -39,11 +38,25 @@ function LineChartComponent() {
     "December",
   ];
 
+  const today = new Date();
+  const currentYear = today.getFullYear().toString();
+  const currentMonth = monthsOfYear[today.getMonth()];
+  const currentDay = today.getDate();
+
+  const defaultInterval = currentDay <= 10 ? 0 : currentDay <= 20 ? 1 : 2;
+
+  // Генерируем года динамически от 2022 до текущего года
+  const years: string[] = Array.from(
+    { length: parseInt(currentYear) - 2022 + 1 }, // Преобразуем currentYear в число
+    (_, i) => (2022 + i).toString()
+  );
+  
+
   const [attendanceData, setAttendanceData] = useState<number[]>([]);
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>("2024"); // Начальный год
-  const [selectedMonth, setSelectedMonth] = useState<string>("August"); // Начальный месяц
-  const [interval, setInterval] = useState<number>(0);
+  const [selectedYear, setSelectedYear] = useState<string>(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState<string>(currentMonth);
+  const [interval, setInterval] = useState<number>(defaultInterval);
   const [openMonthDialog, setOpenMonthDialog] = useState(false);
 
   const chartRef = useRef<HTMLDivElement | null>(null);

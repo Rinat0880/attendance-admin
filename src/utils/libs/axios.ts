@@ -21,6 +21,27 @@ const axiosInstance = () => {
     return config;
   });
 
+  instance.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    async function (error) {
+      const originalRequest = error.config;
+      if (error.response.status === 403 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        const refresh_token = localStorage.getItem('refresh_token');
+        const access_token = refresh_token;
+  
+       
+        instance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${access_token}`;
+        return instance(originalRequest);
+      }
+      return Promise.reject(error);
+    }
+  );
+
   
   return instance;
 };
@@ -32,7 +53,7 @@ export const fetchDepartments = async () => {
     const response = await axiosInstance().get('/department/list');
     if (response.data.status) {
       const departments = response.data.data.results;
-      console.log('Fetched Departments:', departments);
+      // console.log('Fetched Departments:', departments);
       return departments;
     }
   } catch (error) {
@@ -45,7 +66,7 @@ export const fetchDepartments = async () => {
     const response = await axiosInstance().get('/position/list');
     if (response.data.status) {
       const positions = response.data.data.results;
-      console.log('Fetched Positions:', positions);
+      // console.log('Fetched Positions:', positions);
       return positions;
     }
   } catch (error) {

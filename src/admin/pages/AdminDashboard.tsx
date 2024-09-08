@@ -32,7 +32,7 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <div className="User-info">
             <Button
               variant="contained"
-              sx={{backgroundColor: "black", ":hover": {backgroundColor: "#424242"}}}
+              sx={{backgroundColor: "#105E82", ":hover": {backgroundColor: "#919191", color: "black"}}}
               onClick={handleLogoutClick}
             >
               Logout
