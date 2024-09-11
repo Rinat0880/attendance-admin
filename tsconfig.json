@@ -18,9 +18,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./src",  // Добавлено для корректного поиска модулей
+    "paths": {            // Добавление алиасов (если требуется)
+      "@components/*": ["components/*"]
+    }
   },
   "include": [
-    "src"
+    "src",               // Уже включенная директория
+    "other-directory"    // Добавь другие директории, если необходимо
   ]
 }
