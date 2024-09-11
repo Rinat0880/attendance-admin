@@ -28,9 +28,9 @@ function PositionTable({ positions, onEdit, onDelete, departments }: PositionTab
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Position Name</TableCell>
-            <TableCell>Department</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>役職名</TableCell>
+            <TableCell>部署</TableCell>
+            <TableCell>アクション</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -40,8 +40,8 @@ function PositionTable({ positions, onEdit, onDelete, departments }: PositionTab
               <TableCell>{getDepartmentName(position.department_id)}</TableCell>
               <TableCell>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button onClick={() => onEdit(position)} variant="outlined" size='small'>Edit</Button>
-                <Button onClick={() => handleDelete(position.id)} variant="outlined" size='small' color="error">Delete</Button>
+                <Button onClick={() => onEdit(position)} variant="outlined" size='small'>編集</Button>
+                <Button onClick={() => handleDelete(position.id)} variant="outlined" size='small' color="error">削除</Button>
                 </Box>
               </TableCell>
             </TableRow>

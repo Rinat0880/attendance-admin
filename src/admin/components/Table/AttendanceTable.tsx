@@ -177,7 +177,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         }}
       >
         <Typography variant="h6">
-          {tableTitle || "Attendance Overview"}
+          {tableTitle || "出勤状況"}
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           {showCalendar && (
@@ -188,7 +188,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           <TextField
             variant="outlined"
             size="small"
-            placeholder="Quick Search..."
+            placeholder="氏名の検索..."
             value={pendingSearch}
             onChange={handleSearchChange}
             onKeyPress={handleKeyPress}
@@ -206,7 +206,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
             variant="contained"
             sx={{ ml: 1, width: "20%", bgcolor: "#111111", fontSize: "12px" }}
           >
-            Search
+            検索
           </Button>
         </Box>
       </Box>

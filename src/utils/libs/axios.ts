@@ -115,6 +115,12 @@ export const updateUser = async (id: number, employee_id: string, password: stri
   return response.data;
 };
 
+export const deleteUser = async (id: number) => {
+  const response = await axiosInstance().delete(`/user/${id}`);
+  return response.data;
+};
+
+
 // Обновленная функция uploadExcelFile
 export const uploadExcelFile = async (excell: FormData) => {
   try {

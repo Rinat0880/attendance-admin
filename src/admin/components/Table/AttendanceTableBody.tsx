@@ -60,7 +60,7 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
                   <Box sx={{ display: 'flex', gap: 0.5  }}>
                     {onEdit && (
                       <Button onClick={() => onEdit(row)} variant="outlined" size="small">
-                        Edit
+                        編集
                       </Button>
                     )}
                     {onDelete && (
@@ -70,7 +70,7 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
                         color="error"
                         onClick={() => onDelete(row.id)}
                       >
-                        Delete
+                        削除
                       </Button>
                     )}
                   </Box>

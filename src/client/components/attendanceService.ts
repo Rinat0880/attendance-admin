@@ -70,4 +70,3 @@ export const getWeeklyTimesheetData = async (year: number, month: number, interv
     throw error;
   }
 };
-  

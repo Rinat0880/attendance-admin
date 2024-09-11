@@ -45,7 +45,7 @@ export default function SimpleBarChart() {
       series={[
         {
           data,
-          label: ("department attendance"),
+          label: ("部署別出勤率"),
           id: "pvId",
           
         },

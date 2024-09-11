@@ -28,14 +28,14 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </div>
       <div className="App">
         <header className="App-header">
-          <h1 className="Logo">Company X</h1>
+          <h1 className="Logo">○○会社</h1>
           <div className="User-info">
             <Button
               variant="contained"
               sx={{backgroundColor: "#105E82", ":hover": {backgroundColor: "#919191", color: "black"}}}
               onClick={handleLogoutClick}
             >
-              Logout
+              ログアウト
             </Button>
           </div>
         </header>

@@ -78,13 +78,13 @@ const AttendanceSummary: React.FC<AttendanceSummaryProps> = ({ attendanceSummary
   }, [selectedYear, selectedMonth]);
 
   return (
-    <Box sx={{ p: 3, borderRadius: 4, backgroundColor: '#ffffff', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
+    <Box id='attendanceSummary' sx={{ p: '12px', borderRadius: 4, backgroundColor: '#ffffff', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
       <Box sx={{ display: 'flex', marginTop: -3.5, flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
         <Typography variant="h6" sx={{ mt: 1, color: '#111111', alignSelf: 'flex-start', fontSize: '15px' }}>
           {/* Заголовок */}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', mb: 0 }}>
-          <Typography variant="h6" sx={{ color: '#111111', fontSize: '22px', fontWeight: 'medium' }}>
+        <Box id='test2'sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', mb: 0 }}>
+          <Typography variant="h6" sx={{ p: 1, color: '#111111', fontSize: '22px', fontWeight: 'medium' }}>
             {selectedYear}年 {months[selectedMonth - 1]}
           </Typography>
           <IconButton onClick={handleOpen} sx={{ color: '#111111' }}>
@@ -93,7 +93,7 @@ const AttendanceSummary: React.FC<AttendanceSummaryProps> = ({ attendanceSummary
         </Box>
       </Box>
 
-      <Grid container spacing={1}>
+      <Grid id='test'container spacing={1}>
         {Object.entries(monthlyData).map(([key, value]) => {
           const status = statusColors[key as keyof typeof statusColors];
           if (!status) {

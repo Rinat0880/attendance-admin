@@ -66,7 +66,7 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
         }}
       >
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-          Upload Excel File
+          Excelファイルのアップロード
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box sx={{ mb: 3 }}> {/* Added spacing */}
@@ -74,7 +74,7 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
               variant="contained"
               component="label"
             >
-              Select File
+              ファイルを選択
               <input
                 type="file"
                 hidden
@@ -85,15 +85,15 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
             </Button>
             {selectedFile && (
               <Typography variant="body2" sx={{ mt: 2 }}>
-                Selected file: {selectedFile.name}
+                選択されたファイル: {selectedFile.name}
               </Typography>
             )}
           </Box>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Stack direction="row" spacing={1}>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button onClick={onClose}>キャンセル</Button>
               <Button type="submit" variant="contained" disabled={!selectedFile}>
-                Upload
+              アップロード
               </Button>
             </Stack>
           </Box>

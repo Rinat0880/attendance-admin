@@ -40,13 +40,13 @@ function PositionDialog({ open, onClose, position, departments, onSave }: Positi
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{position ? 'Edit Position' : 'Add Position'}</DialogTitle>
+      <DialogTitle>{position ? '役職の編集' : '役職を追加'}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
           id="name"
-          label="Position Name"
+          label="役職名"
           type="text"
           fullWidth
           variant="standard"

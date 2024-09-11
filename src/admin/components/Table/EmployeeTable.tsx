@@ -23,6 +23,7 @@ import AttendanceTableHead from "./AttendanceTableHead";
 import AttendanceTableBody from "./AttendanceTableBody";
 import CalendarModal from "./CalendarModal";
 import axiosInstance from "../../../utils/libs/axios";
+import {deleteUser} from "../../../utils/libs/axios";
 
 interface EmployeeTableProps {
   columns: Column[];
@@ -155,6 +156,23 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
     (page + 1) * rowsPerPage
   );
 
+  const handleDelete = (id: number) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
+    
+    if (confirmDelete) {
+      deleteUser(id)
+        .then(() => {
+          // Обновляем данные после удаления пользователя
+          setData(data.filter((item) => item.id !== id));
+        })
+        .catch((error) => {
+          console.error("Ошибка при удалении пользователя:", error);
+        });
+    }
+  };
+  
+  
+
 
 
   return (
@@ -168,13 +186,13 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
         }}
       >
         <Typography variant="h6">
-          {tableTitle || "Attendance Overview"}
+          {tableTitle}
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextField
             variant="outlined"
             size="small"
-            placeholder="Quick Search..."
+            placeholder="氏名の検索..."
             value={pendingSearch}
             onChange={handleSearchChange}
             onKeyPress={handleKeyPress}
@@ -192,7 +210,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             variant="contained"
             sx={{ ml: 1, width: "20%", bgcolor: "#111111", fontSize: "12px" }}
           >
-            Search
+            検索
           </Button>
         </Box>
       </Box>
@@ -209,7 +227,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             columns={columns}
             filteredData={paginatedData}
             onEdit={onEdit}
-            onDelete={onDelete}
+            onDelete={handleDelete}
           />
         </Table>
       </TableContainer>

@@ -34,13 +34,13 @@ function DepartmentDialog({ open, onClose, department, onSave }: DepartmentDialo
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{department ? 'Edit Department' : 'Add Department'}</DialogTitle>
+      <DialogTitle>{department ? '部署の編集' : '部署を追加'}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
           id="name"
-          label="Department Name"
+          label="部署名"
           type="text"
           fullWidth
           variant="standard"

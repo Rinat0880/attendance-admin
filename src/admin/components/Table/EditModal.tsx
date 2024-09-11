@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Box, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
-import { TableData } from './types';
-import axiosInstance, { updateUser } from '../../../utils/libs/axios';
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+} from "@mui/material";
+import { TableData } from "./types";
+import axiosInstance, { updateUser } from "../../../utils/libs/axios";
 
 interface EditModalProps {
   open: boolean;
   data: TableData | null;
   onClose: () => void;
   onSave: (updatedData: TableData) => void;
-  positions: Position[]; 
+  positions: Position[];
   departments: Department[];
 }
 
@@ -24,7 +35,14 @@ export interface Position {
   department: string;
 }
 
-const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, positions, departments }) => {
+const EditModal: React.FC<EditModalProps> = ({
+  open,
+  data,
+  onClose,
+  onSave,
+  positions,
+  departments,
+}) => {
   const [formData, setFormData] = useState<TableData | null>(data);
 
   useEffect(() => {
@@ -71,22 +89,21 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
         onSave(formData);
         onClose();
       } catch (error) {
-        console.error('Error updating user:', error);
+        console.error("Error updating user:", error);
       }
     }
   };
 
   if (!formData) return null;
 
-
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={{ ...modalStyle }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          Edit Employee
+          従業員の編集
         </Typography>
         <TextField
-          label="Full Name"
+          label="氏名"
           name="full_name"
           value={formData.full_name}
           onChange={handleInputChange}
@@ -95,7 +112,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
           required
         />
         <TextField
-          label="Password"
+          label="パスワード"
           name="password"
           type="password"
           value={formData.password}
@@ -105,7 +122,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
           required
         />
         <FormControl fullWidth margin="normal" required>
-          <InputLabel shrink={Boolean(formData.role)}>Role</InputLabel>
+          <InputLabel shrink={Boolean(formData.role)}>役職</InputLabel>
           <Select
             name="role"
             value={formData.role || ""}
@@ -114,13 +131,13 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="Employee">Employee</MenuItem>
+            <MenuItem value="Admin">管理者</MenuItem>
+            <MenuItem value="Employee">従業員</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="normal" required>
           <InputLabel shrink={Boolean(formData.department)}>
-            Department
+          部署
           </InputLabel>
           <Select
             name="department"
@@ -138,15 +155,14 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
           </Select>
         </FormControl>
         <FormControl fullWidth margin="normal" required>
-          <InputLabel shrink={Boolean(formData.position)}>Position</InputLabel>
+          <InputLabel shrink={Boolean(formData.position)}>役職</InputLabel>
           <Select
             name="position"
             value={formData.position || ""}
             onChange={handleSelectChange}
           >
             <MenuItem value="">
-
-            <em>None</em>
+              <em>None</em>
             </MenuItem>
             {positions.map((position) => (
               <MenuItem key={position.id} value={position.name}>
@@ -156,7 +172,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
           </Select>
         </FormControl>
         <TextField
-          label="Phone"
+          label="電話番号"
           name="phone"
           value={formData.phone}
           onChange={handleInputChange}
@@ -165,7 +181,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
           required
         />
         <TextField
-          label="Email"
+          label="メールアドレス"
           name="email"
           value={formData.email}
           onChange={handleInputChange}
@@ -176,10 +192,10 @@ const EditModal: React.FC<EditModalProps> = ({ open, data, onClose, onSave, posi
 
         <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
           <Button onClick={onClose} sx={{ mr: 1 }}>
-            Cancel
+            キャンセル
           </Button>
           <Button variant="contained" color="primary" onClick={handleSave}>
-            Save
+            保存
           </Button>
         </Box>
       </Box>

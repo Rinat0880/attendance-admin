@@ -92,7 +92,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.total_employee}</p>
-              <p className="Card-text">Total employees</p>
+              <p className="Card-text">総従業員</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/total_employees.png")}></img>
@@ -101,7 +101,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.ontime}</p>
-              <p className="Card-text">On Time</p>
+              <p className="Card-text">時間通り</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/on_time.png")}></img>
@@ -110,7 +110,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.absent}</p>
-              <p className="Card-text">Absent</p>
+              <p className="Card-text">欠席</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/absent.png")}></img>
@@ -119,7 +119,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.late_arrival}</p>
-              <p className="Card-text">Late Arrival</p>
+              <p className="Card-text">遅刻</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/late_arrival.png")}></img>
@@ -128,7 +128,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.early_departures}</p>
-              <p className="Card-text">Early Departures</p>
+              <p className="Card-text">早退</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/early_departures.png")}></img>
@@ -137,7 +137,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.early_come}</p>
-              <p className="Card-text">Early Come</p>
+              <p className="Card-text">早出</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/time-off.png")}></img>

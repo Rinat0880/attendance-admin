@@ -43,7 +43,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ onClose, open }) => {
       >
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Typography id="calendar-modal-title" variant="h6" component="h2">
-            Выберите дату
+           月と年を選択
           </Typography>
           <DatePicker
             label="Дата"

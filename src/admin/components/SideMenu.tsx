@@ -23,7 +23,7 @@ function SideMenu() {
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText primary="ダッシュボード" />
         </ListItemButton>
       </ListItem>
       <Divider />
@@ -35,7 +35,7 @@ function SideMenu() {
           <ListItemIcon>
             <PeopleIcon />
           </ListItemIcon>
-          <ListItemText primary="Department" />
+          <ListItemText primary="部署と役職" />
         </ListItemButton>
       </ListItem>
       <Divider />
@@ -47,7 +47,7 @@ function SideMenu() {
           <ListItemIcon>
             <EditIcon />
           </ListItemIcon>
-          <ListItemText primary="Employee Edit" />
+          <ListItemText primary="従業員の編集" />
         </ListItemButton>
       </ListItem>
       <Divider />

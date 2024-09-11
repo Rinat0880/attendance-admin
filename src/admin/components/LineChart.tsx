@@ -24,18 +24,18 @@ interface LineData {
 
 function LineChartComponent() {
   const monthsOfYear: string[] = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "1月",
+    "2月",
+    "3月",
+    "4月",
+    "5月",
+    "6月",
+    "7月",
+    "8月",
+    "9月",
+    "10月",
+    "11月",
+    "12月",
   ];
 
   const today = new Date();
@@ -146,7 +146,7 @@ function LineChartComponent() {
     <Box sx={{ backgroundColor: "#fff", padding: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6" align="left" sx={{ marginBottom: 2 }}>
-          Attendance Chart
+        出勤状況グラフ化
         </Typography>
 
         <div className={line.div}>
@@ -156,9 +156,9 @@ function LineChartComponent() {
             displayEmpty
             sx={{ marginRight: 2, minWidth: 80 }} // Added minWidth for better display
           >
-            <MenuItem value={0}>Interval 1</MenuItem>
-            <MenuItem value={1}>Interval 2</MenuItem>
-            <MenuItem value={2}>Interval 3</MenuItem>
+            <MenuItem value={0}>1日-10日</MenuItem>
+            <MenuItem value={1}>11日-20日</MenuItem>
+            <MenuItem value={2}>21日-30(31)日</MenuItem>
           </Select>
           <Button
             sx={{
@@ -171,7 +171,7 @@ function LineChartComponent() {
             variant="outlined"
             onClick={handleMonthDialogOpen}
           >
-            {selectedMonth} {selectedYear} {/* Выбранный месяц и год */}
+            {selectedMonth} {selectedYear + "年"} {/* Выбранный месяц и год */}
           </Button>
         </div>
       </Box>
@@ -208,12 +208,12 @@ function LineChartComponent() {
       />
 
       <Dialog open={openMonthDialog} onClose={handleMonthDialogClose}>
-        <DialogTitle>Select month and year</DialogTitle>
+        <DialogTitle>月と年を選択</DialogTitle>
         <DialogContent>
-          <Select value={selectedYear} onChange={handleYearChange} fullWidth>
+          <Select value={selectedYear} onChange={handleYearChange} sx={{minWidth: 300}}>
             {years.map((year, index) => (
               <MenuItem key={index} value={year}>
-                {year}
+                {year + "年"}
               </MenuItem>
             ))}
           </Select>

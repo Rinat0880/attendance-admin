@@ -66,7 +66,7 @@ const AttendanceTableHead: React.FC<AttendanceTableHeadProps> = ({
                 }}
               >
                 <MenuItem value="">
-                  <em>All</em>
+                  <em>すべて</em>
                 </MenuItem>
                 {column.id === "status" && statusOptions
                   ? statusOptions.map((value) => (

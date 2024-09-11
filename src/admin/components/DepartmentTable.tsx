@@ -22,8 +22,8 @@ function DepartmentTable({ departments, onEdit, onDelete }: DepartmentTableProps
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Department Name</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>部署名</TableCell>
+            <TableCell>アクション</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -32,8 +32,8 @@ function DepartmentTable({ departments, onEdit, onDelete }: DepartmentTableProps
               <TableCell>{department.name}</TableCell>
               <TableCell>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button onClick={() => onEdit(department)} variant="outlined" size='small'>Edit</Button>
-                <Button onClick={() => handleDelete(department.id)} variant="outlined" size='small' color="error">Delete</Button>
+                <Button onClick={() => onEdit(department)} variant="outlined" size='small'>編集</Button>
+                <Button onClick={() => handleDelete(department.id)} variant="outlined" size='small' color="error">削除</Button>
                 </Box>
               </TableCell>
             </TableRow>

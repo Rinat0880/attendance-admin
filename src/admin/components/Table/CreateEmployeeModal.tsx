@@ -19,7 +19,7 @@ interface CreateEmployeeModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (newEmployee: TableData) => void;
-  positions: Position[]; 
+  positions: Position[];
   departments: Department[];
 }
 
@@ -79,7 +79,6 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
     }
   };
 
-
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -95,14 +94,14 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
         }}
       >
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-          Create New Employee
+          新入社員の作成
         </Typography>
         <form onSubmit={handleSubmit} autoComplete="off">
           <TextField
             fullWidth
             margin="normal"
             name="full_name"
-            label="Full Name"
+            label="氏名"
             value={newEmployee.full_name || ""}
             onChange={handleInputChange}
             autoComplete="off"
@@ -112,7 +111,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             fullWidth
             margin="normal"
             name="employee_id"
-            label="Employee ID"
+            label="従業員 ID"
             value={newEmployee.employee_id || ""}
             onChange={handleInputChange}
             autoComplete="off"
@@ -123,14 +122,14 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             fullWidth
             margin="normal"
             name="password"
-            label="Password"
+            label="パスワード"
             type="password"
             value={newEmployee.password || ""}
             onChange={handleInputChange}
             autoComplete="new-password"
           />
           <FormControl fullWidth margin="normal" required>
-            <InputLabel shrink={Boolean(newEmployee.role)}>Role</InputLabel>
+            <InputLabel shrink={Boolean(newEmployee.role)}>役職</InputLabel>
             <Select
               name="role"
               value={newEmployee.role || ""}
@@ -139,79 +138,76 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
-              <MenuItem value="Employee">Employee</MenuItem>
+              <MenuItem value="Admin">管理者</MenuItem>
+              <MenuItem value="Employee">従業員</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal" required>
             <InputLabel shrink={Boolean(newEmployee.department)}>
-              Department
+              部署
             </InputLabel>
             <Select
-
-name="department"
-value={newEmployee.department || ""}
-onChange={handleSelectChange}
->
-<MenuItem value="">
-  <em>None</em>
-</MenuItem>
-{departments.map((department) => (
-  <MenuItem key={department.id} value={department.name}>
-    {department.name}
-  </MenuItem>
-))}
-</Select>
-</FormControl>
-<FormControl fullWidth margin="normal" required>
-<InputLabel shrink={Boolean(newEmployee.position)}>
-Position
-</InputLabel>
-<Select
-name="position"
-value={newEmployee.position || ""}
-onChange={handleSelectChange}
->
-<MenuItem value="">
-  <em>None</em>
-</MenuItem>
-{positions.map((position) => (
-  <MenuItem key={position.id} value={position.name}>
-    {position.name}
-  </MenuItem>
-))}
-</Select>
-</FormControl>
-<TextField
-fullWidth
-margin="normal"
-name="phone"
-label="Phone"
-value={newEmployee.phone || ""}
-onChange={handleInputChange}
-required
-/>
-<TextField
-fullWidth
-margin="normal"
-name="email"
-label="Email"
-value={newEmployee.email || ""}
-onChange={handleInputChange}
-required
-/>
-<Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
-<Button onClick={onClose} sx={{ mr: 1 }}>
-Cancel
-</Button>
-<Button type="submit" variant="contained">
-Save
-</Button>
-</Box>
-</form>
-</Box>
-</Modal>
-);
+              name="department"
+              value={newEmployee.department || ""}
+              onChange={handleSelectChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {departments.map((department) => (
+                <MenuItem key={department.id} value={department.name}>
+                  {department.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal" required>
+            <InputLabel shrink={Boolean(newEmployee.position)}>役職</InputLabel>
+            <Select
+              name="position"
+              value={newEmployee.position || ""}
+              onChange={handleSelectChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {positions.map((position) => (
+                <MenuItem key={position.id} value={position.name}>
+                  {position.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            margin="normal"
+            name="phone"
+            label="電話番号"
+            value={newEmployee.phone || ""}
+            onChange={handleInputChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="email"
+            label="メールアドレス"
+            value={newEmployee.email || ""}
+            onChange={handleInputChange}
+            required
+          />
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={onClose} sx={{ mr: 1 }}>
+              キャンセル
+            </Button>
+            <Button type="submit" variant="contained">
+              保存
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Modal>
+  );
 };
 
 export default CreateEmployeeModal;

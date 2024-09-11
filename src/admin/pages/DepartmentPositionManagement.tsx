@@ -166,14 +166,14 @@ useEffect(() => {
     <Box sx={{ width: '100%', padding: 0, marginTop: 2}} className="DepartmentPositionManagement">
       <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs value={activeTab} onChange={handleTabChange} aria-label="basic tabs example">
-          <Tab label="Departments" />
-          <Tab label="Positions" />
+          <Tab label="部署" />
+          <Tab label="役職" />
         </Tabs>
       </Box>
       {activeTab === 0 && (
         <>
           <Button variant="outlined" onClick={handleOpenDepartmentDialog} sx={{marginTop: 2}}> 
-            Add Department
+          部署を追加
           </Button>
           <DepartmentTable 
             departments={departments}
@@ -192,7 +192,7 @@ useEffect(() => {
       {activeTab === 1 && (
         <>
           <Button variant="outlined" onClick={handleOpenPositionDialog} sx={{marginTop: 2}}>
-            Add Position
+          役職を追加
           </Button>
           <PositionTable
             positions={positions}

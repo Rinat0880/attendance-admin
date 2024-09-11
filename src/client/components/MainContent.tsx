@@ -16,7 +16,7 @@ interface MainContentProps {
     [key: string]: number;
   };
   employeeId: string;
-  username: string; // Добавляем это свойство
+  username: string; 
   tableColumns: Column[];
 }
 
@@ -342,6 +342,7 @@ const MainContent: React.FC<MainContentProps> = ({
               onClick={handleComeClick}
               sx={{
                 borderRadius: 28,
+                mb: '12px',
                 backgroundColor: '#1cbeca',
                 '&:hover': {
                   backgroundColor: '#1a9bde',
@@ -355,6 +356,7 @@ const MainContent: React.FC<MainContentProps> = ({
               onClick={handleLeaveClick}
               sx={{
                 borderRadius: 28,
+                mb: '12px',
                 backgroundColor: '#ff9500',
                 '&:hover': {
                   backgroundColor: '#e88e00',

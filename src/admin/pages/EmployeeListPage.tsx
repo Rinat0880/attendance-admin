@@ -9,13 +9,13 @@ import { TableData, Column } from '../components/Table/types';
 import axiosInstance, { updateUser, createUser, uploadExcelFile, fetchDepartments, fetchPositions } from '../../utils/libs/axios';
 
 const columns: Column[] = [
-  { id: 'employee_id', label: 'Login'}, 
-  { id: 'full_name', label: 'Name' },
-  { id: 'department', label: 'Department' },
-  { id: 'position', label: 'Position' },
-  { id: 'phone', label: 'Phone Number' },
-  { id: 'email', label: 'Email' },
-  { id: 'action', label: 'Actions' },
+  { id: 'employee_id', label: 'ID'}, 
+  { id: 'full_name', label: '名前' },
+  { id: 'department', label: '部署' },
+  { id: 'position', label: '役職' },
+  { id: 'phone', label: '電話番号' },
+  { id: 'email', label: 'メールアドレス' },
+  { id: 'action', label: 'アクション' },
 ];
 
 export interface Department {
@@ -136,7 +136,7 @@ const EmployeeListPage: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Employee List</Typography>
+        {/* <Typography variant="h4">従業員リスト</Typography> */}
         <Box>
           <Button
             variant="contained"
@@ -144,7 +144,7 @@ const EmployeeListPage: React.FC = () => {
             onClick={() => setCreateModalOpen(true)}
             sx={{ bgcolor: '#00D891', '&:hover': { bgcolor: '#00AB73' } }}
           >
-            Create
+            作成
           </Button>
           <Button
             variant="contained"
@@ -152,7 +152,7 @@ const EmployeeListPage: React.FC = () => {
             onClick={() => setUploadModalOpen(true)}
             sx={{ bgcolor: '#00D891', '&:hover': { bgcolor: '#00AB73' }, ml: 2 }}
           >
-            Upload Excel
+            ファイルをアップロード
           </Button>
         </Box>
       </Box>
@@ -162,7 +162,7 @@ const EmployeeListPage: React.FC = () => {
         columns={columns}
         onEdit={handleEditOpen}
         onDelete={handleDelete}
-        tableTitle="Employee List"
+        tableTitle="従業員リスト"
         showCalendar={false}
       />
       <EditModal
