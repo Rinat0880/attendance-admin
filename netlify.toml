@@ -1,0 +1,3 @@
+[build]
+  command = "tsc && npm run build"
+  publish = "dist"
