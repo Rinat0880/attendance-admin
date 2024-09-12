@@ -46,13 +46,13 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ onClose, open }) => {
            月と年を選択
           </Typography>
           <DatePicker
-            label="Дата"
+            
             value={selectedDate}
             onChange={handleDateChange}
             sx={{ mt: 2, width: '100%' }}
           />
           <Button onClick={handleClose} variant="contained" sx={{ mt: 2 }}>
-            Выбрать
+          選択
           </Button>
         </LocalizationProvider>
       </Box>

@@ -65,10 +65,15 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const [pendingSearch, setPendingSearch] = useState("");
 
   useEffect(() => {
-    // Fetch data from API when component mounts
     const fetchEmployeeData = async () => {
       try {
-        const response = await axiosInstance().get("/attendance/list");
+        const formattedDate = selectedDate
+          ? selectedDate.toISOString().split('T')[0]
+          : new Date().toISOString().split('T')[0]; // Если нет выбранной даты, берём текущую
+  
+        const response = await axiosInstance().get(
+          `/attendance/list?date=${formattedDate}`
+        );
 
         const formattedData = response.data.data.results.map((item: any) => ({
           id: item.id,
@@ -91,7 +96,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     };
 
     fetchEmployeeData();
-  }, []);
+  }, [selectedDate]);
 
   useEffect(() => {
     const filtered = data.filter((row) => {
@@ -157,10 +162,10 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
       setSelectedDate(date);
       // Здесь вы можете добавить логику для фильтрации данных по выбранной дате
       console.log("Selected date:", date);
+      
     }
   };
 
-  // Вычисляем данные для текущей страницы
   const paginatedData = filteredData.slice(
     page * rowsPerPage,
     (page + 1) * rowsPerPage
