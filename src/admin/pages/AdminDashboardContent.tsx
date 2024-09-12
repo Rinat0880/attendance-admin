@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LineChartComponent from "../components/LineChart";
-import PieChartWithCustomizedLabel from "../components/Pie";
+import PieChartWithCustomizedLabel from "../components/pie";
 import SimpleBarChart from "../components/Bar";
 import AttendanceTable from "../components/Table/AttendanceTable";
 import { Column } from "../components/Table/types";
