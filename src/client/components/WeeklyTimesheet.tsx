@@ -4,7 +4,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { intervals } from './TimesheetData';
-import { getWeeklyTimesheetData } from './AttendanceService';
+import { getWeeklyTimesheetData } from './attendanceService';
 
 export interface TimesheetDay {
   work_day: string;
