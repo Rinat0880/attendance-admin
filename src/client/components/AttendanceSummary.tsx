@@ -4,7 +4,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import MonthSelectorModal from './MonthSelectorModal';
 import WeeklyTimesheet from './WeeklyTimesheet';
 import { SelectChangeEvent } from '@mui/material';
-import { getMonthlyAttendanceData } from './attendanceService';
+import { getMonthlyAttendanceData } from './AttendanceService';
 
 interface AttendanceSummaryProps {
   attendanceSummary: {
