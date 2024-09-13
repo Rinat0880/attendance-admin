@@ -38,10 +38,6 @@ export interface Position {
   department: string;
 }
 
-const OFFICE_LATITUDE = 41.3171712;
-const OFFICE_LONGITUDE = 69.3108736;
-const ALLOWED_DISTANCE_KM = 1;
-
 const MainContent: React.FC<MainContentProps> = ({
   tabIndex,
   handleTabChange,
@@ -115,42 +111,8 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   };
 
-  const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371; // Радиус Земли в километрах
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a = 
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
-      Math.sin(dLon / 2) * Math.sin(dLon / 2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-    const distance = R * c;
-    return distance;
-  };
-
-  const checkLocation = async (type: 'checkIn' | 'checkOut') => {
-    const position = await getCurrentPosition();
-    const distance = getDistanceFromLatLonInKm(
-      position.coords.latitude, 
-      position.coords.longitude, 
-      OFFICE_LATITUDE, 
-      OFFICE_LONGITUDE
-    );
-  
-    if (distance > ALLOWED_DISTANCE_KM) {
-      setMessage(`You are ${distance.toFixed(2)} km away from the office. ${type === 'checkIn' ? 'Check-in not registered.' : 'Check-out not registered.'}`);
-      setMessageColor('#ff0000');
-      return false;
-    }
-    return true;
-  };
-  
-
   const sendComeData = async () => {
     try {
-      const isInRange = await checkLocation('checkIn');
-      if (!isInRange) return;
-
       const position = await getCurrentPosition();
       const data = {
         employee_id: employeeId,
@@ -185,9 +147,6 @@ const MainContent: React.FC<MainContentProps> = ({
 
   const sendLeaveData = async () => {
     try {
-      const isInRange = await checkLocation('checkOut');
-      if (!isInRange) return;
-
       const position = await getCurrentPosition();
       const data = {
         employee_id: employeeId,
@@ -222,44 +181,26 @@ const MainContent: React.FC<MainContentProps> = ({
 
   const handleComeClick = async () => {
     try {
-      const isInRange = await checkLocation('checkIn');
-      if (!isInRange) return;
-  
-      const position = await getCurrentPosition();
-      const data = {
-        employee_id: employeeId,
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-  
-      const token = localStorage.getItem('access_token');
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      };
-  
-      console.log('Отправляемые данные:', data);
-      console.log('URL запроса:', '/attendance/createbyphone');
-      console.log('Токен авторизации:', token ? 'Присутствует' : 'Отсутствует');
-      console.log('Заголовки запроса:', headers);
-  
-      const response = await axiosInstance().post('/attendance/createbyphone', data);
-  
-      console.log(`Ответ сервера (checkIn):`, response.data);
-      if (response.data.status) {
-        setCheckInTime(response.data.data.come_time);
-        setMessage(`Добро пожаловать! Вы отметились в ${response.data.data.come_time}`);
+      const result = await sendComeData();
+      if (result && result.status) {
+        setCheckInTime(result.data.come_time);
+        setMessage(`Добро пожаловать! Вы отметились в ${result.data.come_time}`);
         setMessageColor('#000');
       } else {
-        setMessage(response.data.error || 'Произошла ошибка при отметке прихода.');
-        setMessageColor(response.data.error === 'distance from office is greater than office radius' ? '#ff0000' : '#000');
+        setMessage(result.error || 'Произошла ошибка при отметке прихода.');
+        setMessageColor('#ff0000');
       }
     } catch (error) {
       console.error('Ошибка при отправке запроса на отметку прихода:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        setMessage(error.response.data.error || 'Произошла ошибка при отметке прихода.');
+      } else {
+        setMessage('Произошла неизвестная ошибка при отметке прихода.');
+      }
       setMessageColor('#ff0000');
     }
   };
-
+  
   const handleLeaveClick = async () => {
     if (checkInTime !== '--:--') {
       try {
@@ -271,15 +212,19 @@ const MainContent: React.FC<MainContentProps> = ({
           setMessageColor('#000');
         } else {
           setMessage(result.error || 'Произошла ошибка при отметке выхода.');
-          setMessageColor(result.error === 'distance from office is greater than office radius' ? '#ff0000' : '#000');
+          setMessageColor('#ff0000');
         }
       } catch (error) {
         console.error('Ошибка при отправке запроса на отметку выхода:', error);
-        setMessage('Ошибка при отметке выхода. Пожалуйста, проверьте разрешения на геолокацию и попробуйте снова.');
+        if (axios.isAxiosError(error) && error.response) {
+          setMessage(error.response.data.error || 'Произошла ошибка при отметке выхода.');
+        } else {
+          setMessage('Произошла неизвестная ошибка при отметке выхода.');
+        }
         setMessageColor('#ff0000');
       }
     } else {
-      setMessage('Сначала отметьтесь на приход.');
+      setMessage('まず、出勤してください。');
       setMessageColor('#ff0000');
     }
   };
