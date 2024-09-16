@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box
+  Table, TableBody, TableCell, TableHead, TableRow, Paper, Button, Box
 } from '@mui/material';
 import { Department } from '../pages/DepartmentPositionManagement';
 import { deleteDepartment } from '../../utils/libs/axios';

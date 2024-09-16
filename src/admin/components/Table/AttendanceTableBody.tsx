@@ -11,7 +11,11 @@ interface AttendanceTableBodyProps {
 
 const formatValue = (value: DateOrString | boolean, key?: string): string => {
   if (value === undefined || value === null) {
-    return '';
+    // Special condition for checkOut to return "--:--"
+    if (key === 'checkOut') {
+      return '';
+    }
+    return '--:--';
   }
   if (typeof value === 'boolean') {
     return value ? 'Present' : 'Absent';
@@ -83,8 +87,6 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
               ? getStatusStyles(value as boolean)
               : { backgroundColor: '#fff', color: '#000' };
 
-              
-
             return (
               <TableCell key={column.id} sx={{ padding: '8px 16px' }}>
                 {column.id === 'status' && value !== undefined ? (
@@ -143,4 +145,3 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
 };
 
 export default AttendanceTableBody;
-

@@ -12,11 +12,15 @@ interface DepartmentDialogProps {
   onSave: (department: Department) => void;
 }
 
+
+
 function DepartmentDialog({ open, onClose, department, onSave }: DepartmentDialogProps) {
   const [name, setName] = useState(department?.name || '');
 
   const handleSave = async () => {
-    if (name.trim() !== '') {
+    if (name == department?.name) {
+      alert('using same names');
+    } else if (name.trim() !== '') {
       let savedDepartment;
       if (department) {
         await updateDepartment(department.id, name);

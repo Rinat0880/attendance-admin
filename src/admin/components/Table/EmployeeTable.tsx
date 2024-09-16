@@ -208,7 +208,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
           <Button
             onClick={handleSearchSubmit}
             variant="contained"
-            sx={{ ml: 1, width: "20%", bgcolor: "#111111", fontSize: "12px" }}
+            sx={{ ml: 1, width: "20%", bgcolor: "#105E82", fontSize: "12px" }}
           >
             検索
           </Button>

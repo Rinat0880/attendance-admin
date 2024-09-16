@@ -34,29 +34,22 @@ function DepartmentPositionManagement() {
   const [selectedDepartment] = useState('');
   
   
-  
-useEffect(() => {
-    const loadDepartments = async () => {
-      try {
-        const response = await fetchDepartments();
-        setDepartments(response); 
-      } catch (error) {
-        console.error("Failed to fetch departments", error);
-      }
-    };
 
-    const loadPositions = async () => {
-      try {
-        const response = await fetchPositions();
-        setPositions(response); 
-      } catch (error) {
-        console.error("Failed to fetch positions", error);
-      }
-    };
-
-    loadDepartments();
-    loadPositions();
+  useEffect(() => {
+    fetchData();
   }, []);
+  
+  const fetchData = async () => {
+    try {
+      const departmentsData = await fetchDepartments();
+      const positionsData = await fetchPositions();
+      setDepartments(departmentsData);
+      setPositions(positionsData);
+      
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    }
+  };
   
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -68,9 +61,11 @@ useEffect(() => {
   };
 
   const handleCloseDepartmentDialog = () => {
+    fetchData();
     setOpenDepartmentDialog(false);
     setNewDepartmentName('');
     setEditingDepartment(null);
+    
   };
 
   const handleOpenPositionDialog = () => {
@@ -78,10 +73,12 @@ useEffect(() => {
   };
 
   const handleClosePositionDialog = () => {
+    fetchData();
     setOpenPositionDialog(false);
     setNewPositionName('');
     setSelectedDepartmentId(null);
     setEditingPosition(null);
+    
   };
 
   const handleAddDepartment = () => {
@@ -92,9 +89,7 @@ useEffect(() => {
       };
       setDepartments([...departments, newDepartment]);
       handleCloseDepartmentDialog();
-    } else {
-      alert('Please enter a department name.');
-    }
+    } 
   };
 
   const handleUpdateDepartment = () => {
@@ -102,6 +97,7 @@ useEffect(() => {
       setDepartments(departments.map(d =>
         d.id === editingDepartment.id ? { ...d, name: newDepartmentName } : d
       ));
+      fetchData();
       handleCloseDepartmentDialog();
     } else {
       alert('Please enter a valid department name.');
@@ -117,6 +113,7 @@ useEffect(() => {
         department: selectedDepartment,
       };
       setPositions([...positions, newPosition]);
+      fetchData();
       handleClosePositionDialog();
     } else {
       alert('Please enter a position name and select a department.');
@@ -130,6 +127,7 @@ useEffect(() => {
       setPositions(positions.map(p =>
         p.id === editingPosition.id ? { ...p, name: newPositionName, departmentId: selectedDepartmentId } : p
       ));
+      fetchData();
       handleClosePositionDialog();
     } else {
       alert('Please enter a valid position name and select a department.');
@@ -140,12 +138,14 @@ useEffect(() => {
     if (window.confirm('Are you sure you want to delete this department?')) {
       setDepartments(departments.filter(d => d.id !== departmentId));
       setPositions(positions.filter(p => p.department_id !== departmentId));
+      fetchData();
     }
   };
 
   const handleDeletePosition = (positionId: number) => {
     if (window.confirm('Are you sure you want to delete this position?')) {
       setPositions(positions.filter(p => p.id !== positionId));
+      fetchData();
     }
   };
 
@@ -153,6 +153,7 @@ useEffect(() => {
     setEditingDepartment(department);
     setNewDepartmentName(department.name);
     setOpenDepartmentDialog(true);
+    
   };
 
   const handleEditPosition = (position: Position) => {

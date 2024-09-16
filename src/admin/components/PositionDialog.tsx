@@ -19,7 +19,10 @@ function PositionDialog({ open, onClose, position, departments, onSave }: Positi
   const [departmentId, setDepartmentId] = useState<number | string>(position?.department_id || '');
 
   const handleSave = async () => {
-    if (name.trim() !== '' && departmentId) {
+    if(name == position?.name && departmentId == position?.department_id) {
+      alert('You choosing same thing');
+    }
+     else if (name.trim() !== '' && departmentId) {
       let savedPosition;
       const department = departments.find((dept) => dept.id === Number(departmentId))?.name || 'Unknown';
 
