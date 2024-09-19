@@ -89,7 +89,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         }));
 
         setData(formattedData);
-        // console.log(formattedData);
       } catch (error) {
         console.error("Ошибка при загрузке данных:", error);
       }

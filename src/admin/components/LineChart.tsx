@@ -205,6 +205,7 @@ function LineChartComponent() {
         }}
         width={chartWidth}
         height={235}
+        
       />
 
       <Dialog open={openMonthDialog} onClose={handleMonthDialogClose}>
