@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import { Position, Department } from '../pages/DepartmentPositionManagement'; 
 import { deletePosition } from '../../utils/libs/axios';
+import { useTranslation } from 'react-i18next';
 
 interface PositionTableProps {
   positions: Position[];
@@ -18,6 +19,8 @@ function PositionTable({ positions, onEdit, onDelete, departments }: PositionTab
     onDelete(id);
   };
 
+  const { t } = useTranslation('admin');
+
   const getDepartmentName = (departmentId: number) => {
     const department = departments.find((dept) => dept.id === departmentId);
     return department ? department.name : 'Unknown';
@@ -28,9 +31,9 @@ function PositionTable({ positions, onEdit, onDelete, departments }: PositionTab
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>役職名</TableCell>
-            <TableCell>部署</TableCell>
-            <TableCell>アクション</TableCell>
+            <TableCell>{t('positionTable.jobTitle')}</TableCell>
+            <TableCell>{t('positionTable.positionName')}</TableCell>
+            <TableCell>{t('positionTable.action')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -40,8 +43,8 @@ function PositionTable({ positions, onEdit, onDelete, departments }: PositionTab
               <TableCell>{getDepartmentName(position.department_id)}</TableCell>
               <TableCell>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button onClick={() => onEdit(position)} variant="outlined" size='small'>編集</Button>
-                <Button onClick={() => handleDelete(position.id)} variant="outlined" size='small' color="error">削除</Button>
+                <Button onClick={() => onEdit(position)} variant="outlined" size='small'>{t('positionTable.editBtn')}</Button>
+                <Button onClick={() => handleDelete(position.id)} variant="outlined" size='small' color="error">{t('positionTable.deleteBtn')}</Button>
                 </Box>
               </TableCell>
             </TableRow>

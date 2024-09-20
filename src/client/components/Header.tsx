@@ -1,8 +1,8 @@
-// Header.tsx
-
 import React from 'react';
-import { Typography, Box, IconButton, Menu, MenuItem } from '@mui/material';
+import { Typography, Box, IconButton, Menu, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { styled } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   employeeId: string;
@@ -12,7 +12,32 @@ interface HeaderProps {
   handleMenuClose: () => void;
 }
 
+const CustomMenu = styled(Menu)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    backgroundColor: '#f4f4f4',
+    borderRadius: 2,
+    boxShadow: theme.shadows[3],
+    minWidth: 120,
+    '& .MuiMenuItem-root': {
+      color: '#333333',
+      backgroundColor: '#f4f4f4',
+      '&:hover': {
+        backgroundColor: '#ff3b30',
+        color: '#ffffff',
+      },
+      width: '100%',
+    },
+  },
+}));
+
 const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleMenuOpen, handleMenuClose }) => {
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (event: SelectChangeEvent) => {
+    i18n.changeLanguage(event.target.value);
+    handleMenuClose();
+  };
+
   return (
     <Box sx={{
       bgcolor: '#105e82', color: 'white', p: 2, display: 'flex',
@@ -23,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleM
       borderRadius: 3,
     }}>
       <Typography variant="h6" sx={{ ml: 2, color: '#ffffff', textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
-        こんにちは {employeeId}!
+        {t('greeting', { employeeId })}
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton 
@@ -38,30 +63,10 @@ const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleM
         >
           <MenuIcon />
         </IconButton>
-        <Menu
+        <CustomMenu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
-          PaperProps={{
-            sx: {
-              pt: 0,
-              mt: 1,
-              bgcolor: '#f4f4f4',
-              borderRadius: 2,
-              boxShadow: 3,
-              minWidth: 120,
-              '& .MuiMenuItem-root': {
-                mt: 0,
-                color: '#333333',
-                bgcolor: '#f4f4f4',
-                '&:hover': {
-                  bgcolor: '#ff3b30',
-                  color: '#ffffff',
-                },
-                width: '100%',
-              },
-            },
-          }}
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'right',
@@ -71,8 +76,18 @@ const Header: React.FC<HeaderProps> = ({ employeeId, onLogout, anchorEl, handleM
             horizontal: 'right',
           }}
         >
-          <MenuItem onClick={onLogout}>ログアウト</MenuItem>
-        </Menu>
+          <MenuItem>
+            <Select
+              value={i18n.language}
+              onChange={changeLanguage}
+              sx={{ minWidth: 120, color: 'inherit' }}
+            >
+              <MenuItem value="ja">{t('japanese')}</MenuItem>
+              <MenuItem value="en">{t('english')}</MenuItem>
+            </Select>
+          </MenuItem>
+          <MenuItem onClick={onLogout}>{t('logout')}</MenuItem>
+        </CustomMenu>
       </Box>
     </Box>
   );

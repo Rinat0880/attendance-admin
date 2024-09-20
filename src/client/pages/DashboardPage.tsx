@@ -16,7 +16,7 @@ interface DashboardPageProps {
 // Пример данных для колонок
 const columns: Column[] = [
   { id: 'id', label: 'ID' },
-  { id: 'status', label: 'Status', filterable: true, filterValues: ['Present', 'Absent', 'Excused Absence'] },
+  { id: 'status', label: 'Status', filterable: true, filterValues: ['Present', 'Absent'] },
 ];
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ employeeData, onLogout }) => {

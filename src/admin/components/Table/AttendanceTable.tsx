@@ -18,6 +18,7 @@ import AttendanceTableHead from "./AttendanceTableHead";
 import AttendanceTableBody from "./AttendanceTableBody";
 import CalendarModal from "./CalendarModal";
 import axiosInstance from "../../../utils/libs/axios";
+import { useTranslation } from 'react-i18next';
 
 interface AttendanceTableProps {
   columns: Column[];
@@ -63,6 +64,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [pendingSearch, setPendingSearch] = useState("");
+  const { t } = useTranslation('common');
+ 
+  
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
@@ -189,28 +193,29 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
               <CalendarTodayIcon />
             </IconButton>
           )}
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="氏名の検索..."
-            value={pendingSearch}
-            onChange={handleSearchChange}
-            onKeyPress={handleKeyPress}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ width: "75%" }}
-          />
+<TextField
+  variant="outlined"
+  size="small"
+  placeholder={t('table.searchPlaceholder')}
+  value={pendingSearch}
+  onChange={handleSearchChange}
+  onKeyPress={handleKeyPress}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon />
+      </InputAdornment>
+    ),
+  }}
+  sx={{ width: "75%" }}
+/>
+
           <Button
             onClick={handleSearchSubmit}
             variant="contained"
             sx={{ ml: 1, width: "20%", bgcolor: "#105E82", fontSize: "12px" }}
           >
-            検索
+            {t('table.searchBtn')}
           </Button>
         </Box>
       </Box>

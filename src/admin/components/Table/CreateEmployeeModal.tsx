@@ -14,6 +14,7 @@ import {
 import { TableData } from "./types";
 import { createUser } from "../../../utils/libs/axios"; // Импортируем функцию createUser
 import axiosInstance from "../../../utils/libs/axios";
+import { useTranslation } from "react-i18next";
 
 interface CreateEmployeeModalProps {
   open: boolean;
@@ -46,6 +47,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
     position: "",
     department: "",
   });
+  const { t } = useTranslation('admin');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -94,14 +96,14 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
         }}
       >
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-          新入社員の作成
+        {t('createEmployeeModal.title')}
         </Typography>
         <form onSubmit={handleSubmit} autoComplete="off">
           <TextField
             fullWidth
             margin="normal"
             name="full_name"
-            label="氏名"
+            label={t('createEmployeeModal.name')}
             value={newEmployee.full_name || ""}
             onChange={handleInputChange}
             autoComplete="off"
@@ -111,7 +113,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             fullWidth
             margin="normal"
             name="employee_id"
-            label="従業員 ID"
+            label={t('createEmployeeModal.employeeId')}
             value={newEmployee.employee_id || ""}
             onChange={handleInputChange}
             autoComplete="off"
@@ -122,14 +124,14 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             fullWidth
             margin="normal"
             name="password"
-            label="パスワード"
+            label={t('createEmployeeModal.password')}
             type="password"
             value={newEmployee.password || ""}
             onChange={handleInputChange}
             autoComplete="new-password"
           />
           <FormControl fullWidth margin="normal" required>
-            <InputLabel shrink={Boolean(newEmployee.role)}>役職</InputLabel>
+            <InputLabel shrink={Boolean(newEmployee.role)}>{t('createEmployeeModal.role')}</InputLabel>
             <Select
               name="role"
               value={newEmployee.role || ""}
@@ -138,13 +140,13 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="Admin">管理者</MenuItem>
-              <MenuItem value="Employee">従業員</MenuItem>
+              <MenuItem value="Admin">{t('createEmployeeModal.roleAdmin')}</MenuItem>
+              <MenuItem value="Employee">{t('createEmployeeModal.roleEmployee')}</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal" required>
             <InputLabel shrink={Boolean(newEmployee.department)}>
-              部署
+            {t('createEmployeeModal.department')}
             </InputLabel>
             <Select
               name="department"
@@ -162,7 +164,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal" required>
-            <InputLabel shrink={Boolean(newEmployee.position)}>役職</InputLabel>
+            <InputLabel shrink={Boolean(newEmployee.position)}>{t('createEmployeeModal.position')}</InputLabel>
             <Select
               name="position"
               value={newEmployee.position || ""}
@@ -182,7 +184,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             fullWidth
             margin="normal"
             name="phone"
-            label="電話番号"
+            label={t('createEmployeeModal.phoneNumber')}
             value={newEmployee.phone || ""}
             onChange={handleInputChange}
             required
@@ -191,17 +193,17 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
             fullWidth
             margin="normal"
             name="email"
-            label="メールアドレス"
+            label={t('createEmployeeModal.email')}
             value={newEmployee.email || ""}
             onChange={handleInputChange}
             required
           />
           <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
             <Button onClick={onClose} sx={{ mr: 1 }}>
-              キャンセル
+            {t('createEmployeeModal.cancelBtn')}
             </Button>
             <Button type="submit" variant="contained">
-              保存
+              {t('createEmployeeModal.saveBtn')}
             </Button>
           </Box>
         </form>

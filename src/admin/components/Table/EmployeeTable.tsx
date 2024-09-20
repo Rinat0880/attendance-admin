@@ -24,6 +24,7 @@ import AttendanceTableBody from "./AttendanceTableBody";
 import CalendarModal from "./CalendarModal";
 import axiosInstance from "../../../utils/libs/axios";
 import {deleteUser} from "../../../utils/libs/axios";
+import { useTranslation } from "react-i18next";
 
 interface EmployeeTableProps {
   columns: Column[];
@@ -64,6 +65,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   const [filteredData, setFilteredData] = useState<TableData[]>(data);
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [pendingSearch, setPendingSearch] = useState("");
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
@@ -192,7 +194,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
           <TextField
             variant="outlined"
             size="small"
-            placeholder="氏名の検索..."
+            placeholder={t('table.searchPlaceholder')}
             value={pendingSearch}
             onChange={handleSearchChange}
             onKeyPress={handleKeyPress}
@@ -210,7 +212,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             variant="contained"
             sx={{ ml: 1, width: "20%", bgcolor: "#105E82", fontSize: "12px" }}
           >
-            検索
+            {t('table.searchBtn')}
           </Button>
         </Box>
       </Box>

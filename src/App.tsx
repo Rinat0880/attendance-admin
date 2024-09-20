@@ -10,6 +10,7 @@ import { Box } from "@mui/material";
 import "./shared/styles/App.css";
 import QRCodeScanner from "./client/pages/QrCodeScanner";
 import BigTablePage from "./client/pages/BigTable";
+import './i18n';
 
 const theme = createTheme({
   palette: {

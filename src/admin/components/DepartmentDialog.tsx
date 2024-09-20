@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import { Department } from '../pages/DepartmentPositionManagement'; 
 import { createDepartment, updateDepartment } from '../../utils/libs/axios';
+import { useTranslation } from 'react-i18next';
 
 interface DepartmentDialogProps {
   open: boolean;
@@ -16,6 +17,7 @@ interface DepartmentDialogProps {
 
 function DepartmentDialog({ open, onClose, department, onSave }: DepartmentDialogProps) {
   const [name, setName] = useState(department?.name || '');
+  const { t } = useTranslation('admin');
 
   const handleSave = async () => {
     if (name == department?.name) {
@@ -38,13 +40,14 @@ function DepartmentDialog({ open, onClose, department, onSave }: DepartmentDialo
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{department ? '部署の編集' : '部署を追加'}</DialogTitle>
+      <DialogTitle>{department ? t('departmentTable.dialogTitleEdit') : t('departmentTable.dialogTitleAdd')}</DialogTitle>
+
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
           id="name"
-          label="部署名"
+          label={t('departmentTable.label')}
           type="text"
           fullWidth
           variant="standard"

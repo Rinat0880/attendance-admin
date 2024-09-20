@@ -7,16 +7,7 @@ import CreateEmployeeModal from '../components/Table/CreateEmployeeModal';
 import UploadExcelModal from '../components/Table/UploadExcelModal'; // Импортируем модальное окно для загрузки файла
 import { TableData, Column } from '../components/Table/types';
 import axiosInstance, { updateUser, createUser, uploadExcelFile, fetchDepartments, fetchPositions } from '../../utils/libs/axios';
-
-const columns: Column[] = [
-  { id: 'employee_id', label: 'ID'}, 
-  { id: 'full_name', label: '名前' },
-  { id: 'department', label: '部署' },
-  { id: 'position', label: '役職' },
-  { id: 'phone', label: '電話番号' },
-  { id: 'email', label: 'メールアドレス' },
-  { id: 'action', label: 'アクション' },
-];
+import { useTranslation } from 'react-i18next';
 
 export interface Department {
   id: number;
@@ -38,6 +29,17 @@ const EmployeeListPage: React.FC = () => {
   const [employeeData, setEmployeeData] = useState<TableData[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
+  const { t } = useTranslation('admin');
+
+  const columns: Column[] = [
+    { id: 'employee_id', label: t('employeeTable.employeeId') },
+    { id: 'full_name', label: t('employeeTable.fullName') },
+    { id: 'department', label: t('employeeTable.department') },
+    { id: 'position', label: t('employeeTable.position') },
+    { id: 'phone', label: t('employeeTable.phone') },
+    { id: 'email', label: t('employeeTable.email') },
+    { id: 'action', label: t('employeeTable.action') },
+  ];
 
   useEffect(() => {
     const loadDepartments = async () => {
@@ -135,8 +137,8 @@ const EmployeeListPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      <Typography variant="h4">{t('employeeList.pageTitle')}</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        {/* <Typography variant="h4">従業員リスト</Typography> */}
         <Box>
           <Button
             variant="contained"
@@ -144,7 +146,7 @@ const EmployeeListPage: React.FC = () => {
             onClick={() => setCreateModalOpen(true)}
             sx={{ bgcolor: '#00D891', '&:hover': { bgcolor: '#00AB73' } }}
           >
-            作成
+            {t('employeeList.createButton')}
           </Button>
           <Button
             variant="contained"
@@ -152,7 +154,7 @@ const EmployeeListPage: React.FC = () => {
             onClick={() => setUploadModalOpen(true)}
             sx={{ bgcolor: '#00D891', '&:hover': { bgcolor: '#00AB73' }, ml: 2 }}
           >
-            ファイルをアップロード
+            {t('employeeList.uploadButton')}
           </Button>
         </Box>
       </Box>
@@ -162,7 +164,7 @@ const EmployeeListPage: React.FC = () => {
         columns={columns}
         onEdit={handleEditOpen}
         onDelete={handleDelete}
-        tableTitle="従業員リスト"
+        tableTitle={t('employeeTable.title')}
         showCalendar={false}
       />
       <EditModal
@@ -187,7 +189,7 @@ const EmployeeListPage: React.FC = () => {
       />
     </Box>
   );
-};
+};  
 
 export default EmployeeListPage;
 

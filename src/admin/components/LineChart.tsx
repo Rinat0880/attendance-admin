@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import line from "./Line.module.css";
 import axiosInstance from "../../utils/libs/axios";
+import { useTranslation } from "react-i18next";
+
 
 interface LineData {
   percentage: number;
@@ -23,6 +25,7 @@ interface LineData {
 }
 
 function LineChartComponent() {
+  const { t } = useTranslation(['admin', 'common']);
   const monthsOfYear: string[] = [
     "1月",
     "2月",
@@ -45,12 +48,11 @@ function LineChartComponent() {
 
   const defaultInterval = currentDay <= 10 ? 0 : currentDay <= 20 ? 1 : 2;
 
-  // Генерируем года динамически от 2022 до текущего года
+  // Generate years dynamically from 2022 to the current year
   const years: string[] = Array.from(
-    { length: parseInt(currentYear) - 2022 + 1 }, // Преобразуем currentYear в число
+    { length: parseInt(currentYear) - 2022 + 1 }, // Convert currentYear to number
     (_, i) => (2022 + i).toString()
   );
-  
 
   const [attendanceData, setAttendanceData] = useState<number[]>([]);
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
@@ -146,7 +148,7 @@ function LineChartComponent() {
     <Box sx={{ backgroundColor: "#fff", padding: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6" align="left" sx={{ marginBottom: 2 }}>
-        出勤状況グラフ化
+          {t('admin:lineChart.title')}
         </Typography>
 
         <div className={line.div}>
@@ -156,9 +158,9 @@ function LineChartComponent() {
             displayEmpty
             sx={{ marginRight: 2, minWidth: 80 }} // Added minWidth for better display
           >
-            <MenuItem value={0}>1日-10日</MenuItem>
-            <MenuItem value={1}>11日-20日</MenuItem>
-            <MenuItem value={2}>21日-30(31)日</MenuItem>
+            <MenuItem value={0}>{t('admin:lineChart.interval.first')}</MenuItem>
+            <MenuItem value={1}>{t('admin:lineChart.interval.second')}</MenuItem>
+            <MenuItem value={2}>{t('admin:lineChart.interval.third')}</MenuItem>
           </Select>
           <Button
             sx={{
@@ -171,7 +173,7 @@ function LineChartComponent() {
             variant="outlined"
             onClick={handleMonthDialogOpen}
           >
-            {selectedMonth} {selectedYear + "年"} {/* Выбранный месяц и год */}
+            {`${selectedMonth} ${selectedYear}年`}
           </Button>
         </div>
       </Box>
@@ -184,11 +186,11 @@ function LineChartComponent() {
         ]}
         yAxis={[
           {
-            min: 0, // Задаем минимальное значение оси Y
+            min: 0, // Set minimum value for Y axis
             max: 100,
             colorMap: {
               type: "continuous",
-              min:-20,
+              min: -20,
               max: 80,
               color: ["transparent", "rgba(51, 84, 244, 0.6)"],
             },
@@ -205,16 +207,15 @@ function LineChartComponent() {
         }}
         width={chartWidth}
         height={235}
-        
       />
 
       <Dialog open={openMonthDialog} onClose={handleMonthDialogClose}>
-        <DialogTitle>月と年を選択</DialogTitle>
+        <DialogTitle>{t('selectMonthAndYear')}</DialogTitle>
         <DialogContent>
-          <Select value={selectedYear} onChange={handleYearChange} sx={{minWidth: 300}}>
+          <Select value={selectedYear} onChange={handleYearChange} sx={{ minWidth: 300 }}>
             {years.map((year, index) => (
               <MenuItem key={index} value={year}>
-                {year + "年"}
+                {`${year}年`}
               </MenuItem>
             ))}
           </Select>
@@ -232,7 +233,7 @@ function LineChartComponent() {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleMonthDialogClose}>OK</Button>
+          <Button onClick={handleMonthDialogClose}>{t('ok')}</Button>
         </DialogActions>
       </Dialog>
     </Box>

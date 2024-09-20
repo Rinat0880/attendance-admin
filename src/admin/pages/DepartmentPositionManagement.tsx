@@ -6,6 +6,7 @@ import DepartmentDialog from '../components/DepartmentDialog';
 import PositionDialog from '../components/PositionDialog';
 import '../../shared/styles/App.css';
 import { fetchDepartments, fetchPositions } from '../../utils/libs/axios';
+import { useTranslation } from 'react-i18next';
 
 export interface Department {
   id: number;
@@ -32,6 +33,7 @@ function DepartmentPositionManagement() {
   const [newPositionName, setNewPositionName] = useState('');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | null>(null);
   const [selectedDepartment] = useState('');
+  const { t } = useTranslation('admin');
   
   
 
@@ -167,14 +169,14 @@ function DepartmentPositionManagement() {
     <Box sx={{ width: '100%', padding: 0, marginTop: 2}} className="DepartmentPositionManagement">
       <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs value={activeTab} onChange={handleTabChange} aria-label="basic tabs example">
-          <Tab label="部署" />
-          <Tab label="役職" />
+          <Tab label = {t('positionTable.changeDep')}/>
+          <Tab label={t('positionTable.changePos')} />
         </Tabs>
       </Box>
       {activeTab === 0 && (
         <>
           <Button variant="outlined" onClick={handleOpenDepartmentDialog} sx={{marginTop: 2}}> 
-          部署を追加
+          {t('departmentTable.dialogTitleAdd')}
           </Button>
           <DepartmentTable 
             departments={departments}
@@ -193,7 +195,7 @@ function DepartmentPositionManagement() {
       {activeTab === 1 && (
         <>
           <Button variant="outlined" onClick={handleOpenPositionDialog} sx={{marginTop: 2}}>
-          役職を追加
+          {t('positionTable.dialogTitleAdd')}
           </Button>
           <PositionTable
             positions={positions}

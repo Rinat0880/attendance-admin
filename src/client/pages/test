@@ -234,7 +234,7 @@ const QRCodeScanner: React.FC = () => {
               <Typography variant="h3" gutterBottom sx={{ color: getMessageColor() }}>
                 {messageType === 'check-in' ? 'チェックイン成功' : 
                  messageType === 'check-out' ? 'チェックアウト成功' : 
-                 ''}
+                 'エラー'}
               </Typography>
               {serverMessage && (
                 <Typography variant="h5" sx={{ marginTop: 2, color: getMessageColor() }}>

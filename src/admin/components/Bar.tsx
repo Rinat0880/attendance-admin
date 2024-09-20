@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart } from "@mui/x-charts";
 import axiosInstance from '../../utils/libs/axios';
+import { useTranslation } from 'react-i18next';
 
 interface BarData {
   department: string;
@@ -10,6 +11,7 @@ interface BarData {
 export default function SimpleBarChart() {
   const [data, setData] = useState<number[]>([]);
   const [xLabels, setXLabels] = useState<string[]>([]);
+  const { t } = useTranslation('admin');
 
   useEffect(() => {
     getBarData();
@@ -45,7 +47,7 @@ export default function SimpleBarChart() {
       series={[
         {
           data,
-          label: ("部署別出勤率"),
+          label: t('barLabel'),
           id: "pvId",
           
         },

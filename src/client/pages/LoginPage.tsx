@@ -72,7 +72,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           },
         };
 
-
         // console.log('Сохранение данных сотрудника в localStorage:', tempEmployeeData);
         localStorage.setItem("employeeData", JSON.stringify(tempEmployeeData));
         onLoginSuccess(tempEmployeeData);

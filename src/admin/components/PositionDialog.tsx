@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { Department, Position } from '../pages/DepartmentPositionManagement'; 
 import { createPosition, updatePosition } from '../../utils/libs/axios'; 
+import { useTranslation } from 'react-i18next';
 
 interface PositionDialogProps {
   open: boolean;
@@ -17,6 +18,7 @@ interface PositionDialogProps {
 function PositionDialog({ open, onClose, position, departments, onSave }: PositionDialogProps) {
   const [name, setName] = useState(position?.name || '');
   const [departmentId, setDepartmentId] = useState<number | string>(position?.department_id || '');
+  const { t } = useTranslation('admin');
 
   const handleSave = async () => {
     if(name == position?.name && departmentId == position?.department_id) {
@@ -43,13 +45,13 @@ function PositionDialog({ open, onClose, position, departments, onSave }: Positi
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{position ? '役職の編集' : '役職を追加'}</DialogTitle>
+      <DialogTitle>{position ? t('positionTable.dialogTitleEdit'):t('positionTable.dialogTitleAdd')}</DialogTitle> 
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
           id="name"
-          label="役職名"
+          label={t('positionTable.label')}
           type="text"
           fullWidth
           variant="standard"
@@ -57,7 +59,7 @@ function PositionDialog({ open, onClose, position, departments, onSave }: Positi
           onChange={(e) => setName(e.target.value)}
         />
         <FormControl fullWidth variant="standard" sx={{ marginTop: 2 }}>
-          <InputLabel id="department-select-label">Department</InputLabel>
+          <InputLabel id="department-select-label">{t('positionTable.changeDep')}</InputLabel>
           <Select
             labelId="department-select-label"
             id="department-select"

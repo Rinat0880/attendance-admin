@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import LineChartComponent from "../components/LineChart";
 import PieChartWithCustomizedLabel from "../components/pie";
 import SimpleBarChart from "../components/Bar";
@@ -19,6 +20,8 @@ export interface Position {
 }
 
 function AdminDashboardContent() {
+  const { t } = useTranslation('admin'); // Используем useTranslation для доступа к переводам
+
   const [departments, setDepartments] = useState<Department[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
   const [attendanceStats, setAttendanceStats] = useState({
@@ -31,15 +34,15 @@ function AdminDashboardContent() {
   });
 
   const columns: Column[] = [
-    { id: 'employee_id', label: 'ID' },
-    { id: 'full_name', label: '名前', filterable: true },
-    { id: 'department', label: '部署', filterable: true},
-    { id: 'position', label: '役職', filterable: true},
-    { id: 'work_day', label: '勤務日' },
-    { id: 'status', label: '状態', filterable: true},
-    { id: 'come_time', label: '出勤時間' },
-    { id: 'leave_time', label: '退勤時間' },
-    { id: 'total_hourse', label: '総労働時間' },
+    { id: 'employee_id', label: t('employeeId') },
+    { id: 'full_name', label: t('fullName'), filterable: true },
+    { id: 'department', label: t('department'), filterable: true },
+    { id: 'position', label: t('position'), filterable: true },
+    { id: 'work_day', label: t('workDay') },
+    { id: 'status', label: t('status'), filterable: true },
+    { id: 'come_time', label: t('comeTime') },
+    { id: 'leave_time', label: t('leaveTime') },
+    { id: 'total_hourse', label: t('totalHours') },
   ] as Column[];
 
   useEffect(() => {
@@ -76,7 +79,6 @@ function AdminDashboardContent() {
       }
     };
 
-
     loadDepartments();
     loadPositions();
   }, []);
@@ -86,13 +88,12 @@ function AdminDashboardContent() {
       <div className="DashboardContainer">
         <div className="Chart-2">
             <PieChartWithCustomizedLabel />
-          
         </div>
         <div className="Cards">
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.total_employee}</p>
-              <p className="Card-text">総従業員</p>
+              <p className="Card-text">{t('totalEmployee')}</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/total_employees.png")}></img>
@@ -101,7 +102,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.ontime}</p>
-              <p className="Card-text">時間通り</p>
+              <p className="Card-text">{t('onTime')}</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/on_time.png")}></img>
@@ -110,7 +111,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.absent}</p>
-              <p className="Card-text">欠席</p>
+              <p className="Card-text">{t('absent')}</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/absent.png")}></img>
@@ -119,7 +120,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.late_arrival}</p>
-              <p className="Card-text">遅刻</p>
+              <p className="Card-text">{t('lateArrival')}</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/late_arrival.png")}></img>
@@ -128,7 +129,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.early_departures}</p>
-              <p className="Card-text">早退</p>
+              <p className="Card-text">{t('earlyDepartures')}</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/early_departures.png")}></img>
@@ -137,7 +138,7 @@ function AdminDashboardContent() {
           <div className="Card">
             <div className="data">
               <p className="Card-amount">{attendanceStats.early_come}</p>
-              <p className="Card-text">早出</p>
+              <p className="Card-text">{t('earlyCome')}</p>
             </div>
             <div className="icon">
               <img src={require("../../shared/png/time-off.png")}></img>
@@ -154,7 +155,7 @@ function AdminDashboardContent() {
         </div>
       </div>
       <div className="TableSection">
-        <AttendanceTable departments={departments} positions={positions} columns={columns} showCalendar={true}/>
+        <AttendanceTable departments={departments} positions={positions} columns={columns} showCalendar={true} tableTitle={t('common:table.title')}/>
       </div>
     </>
   );

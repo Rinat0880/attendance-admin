@@ -7,6 +7,7 @@ import {
   Stack,
 } from "@mui/material";
 import { uploadExcelFile } from "../../../utils/libs/axios";
+import { useTranslation } from "react-i18next";
 
 interface UploadExcelModalProps {
   open: boolean;
@@ -20,6 +21,7 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
   onUpload,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { t } = useTranslation('admin');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -66,7 +68,7 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
         }}
       >
         <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-          Excelファイルのアップロード
+        {t('uploadModal.title')}
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box sx={{ mb: 3 }}> {/* Added spacing */}
@@ -74,7 +76,7 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
               variant="contained"
               component="label"
             >
-              ファイルを選択
+              {t('uploadModal.selectedFileBtn')}
               <input
                 type="file"
                 hidden
@@ -85,15 +87,15 @@ const UploadExcelModal: React.FC<UploadExcelModalProps> = ({
             </Button>
             {selectedFile && (
               <Typography variant="body2" sx={{ mt: 2 }}>
-                選択されたファイル: {selectedFile.name}
+                {t('uploadModal.fileName')} {selectedFile.name}
               </Typography>
             )}
           </Box>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Stack direction="row" spacing={1}>
-              <Button onClick={onClose}>キャンセル</Button>
+              <Button onClick={onClose}>{t('uploadModal.cancelBtn')}</Button>
               <Button type="submit" variant="contained" disabled={!selectedFile}>
-              アップロード
+              {t('uploadModal.uploadBtn')}
               </Button>
             </Stack>
           </Box>

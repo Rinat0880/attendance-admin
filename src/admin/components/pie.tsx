@@ -3,6 +3,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { useDrawingArea } from '@mui/x-charts/hooks';
 import { styled } from '@mui/material/styles';
 import axiosInstance from '../../utils/libs/axios';
+import { useTranslation } from 'react-i18next'; // Подключаем useTranslation
 
 interface PieData {
   absent: number;
@@ -36,20 +37,20 @@ function PieCenterLabel({ children }: PieCenterLabelProps) {
 
 export default function PieChartWithCenterLabel() {
   const [data, setData] = useState<{ value: number; label: string }[]>([]);
+  const { t } = useTranslation('admin'); // Используем useTranslation для получения функции t
 
   useEffect(() => {
     getPieData();
-  }, []);
+  }, [t]); // Добавляем t в зависимости useEffect, чтобы реагировать на изменения языка
 
   const getPieData = async () => {
     try {
       const response = await axiosInstance().get('/attendance/piechart');
       const pieValue: PieData = response.data.data;
       
-      
       setData([
-        { value: pieValue.come, label: '出席' },
-        { value: pieValue.absent, label: '欠席' },
+        { value: pieValue.come, label: t('pieChart.come') }, // Используем перевод для меток
+        { value: pieValue.absent, label: t('pieChart.absent') }, // Используем перевод для меток
       ]);
     } catch (err) {
       console.log(err);

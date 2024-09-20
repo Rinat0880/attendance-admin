@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, IconButton, Modal, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useTranslation } from 'react-i18next';
 
 interface MonthSelectorModalProps {
   open: boolean;
@@ -11,12 +12,14 @@ interface MonthSelectorModalProps {
   onYearChange: (event: SelectChangeEvent<number>) => void;
 }
 
-// Массив с названиями месяцев на японском
-const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-
 const years = [2024, 2023, 2022, 2021]; // Добавьте нужные годы
 
 const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, selectedMonth, onMonthChange, selectedYear, onYearChange }) => {
+  const { t } = useTranslation(['user']);
+
+  // Используем переводы для названий месяцев
+  const months = t('weeklyTimesheet.months', { returnObjects: true }) as string[];
+
   return (
     <Modal
       open={open}
@@ -50,7 +53,7 @@ const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, 
         </IconButton>
 
         <Typography variant="h6" sx={{ mb: 2 }}>
-          月と年を選択
+          {t('monthSelectorModal.title')}
         </Typography>
 
         <Box sx={{ mb: 2 }}>
@@ -62,7 +65,7 @@ const MonthSelectorModal: React.FC<MonthSelectorModalProps> = ({ open, onClose, 
           >
             {years.map(year => (
               <MenuItem key={year} value={year}>
-                {year}年
+                {year}{t('monthSelectorModal.year')}
               </MenuItem>
             ))}
           </Select>

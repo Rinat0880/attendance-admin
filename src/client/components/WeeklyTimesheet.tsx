@@ -5,6 +5,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { intervals } from './TimesheetData';
 import { getWeeklyTimesheetData } from './attendanceService';
+import { useTranslation } from 'react-i18next';
 
 export interface TimesheetDay {
   work_day: string;
@@ -13,10 +14,37 @@ export interface TimesheetDay {
   total_hours: string | null;
 }
 
+
+interface TimeDisplayProps {
+  time: string;
+  color: string;
+}
+
+
 interface WeeklyTimesheetProps {
   year: number;
   month: number;
 }
+
+const TimeDisplay: React.FC<TimeDisplayProps> = ({ time, color }) => (
+  <Typography 
+    variant="body2" 
+    sx={{ 
+      color, 
+      fontSize: '16px', 
+      fontFamily: 'Roboto Mono', 
+      fontWeight: '500',
+      width: '4ch',  // Ширина, равная 5 символам
+      display: 'inline-block',
+      textAlign: 'center'
+    }}
+  >
+    {time}
+  </Typography>
+);
+
+
+
 
 const getWeekRangeFromDate = (workDay: string): string => {
   const day = parseInt(workDay.split('-')[2], 10);
@@ -30,42 +58,62 @@ const formatDay = (day: string): string => {
   return String(dayNumber).padStart(2, '0');
 };
 
-const getTimeColor = (time: string | null, isCheckIn: boolean): string => {
-  if (!time || time === '00:00') return '#cccccc';
+const formatTime = (time: string | null): string => {
+  if (!time || time === '00:00') return '--:--';
+  return time;
+};
+
+const getTimeColor = (time: string | null): string => {
+  if (!time || time === '00:00' || time === '--:--') return '#cccccc';
   const [hours, minutes] = time.split(':').map(Number);
   
-  if (isCheckIn) {
-    return hours < 10 || (hours === 10 && minutes <= 30) ? '#00af6c' : '#ff9500';
+  if (hours < 10 || (hours === 10 && minutes <= 30)) {
+    return '#00af6c';  // Зеленый для раннего прихода
   } else {
-    return hours > 18 || (hours === 18 && minutes >= 0) ? '#00af6c' : '#ff9500';
+    return '#ff9500';  // Оранжевый для позднего прихода/ухода
   }
 };
 
 const getTotalHoursColor = (totalHours: string | null): string => {
-  if (!totalHours || totalHours === '00:00') return '#cccccc';
+  if (!totalHours || totalHours === '00:00' || totalHours === '--:--') return '#cccccc';
   return '#2196f3';
 };
 
-// const isWeekend = (weekday: string): boolean => {
-//   return weekday === 'суббота' || weekday === 'воскресенье';
-// };
-
-const getWeekday = (dateString: string): string => {
+const isWeekend = (dateString: string): boolean => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('ja-JP', { weekday: 'short' });
+  return date.getDay() === 0 || date.getDay() === 6;
 };
 
-const getJapaneseDateRange = (interval: string, daysInMonth: number): string => {
+const isAbsent = (day: TimesheetDay): boolean => {
+  const today = new Date();
+  const dayDate = new Date(day.work_day);
+  return dayDate < today && (!day.come_time || day.come_time === '00:00') && (!day.leave_time || day.leave_time === '00:00') && (!day.total_hours || day.total_hours === '00:00');
+};
+
+const getIconColor = (day: TimesheetDay, timeType: 'come' | 'leave' | 'total'): string => {
+  if (isWeekend(day.work_day)) return '#cccccc';
+  if (isAbsent(day)) return '#ff0000';
+  return timeType === 'total' ? getTotalHoursColor(day.total_hours) : getTimeColor(day[`${timeType}_time`]);
+};
+
+
+const getJapaneseDateRange = (interval: string, daysInMonth: number, t: any): string => {
   switch (interval) {
     case '0':
-      return '1日-10日';
+      return t('weeklyTimesheet.dateRange.first');
     case '1':
-      return '11日-20日';
+      return t('weeklyTimesheet.dateRange.second');
     case '2':
-      return `21日-${daysInMonth}日`;
+      return t('weeklyTimesheet.dateRange.third', { lastDay: daysInMonth });
     default:
       return '';
   }
+};
+
+const getWeekday = (dateString: string, t: any): string => {
+  const date = new Date(dateString);
+  const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  return t(`weeklyTimesheet.weekdays.${weekdays[date.getDay()]}`);
 };
 
 const getDefaultInterval = (): string => {
@@ -76,10 +124,9 @@ const getDefaultInterval = (): string => {
 };
 
 const WeeklyTimesheet: React.FC<WeeklyTimesheetProps> = ({ year, month }) => {
+  const { t } = useTranslation('user');
   const [selectedInterval, setSelectedInterval] = useState<string>(getDefaultInterval());
   const [timesheetData, setTimesheetData] = useState<TimesheetDay[] | null>(null);
-
-  
 
   const daysInMonth = new Date(year, month, 0).getDate();
 
@@ -105,7 +152,7 @@ const WeeklyTimesheet: React.FC<WeeklyTimesheetProps> = ({ year, month }) => {
     fetchData();
   }, [year, month, selectedInterval]);
 
-  const intervalDisplayNames = intervals.map(interval => getJapaneseDateRange(interval, daysInMonth));
+  const intervalDisplayNames = intervals.map(interval => getJapaneseDateRange(interval, daysInMonth, t));
 
   const selectedDays = useMemo(() => {
     if (!timesheetData) return [];
@@ -119,130 +166,118 @@ const WeeklyTimesheet: React.FC<WeeklyTimesheetProps> = ({ year, month }) => {
   }, [timesheetData, selectedInterval]);
 
   return (
-<Box id='WEEKLY' sx={{ mb: 3, mt: 3, backgroundColor: '#ffffff', borderRadius: 2, overflow: 'hidden', boxShadow: 1, p: 1 }}>
-  {/* Интервал кнопок */}
-  <ButtonGroup size='large' variant="outlined" aria-label="выбор интервала" sx={{
-    borderColor: 'transparent',
-    boxShadow: '0 0 5px rgba(0,0,0,0.2)',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-    p: '0.1px',
-    mb: '16px',
-    width: '100%', // Занимает всю ширину
-  }}>
-    {intervals.map((interval, index) => (
-      <Button
-        key={interval}
-        onClick={() => handleIntervalChange(interval)}
-        variant={selectedInterval === interval ? 'contained' : 'outlined'}
-        sx={{
-          flexGrow: 1,
-          borderRadius: '8px',
-          borderColor: selectedInterval === interval ? 'transparent' : '#e0e0e0',
-          backgroundColor: selectedInterval === interval ? '#105e82' : 'white',
-          color: selectedInterval === interval ? 'white' : '#105e82',
-          transition: 'all 0.3s ease',
-          textTransform: 'none',
-          '&:hover': {
-            backgroundColor: selectedInterval === interval ? '#0d4b66' : '#f0f0f0',
-          },
-          '&:focus': {
-            outline: 'none',
-          },
-          '&:not(:last-child)': {
-            borderRight: '1px solid #e0e0e0',
-          },
-          padding: '8px 14px',
-          mb: '0.1px',
-          minWidth: '80px', // Обеспечивает минимальную ширину для кнопок
-        }}
-      >
-        {intervalDisplayNames[index]}
-      </Button>
-    ))}
-  </ButtonGroup>
-  
-  {/* Основной контент */}
-  <Grid container spacing={1}>
-  {selectedDays.length > 0 ? (
-    selectedDays.map((day) => {
-      const weekday = getWeekday(day.work_day);
-      const checkInColor = getTimeColor(day.come_time, true);
-      const checkOutColor = getTimeColor(day.leave_time, false);
-      const totalHoursColor = getTotalHoursColor(day.total_hours);
-
-      return (
-        <Grid item xs={12} key={day.work_day}>
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: '#ffffff',
-            borderRadius: 1,
-            p: 1,
-            boxShadow: 1,
-            height: 'auto',
-            flexDirection: 'row', // Горизонтальное выравнивание
-            textAlign: 'center',
-          }}>
-            {/* Дата и день недели */}
-            <Box sx={{ width: '17%', p: 0.5 }}>
-              <Typography variant="body2" sx={{ fontSize: '16px', fontFamily:'Roboto mono', lineHeight: '1.5' }}>
-                {formatDay(day.work_day)} {weekday}
-              </Typography>
-            </Box>
-
-            {/* Вход, выход, тотал */}
-            <Box id='come,leave,total' sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-around',
+    <Box id='WEEKLY' sx={{ mb: 3, mt: 3, backgroundColor: '#ffffff', borderRadius: 2, overflow: 'hidden', boxShadow: 1, p: 1 }}>
+      {/* Интервал кнопок */}
+      <ButtonGroup size='large' variant="outlined" aria-label="выбор интервала" sx={{
+        borderColor: 'transparent',
+        boxShadow: '0 0 5px rgba(0,0,0,0.2)',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        backgroundColor: '#ffffff',
+        p: '0.1px',
+        mb: '16px',
+        width: '100%',
+      }}>
+        {intervals.map((interval, index) => (
+          <Button
+            key={interval}
+            onClick={() => handleIntervalChange(interval)}
+            variant={selectedInterval === interval ? 'contained' : 'outlined'}
+            sx={{
+              cursor: 'pointer',
               flexGrow: 1,
-              width: '80%',
-            }}>
-              {/* Вход */}
-              <Box id='come' sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
-                <AccessTimeIcon sx={{ fontSize: 20, color: checkInColor, mr: 0.5 }} />
-                <Typography variant="body2" sx={{ color: checkInColor, fontSize: '16px', fontFamily: 'Roboto Mono', fontWeight: '500' }}>
-                  {day.come_time || '--:--'}
-                </Typography>
-              </Box>
+              borderRadius: '8px',
+              borderColor: selectedInterval === interval ? 'transparent' : '#e0e0e0',
+              backgroundColor: selectedInterval === interval ? '#105e82' : 'white',
+              color: selectedInterval === interval ? 'white' : '#105e82',
+              transition: 'all 0.3s ease',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: selectedInterval === interval ? '#0d4b66' : '#f0f0f0',
+              },
+              '&:focus': {
+                outline: 'none',
+              },
+              '&:not(:last-child)': {
+                borderRight: '1px solid #e0e0e0',
+              },
+              padding: '8px 14px',
+              mb: '0.1px',
+              minWidth: '80px',
+            }}
+          >
+            {intervalDisplayNames[index]}
+          </Button>
+        ))}
+      </ButtonGroup>
+      
+      <Grid container spacing={1}>
+      {selectedDays.length > 0 ? (
+        selectedDays.map((day) => {
+          const weekday = getWeekday(day.work_day, t);
 
-              {/* Выход */}
-              <Box id='leave' sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
-                <ExitToAppIcon sx={{ fontSize: 20, color: checkOutColor, mr: 0.5 }} />
-                <Typography variant="body2" sx={{ color: checkOutColor, fontSize: '16px', fontFamily: 'Roboto Mono', fontWeight: '500' }}>
-                  {day.leave_time || '--:--'}
-                </Typography>
-              </Box>
+          return (
+            <Grid item xs={12} key={day.work_day}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: '#ffffff',
+                borderRadius: 1,
+                p: 1,
+                boxShadow: 1,
+                height: 'auto',
+                flexDirection: 'row',
+                textAlign: 'center',
+              }}>
+                {/* Дата и день недели */}
+                <Box sx={{ width: '17%', p: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: '16px', fontFamily:'Roboto mono', lineHeight: '1.5' }}>
+                    {formatDay(day.work_day)} {weekday}
+                  </Typography>
+                </Box>
 
-              {/* Тотал */}
-              <Box id='total' sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
-                <TimelapseIcon sx={{ fontSize: 20, color: totalHoursColor, mr: 0.5 }} />
-                <Typography variant="body2" sx={{ color: totalHoursColor, fontSize: '16px', fontFamily: 'Roboto Mono', fontWeight: '500'}}>
-                  {day.total_hours || '--:--'}
-                </Typography>
+                {/* Вход, выход, тотал */}
+                <Box id='come,leave,total' sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                  flexGrow: 1,
+                  width: '80%',
+                }}>
+                  {/* Вход */}
+                  <Box id='come' sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
+                    <AccessTimeIcon sx={{ fontSize: 20, color: getIconColor(day, 'come'), mr: 0.5 }} />
+                    <TimeDisplay time={formatTime(day.come_time)} color={getTimeColor(day.come_time)} />
+                  </Box>
+
+                  {/* Выход */}
+                  <Box id='leave' sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
+                    <ExitToAppIcon sx={{ fontSize: 20, color: getIconColor(day, 'leave'), mr: 0.5 }} />
+                    <TimeDisplay time={formatTime(day.leave_time)} color={getTimeColor(day.leave_time)} />
+                  </Box>
+
+                  {/* Тотал */}
+                  <Box id='total' sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
+                    <TimelapseIcon sx={{ fontSize: 20, color: getIconColor(day, 'total'), mr: 0.5 }} />
+                    <TimeDisplay time={formatTime(day.total_hours)} color={getTotalHoursColor(day.total_hours)} />
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-          </Box>
+            </Grid>
+          );
+        })
+      ) : (
+        <Grid item xs={12}>
+          <Typography variant="body2" align="center">{t('weeklyTimesheet.noData')}</Typography>
         </Grid>
-      );
-    })
-  ) : (
-    <Grid item xs={12}>
-      <Typography variant="body2" align="center">...</Typography>
+      )}
     </Grid>
-  )}
-</Grid>
-
-</Box>
-
+    </Box>
   );
 };
 
 export default WeeklyTimesheet;
-

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TableBody, TableRow, TableCell, Box, Select, MenuItem, SelectChangeEvent, Button } from "@mui/material";
 import { TableData, Column, DateOrString } from "./types";
+import { useTranslation } from 'react-i18next';
 
 interface AttendanceTableBodyProps {
   columns: Column[];
@@ -47,6 +48,7 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
   onDelete 
 }) => {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
+  const { t } = useTranslation('admin');
 
   const handleStatusChange = (rowId: number, newStatus: string) => {
     // onStatusChange(rowId, newStatus);
@@ -64,7 +66,7 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
                   <Box sx={{ display: 'flex', gap: 0.5  }}>
                     {onEdit && (
                       <Button onClick={() => onEdit(row)} variant="outlined" size="small">
-                        編集
+                    {t('employeeTable.editBtn')}
                       </Button>
                     )}
                     {onDelete && (
@@ -74,7 +76,7 @@ const AttendanceTableBody: React.FC<AttendanceTableBodyProps> = ({
                         color="error"
                         onClick={() => onDelete(row.id)}
                       >
-                        削除
+                        {t('employeeTable.deleteBtn')}
                       </Button>
                     )}
                   </Box>
