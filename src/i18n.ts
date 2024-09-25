@@ -196,6 +196,7 @@ const adminResources = {
         dashboard: 'Dashboard',
         departmentAndPosition: 'Department and Position',
         employeeEdit: 'Edit Employees',
+        companySettings: 'Company Settings',
       },
       pieChart: {
         come: 'Come',
@@ -243,6 +244,26 @@ const adminResources = {
         selectedFileBtn: 'Select File',
         uploadBtn: 'Upload',
         cancelBtn: 'Cancel',
+      },
+
+      settings: {
+        mainTitle: 'Company Settings',
+        companyNameLabel:'Company Name',
+        logo: 'Logo',
+        logoBtn: 'Upload',
+        chapter1Title: 'Company Overview',
+        chapter2Title: 'Company Location',
+        chapter3Title: 'Attendance Rules',
+        coordinatesLabel: 'Company Coordinates',
+        startLabel: 'Start Time',
+        lateLabel: 'Late Time (minutes)',
+        endLabel: 'End Time',
+        overEndLabel: 'Overtime End Time',
+        overTitle: 'Overtime: ',
+        overStartTitle: 'Start: ',
+        overEndTitle: 'End: ',
+        saveBtn: 'Save All',
+        selectedFile: 'Selected File: ',
       },
 
       lineChart: {
@@ -309,6 +330,7 @@ const adminResources = {
         dashboard: 'ダッシュボード',
         departmentAndPosition: '部署と役職',
         employeeEdit: '従業員の編集',
+        companySettings: '会社の設定',
       },
 
       pieChart: {
@@ -358,6 +380,27 @@ const adminResources = {
         cancelBtn: 'キャンセル',
         uploadBtn: 'アップロード',
       },
+
+      settings: {
+        mainTitle: '会社設定',
+        companyNameLabel: '会社名',
+        logo: 'ロゴ',
+        logoBtn: 'アップロード',
+        chapter1Title: '会社概要',
+        chapter2Title: '会社所在地',
+        chapter3Title: '出席ルール',
+        coordinatesLabel: '会社の座標',
+        startLabel: '開始時間',
+        lateLabel: '遅刻時間（分）',
+        endLabel: '終了時間',
+        overEndLabel: '残業終了時間',
+        overTitle: '残業',
+        overStartTitle: '開始: ',
+        overEndTitle: '終了: ',
+        saveBtn: 'すべて保存',
+        selectedFile: '選択されたファイル',
+      },
+      
       
 
       // Добавьте переводы для компонента графика

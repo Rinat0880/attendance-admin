@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../shared/styles/App.css";
 import DashboardContent from "./AdminDashboardContent";
 import { Grid, Button, Select, MenuItem, SelectChangeEvent } from "@mui/material";
@@ -8,19 +8,33 @@ import EmployeeListPage from "./EmployeeListPage";
 import CompanySettingsPage from "./CompanySettingsPage";
 import SideMenu from "../components/SideMenu";
 import { useTranslation } from "react-i18next";
+import axiosInstance from '../../utils/libs/axios';
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-
-
 function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['admin', 'common']);
   const [language, setLanguage] = useState(i18n.language);
+  const [companyName, setCompanyName] = useState<string>("");
 
+  // useEffect(() => {
+  //   const getCompanyInfo = async () => {
+  //     try {
+  //       const data = await fetchCompanySettings();
+  //       console.log("Company data:", data);
+  //       setCompanyName(data.results.company_name || "");
+  //       console.log("Company name set to:", data.results.company_name);
+  //     } catch (error) {
+  //       console.error("Ошибка при получении информации о компании:", error);
+  //     }
+  //   };
 
+  //   getCompanyInfo();
+  // }, []);
+    
 
   const handleLogoutClick = () => {
     onLogout();
@@ -42,7 +56,7 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </div>
       <div className="App">
         <header className="App-header">
-          <h1 className="Logo">○○会社</h1>
+          <h1 className="Logo">{companyName || "○○会社"}</h1>
           <div className="User-info" style={{ display: "flex", alignItems: "center" }}>
             <Select
               value={language}
@@ -52,10 +66,10 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 color: "white",
                 borderColor: "white",
                 backgroundColor: "#105E82",
-                height: "40px", // Уменьшаем высоту
-                width: "120px", // Уменьшаем ширину
-                fontSize: "0.875rem", // Размер шрифта
-                padding: "0 10px" // Внутренние отступы для уменьшения размера
+                height: "40px",
+                width: "120px",
+                fontSize: "0.875rem",
+                padding: "0 10px"
               }}
             >
               <MenuItem value="ja">{t('common:japanese')}</MenuItem>
@@ -63,10 +77,10 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
             </Select>
             <Button
               variant="contained"
-              sx={{ 
-                backgroundColor: "#105E82", 
+              sx={{
+                backgroundColor: "#105E82",
                 ":hover": { backgroundColor: "#919191", color: "black" },
-                height: "40px" // Высота кнопки лог аута для соответствия
+                height: "40px"
               }}
               onClick={handleLogoutClick}
             >
@@ -78,10 +92,7 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <div className="Dashboard">
             <Routes>
               <Route path="/" element={<DashboardContent />} />
-              <Route
-                path="/department-and-position"
-                element={<DepartmentPositionManagement />}
-              />
+              <Route path="/department-and-position" element={<DepartmentPositionManagement />} />
               <Route path="/employee-edit" element={<EmployeeListPage />} />
               <Route path="/company-settings" element={<CompanySettingsPage />} />
             </Routes>
