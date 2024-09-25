@@ -31,6 +31,7 @@ function AdminDashboardContent() {
     late_arrival: 0,
     early_departures: 0,
     early_come: 0,
+    over_time: 0,
   });
 
   const columns: Column[] = [
@@ -101,7 +102,7 @@ function AdminDashboardContent() {
           </div>
           <div className="Card">
             <div className="data">
-              <p className="Card-amount">{attendanceStats.ontime}</p>
+              <p className="Card-amount">{attendanceStats.over_time}</p>
               <p className="Card-text">{t('onTime')}</p>
             </div>
             <div className="icon">

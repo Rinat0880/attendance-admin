@@ -153,7 +153,7 @@ const adminResources = {
     admin: {
       // Существующие переводы...
       totalEmployee: 'Total Employees',
-      onTime: 'On Time',
+      onTime: 'Over Time',
       absent: 'Absent',
       lateArrival: 'Late Arrival',
       earlyDepartures: 'Early Departures',
@@ -287,7 +287,7 @@ const adminResources = {
     admin: {
       // Существующие переводы...
       totalEmployee: '総従業員',
-      onTime: '時間通り',
+      onTime: '残業',
       absent: '欠席',
       lateArrival: '遅刻',
       earlyDepartures: '早退',

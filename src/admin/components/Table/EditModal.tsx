@@ -94,8 +94,8 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   if (!formData) return null;
-  
 
+  
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={{ ...modalStyle }}>
