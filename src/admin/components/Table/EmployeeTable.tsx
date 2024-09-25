@@ -34,6 +34,7 @@ interface EmployeeTableProps {
   showCalendar?: boolean;
   positions: Position[];
   departments: Department[];
+  data: TableData[]; // Receive the employee data as a prop
 }
 
 export interface Department {
@@ -56,8 +57,8 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   showCalendar = true,
   positions,
   departments,
+  data,
 }) => {
-  const [data, setData] = useState<TableData[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,29 +68,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   const [pendingSearch, setPendingSearch] = useState("");
   const { t } = useTranslation('common');
 
-  useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const response = await axiosInstance().get("/user/list");
-
-        const formattedData = response.data.data.results.map((item: any) => ({
-          id: item.id,
-          employee_id: item.employee_id,
-          full_name: item.full_name,
-          department: item.department,
-          position: item.position,
-          phone: item.phone,
-          email: item.email,
-        }));
-
-        setData(formattedData);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
-      }
-    };
-
-    fetchEmployeeData();
-  }, []);
 
   useEffect(() => {
     const filtered = data.filter((row) => {
@@ -158,20 +136,20 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
     (page + 1) * rowsPerPage
   );
 
-  const handleDelete = (id: number) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
+  // const handleDelete = (id: number) => {
+  //   const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
     
-    if (confirmDelete) {
-      deleteUser(id)
-        .then(() => {
-          // Обновляем данные после удаления пользователя
-          setData(data.filter((item) => item.id !== id));
-        })
-        .catch((error) => {
-          console.error("Ошибка при удалении пользователя:", error);
-        });
-    }
-  };
+  //   if (confirmDelete) {
+  //     deleteUser(id)
+  //       .then(() => {
+  //         // Обновляем данные после удаления пользователя
+          
+  //       })
+  //       .catch((error) => {
+  //         console.error("Ошибка при удалении пользователя:", error);
+  //       });
+  //   }
+  // };
   
   
 
@@ -229,7 +207,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             columns={columns}
             filteredData={paginatedData}
             onEdit={onEdit}
-            onDelete={handleDelete}
+            onDelete={onDelete}
           />
         </Table>
       </TableContainer>

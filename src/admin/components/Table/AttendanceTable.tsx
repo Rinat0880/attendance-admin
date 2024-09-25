@@ -18,7 +18,7 @@ import AttendanceTableHead from "./AttendanceTableHead";
 import AttendanceTableBody from "./AttendanceTableBody";
 import CalendarModal from "./CalendarModal";
 import axiosInstance from "../../../utils/libs/axios";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 interface AttendanceTableProps {
   columns: Column[];
@@ -52,8 +52,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   showCalendar = true,
   positions,
   departments,
-  width = "100%",  
-  height = "auto", 
+  width = "100%",
+  height = "auto",
 }) => {
   const [data, setData] = useState<TableData[]>([]);
   const [page, setPage] = useState(0);
@@ -64,40 +64,38 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [pendingSearch, setPendingSearch] = useState("");
-  const { t } = useTranslation('common');
- 
-  
+  const { t } = useTranslation("common");
+
+  const fetchEmployeeData = async () => {
+    try {
+      const formattedDate = selectedDate
+        ? selectedDate.toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0]; // Если нет выбранной даты, берём текущую
+
+      const response = await axiosInstance().get(
+        `/attendance/list?date=${formattedDate}`
+      );
+
+      const formattedData = response.data.data.results.map((item: any) => ({
+        id: item.id,
+        department: item.department,
+        position: item.position,
+        employee_id: item.employee_id,
+        full_name: item.full_name,
+        status: item.status,
+        work_day: item.work_day,
+        come_time: item.come_time,
+        leave_time: item.leave_time,
+        total_hourse: item.total_hourse,
+      }));
+
+      setData(formattedData);
+    } catch (error) {
+      console.error("Ошибка при загрузке данных:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const formattedDate = selectedDate
-          ? selectedDate.toISOString().split('T')[0]
-          : new Date().toISOString().split('T')[0]; // Если нет выбранной даты, берём текущую
-  
-        const response = await axiosInstance().get(
-          `/attendance/list?date=${formattedDate}`
-        );
-
-        const formattedData = response.data.data.results.map((item: any) => ({
-          id: item.id,
-          department: item.department,
-          position: item.position,
-          employee_id: item.employee_id,
-          full_name: item.full_name,
-          status: item.status,
-          work_day: item.work_day,
-          come_time: item.come_time,
-          leave_time: item.leave_time,
-          total_hourse: item.total_hourse,
-        }));
-
-        setData(formattedData);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
-      }
-    };
-
     fetchEmployeeData();
   }, [selectedDate]);
 
@@ -157,7 +155,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
   const handleCalendarOpen = () => {
     setCalendarOpen(true);
   };
-  
 
   const handleCalendarClose = (date: Date | null) => {
     setCalendarOpen(false);
@@ -165,7 +162,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
       setSelectedDate(date);
       // Здесь вы можете добавить логику для фильтрации данных по выбранной дате
       console.log("Selected date:", date);
-      
     }
   };
 
@@ -184,38 +180,36 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           p: 2,
         }}
       >
-        <Typography variant="h6">
-          {tableTitle || "出勤状況"}
-        </Typography>
+        <Typography variant="h6">{tableTitle || "出勤状況"}</Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           {showCalendar && (
             <IconButton onClick={handleCalendarOpen}>
               <CalendarTodayIcon />
             </IconButton>
           )}
-<TextField
-  variant="outlined"
-  size="small"
-  placeholder={t('table.searchPlaceholder')}
-  value={pendingSearch}
-  onChange={handleSearchChange}
-  onKeyPress={handleKeyPress}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon />
-      </InputAdornment>
-    ),
-  }}
-  sx={{ width: "75%" }}
-/>
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder={t("table.searchPlaceholder")}
+            value={pendingSearch}
+            onChange={handleSearchChange}
+            onKeyPress={handleKeyPress}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ width: "75%" }}
+          />
 
           <Button
             onClick={handleSearchSubmit}
             variant="contained"
             sx={{ ml: 1, width: "20%", bgcolor: "#105E82", fontSize: "12px" }}
           >
-            {t('table.searchBtn')}
+            {t("table.searchBtn")}
           </Button>
         </Box>
       </Box>
@@ -245,13 +239,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <CalendarModal
-        open={isCalendarOpen}
-        onClose={handleCalendarClose}
-      />
+      <CalendarModal open={isCalendarOpen} onClose={handleCalendarClose} />
     </Paper>
   );
 };
 
 export default AttendanceTable;
-

@@ -72,8 +72,6 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

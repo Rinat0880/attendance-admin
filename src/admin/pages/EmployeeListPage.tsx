@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import EmployeeTable from '../components/Table/EmployeeTable';
-import EditModal from '../components/Table/EditModal';
-import CreateEmployeeModal from '../components/Table/CreateEmployeeModal';
-import UploadExcelModal from '../components/Table/UploadExcelModal'; // Импортируем модальное окно для загрузки файла
-import { TableData, Column } from '../components/Table/types';
-import axiosInstance, { updateUser, createUser, uploadExcelFile, fetchDepartments, fetchPositions } from '../../utils/libs/axios';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Paper, Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EmployeeTable from "../components/Table/EmployeeTable";
+import EditModal from "../components/Table/EditModal";
+import CreateEmployeeModal from "../components/Table/CreateEmployeeModal";
+import UploadExcelModal from "../components/Table/UploadExcelModal"; // Импортируем модальное окно для загрузки файла
+import { TableData, Column } from "../components/Table/types";
+import axiosInstance, {
+  updateUser,
+  createUser,
+  uploadExcelFile,
+  fetchDepartments,
+  fetchPositions,
+} from "../../utils/libs/axios";
+import { useTranslation } from "react-i18next";
 
 export interface Department {
   id: number;
@@ -25,43 +31,65 @@ const EmployeeListPage: React.FC = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false); // Добавляем состояние для модального окна загрузки файла
-  const [selectedEmployee, setSelectedEmployee] = useState<TableData | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<TableData | null>(
+    null
+  );
   const [employeeData, setEmployeeData] = useState<TableData[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation("admin");
 
   const columns: Column[] = [
-    { id: 'employee_id', label: t('employeeTable.employeeId') },
-    { id: 'full_name', label: t('employeeTable.fullName') },
-    { id: 'department', label: t('employeeTable.department') },
-    { id: 'position', label: t('employeeTable.position') },
-    { id: 'phone', label: t('employeeTable.phone') },
-    { id: 'email', label: t('employeeTable.email') },
-    { id: 'action', label: t('employeeTable.action') },
+    { id: "employee_id", label: t("employeeTable.employeeId") },
+    { id: "full_name", label: t("employeeTable.fullName") },
+    { id: "department", label: t("employeeTable.department") },
+    { id: "position", label: t("employeeTable.position") },
+    { id: "phone", label: t("employeeTable.phone") },
+    { id: "email", label: t("employeeTable.email") },
+    { id: "action", label: t("employeeTable.action") },
   ];
 
+  const loadDepartments = async () => {
+    try {
+      const response = await fetchDepartments();
+      setDepartments(response);
+    } catch (error) {
+      console.error("Failed to fetch departments", error);
+    }
+  };
+
+  const loadPositions = async () => {
+    try {
+      const response = await fetchPositions();
+      setPositions(response);
+    } catch (error) {
+      console.error("Failed to fetch positions", error);
+    }
+  };
+
+  const loadEmployeeData = async () => {
+    try {
+      const response = await axiosInstance().get("/user/list");
+      setEmployeeData(
+        response.data.data.results.map((item: any) => ({
+          id: item.id,
+          employee_id: item.employee_id,
+          full_name: item.full_name,
+          department: item.department,
+          position: item.position,
+          phone: item.phone,
+          email: item.email,
+        }))
+      );
+    } catch (error) {
+      console.error("Ошибка при загрузке данных:", error);
+    }
+  };
+
   useEffect(() => {
-    const loadDepartments = async () => {
-      try {
-        const response = await fetchDepartments();
-        setDepartments(response); 
-      } catch (error) {
-        console.error("Failed to fetch departments", error);
-      }
-    };
-
-    const loadPositions = async () => {
-      try {
-        const response = await fetchPositions();
-        setPositions(response); 
-      } catch (error) {
-        console.error("Failed to fetch positions", error);
-      }
-    };
-
     loadDepartments();
     loadPositions();
+    loadEmployeeData();
   }, []);
 
   const handleEditOpen = (employee: TableData) => {
@@ -72,7 +100,7 @@ const EmployeeListPage: React.FC = () => {
   const handleEditSave = async (updatedEmployee: TableData) => {
     try {
       await updateUser(
-        updatedEmployee.id, 
+        updatedEmployee.id,
         updatedEmployee.employee_id!,
         updatedEmployee.password!,
         updatedEmployee.role!,
@@ -82,9 +110,15 @@ const EmployeeListPage: React.FC = () => {
         updatedEmployee.phone!,
         updatedEmployee.email!
       );
+      setEmployeeData(
+        employeeData.map((employee) =>
+          employee.id === updatedEmployee.id ? updatedEmployee : employee
+        )
+      );
+      loadEmployeeData();
       setEditModalOpen(false);
     } catch (error) {
-      console.error('Ошибка при обновлении данных:', error);
+      console.error("Ошибка при обновлении данных:", error);
     }
   };
 
@@ -100,61 +134,80 @@ const EmployeeListPage: React.FC = () => {
         newEmployee.phone!,
         newEmployee.email!
       );
-      setEmployeeData(prevData => [...prevData, { ...newEmployee, id: createdEmployee.id }]); // Присваиваем реальный id новому сотруднику
+      setEmployeeData([
+        ...employeeData,
+        { ...newEmployee, id: createdEmployee.id },
+      ]); // Присваиваем реальный id новому сотруднику
       setCreateModalOpen(false);
     } catch (error) {
-      console.error('Ошибка при создании нового сотрудника:', error);
+      console.error("Ошибка при создании нового сотрудника:", error);
+      loadEmployeeData();
     }
   };
 
   const handleDelete = async (id: number) => {
-    try {
-      await axiosInstance().delete(`/user/${id}`);
-    } catch (error) {
-      console.error('Ошибка при удалении сотрудника:', error);
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this employee?"
+    );
+
+    if (confirmDelete) {
+      try {
+        await axiosInstance().delete(`/user/${id}`);
+        setEmployeeData(employeeData.filter((employee) => employee.id !== id));
+      } catch (error) {
+        console.error("Ошибка при удалении сотрудника:", error);
+      }
     }
   };
 
   const handleFileUpload = async (file: File) => {
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
       const response = await uploadExcelFile(formData);
 
-
-      
-
       // Обработайте ответ после успешной загрузки
-      console.log('Файл успешно загружен:', response);
-
+      console.log("Файл успешно загружен:", response);
+      loadEmployeeData();
       // Закройте модальное окно после загрузки
       setUploadModalOpen(false);
     } catch (error) {
-      console.error('Ошибка при загрузке файла:', error);
+      console.error("Ошибка при загрузке файла:", error);
     }
   };
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4">{t('employeeList.pageTitle')}</Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Typography variant="h4">{t("employeeList.pageTitle")}</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <Box>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setCreateModalOpen(true)}
-            sx={{ bgcolor: '#00D891', '&:hover': { bgcolor: '#00AB73' } }}
+            sx={{ bgcolor: "#00D891", "&:hover": { bgcolor: "#00AB73" } }}
           >
-            {t('employeeList.createButton')}
+            {t("employeeList.createButton")}
           </Button>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setUploadModalOpen(true)}
-            sx={{ bgcolor: '#00D891', '&:hover': { bgcolor: '#00AB73' }, ml: 2 }}
+            sx={{
+              bgcolor: "#00D891",
+              "&:hover": { bgcolor: "#00AB73" },
+              ml: 2,
+            }}
           >
-            {t('employeeList.uploadButton')}
+            {t("employeeList.uploadButton")}
           </Button>
         </Box>
       </Box>
@@ -164,8 +217,9 @@ const EmployeeListPage: React.FC = () => {
         columns={columns}
         onEdit={handleEditOpen}
         onDelete={handleDelete}
-        tableTitle={t('employeeTable.title')}
+        tableTitle={t("employeeTable.title")}
         showCalendar={false}
+        data={employeeData}
       />
       <EditModal
         departments={departments}
@@ -189,7 +243,6 @@ const EmployeeListPage: React.FC = () => {
       />
     </Box>
   );
-};  
+};
 
 export default EmployeeListPage;
-
