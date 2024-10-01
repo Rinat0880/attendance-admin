@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Paper, Typography, TextField, Button, Box, IconButton } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, parse, isValid } from 'date-fns';
 import { Edit as EditIcon, Save as SaveIcon } from '@mui/icons-material';
 import { LatLngTuple } from 'leaflet';
 import MapComponent from '../components/MapComponent'; 
-import axiosInstance from '../../utils/libs/axios';
+import axiosInstance, { fetchCompanySettings, updateCompanySettings } from '../../utils/libs/axios';
 import { useTranslation } from 'react-i18next';
 
 interface CompanySettings {
@@ -67,42 +67,42 @@ const CompanySettings: React.FC = () => {
     return hours * 60 + minutes;
   };
 
-  // useEffect(() => {
-  //   const loadSettings = async () => {
-  //     try {
-  //       const data = await fetchCompanySettings();
-  //       const results = data?.results;
-  //       console.log('Received data from API:', data);
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const data = await fetchCompanySettings();
+        const results = data?.results;
+        console.log('Received data from API:', data);
   
-  //       if (results) {
-  //         setSettings(prevSettings => ({
-  //           ...prevSettings,
-  //           id: results.id,
-  //           company_name: results.company_name || '',
-  //           logo: results.logo || null,
-  //           start_time: results.start_time ? parseTime(results.start_time) : null,
-  //           end_time: results.end_time ? parseTime(results.end_time) : null,
-  //           late_time: results.late_time ? parseTimeToMinutes(results.late_time) : prevSettings.late_time,
-  //           over_start_time: results.end_time ? parseTime(results.end_time) : null,
-  //           over_end_time: results.over_end_time ? parseTime(results.over_end_time) : null,
-  //           company_coordinates: [parseFloat(results.latitude), parseFloat(results.longitude)] as LatLngTuple,
-  //           company_location: `${results.latitude}, ${results.longitude}`,
-  //         }));
+        if (results) {
+          setSettings(prevSettings => ({
+            ...prevSettings,
+            id: results.id,
+            company_name: results.company_name || '',
+            logo: results.logo || null,
+            start_time: results.start_time ? parseTime(results.start_time) : null,
+            end_time: results.end_time ? parseTime(results.end_time) : null,
+            late_time: results.late_time ? parseTimeToMinutes(results.late_time) : prevSettings.late_time,
+            over_start_time: results.end_time ? parseTime(results.end_time) : null,
+            over_end_time: results.over_end_time ? parseTime(results.over_end_time) : null,
+            company_coordinates: [parseFloat(results.latitude), parseFloat(results.longitude)] as LatLngTuple,
+            company_location: `${results.latitude}, ${results.longitude}`,
+          }));
   
-  //         if (results.logo) {
-  //           const imageUrl = results.logo.startsWith('http') 
-  //             ? results.logo 
-  //             : `${process.env.REACT_APP_API_BASE_URL}/${results.logo}`;
-  //           setLogoPreview(imageUrl);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Failed to load company settings:', error);
-  //     }
-  //   };
+          if (results.logo) {
+            const imageUrl = results.logo.startsWith('http') 
+              ? results.logo 
+              : `${process.env.REACT_APP_API_BASE_URL}/${results.logo}`;
+            setLogoPreview(imageUrl);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load company settings:', error);
+      }
+    };
   
-  //   loadSettings();
-  // }, []);
+    loadSettings();
+  }, []);
   
   
 
@@ -145,15 +145,15 @@ const CompanySettings: React.FC = () => {
   
     console.log('Sending data to API:', Object.fromEntries(formData));
   
-    // try {
-    //   const response = await updateCompanySettings(formData);
-    //   console.log('Settings saved successfully:', response);
-    //   setEditMode(false);
-    //   // You can add a success message for the user here
-    // } catch (error) {
-    //   console.error('Failed to save settings:', error);
-    //   // You can add an error message for the user here
-    // }
+    try {
+      const response = await updateCompanySettings(formData);
+      console.log('Settings saved successfully:', response);
+      setEditMode(false);
+      // You can add a success message for the user here
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      // You can add an error message for the user here
+    }
   };
 
   const formatTime = (date: Date | null): string => {

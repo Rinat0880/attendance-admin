@@ -8,7 +8,7 @@ import EmployeeListPage from "./EmployeeListPage";
 import CompanySettingsPage from "./CompanySettingsPage";
 import SideMenu from "../components/SideMenu";
 import { useTranslation } from "react-i18next";
-import axiosInstance from '../../utils/libs/axios';
+import axiosInstance, { fetchCompanySettings, updateCompanySettings } from '../../utils/libs/axios';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -20,20 +20,20 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [language, setLanguage] = useState(i18n.language);
   const [companyName, setCompanyName] = useState<string>("");
 
-  // useEffect(() => {
-  //   const getCompanyInfo = async () => {
-  //     try {
-  //       const data = await fetchCompanySettings();
-  //       console.log("Company data:", data);
-  //       setCompanyName(data.results.company_name || "");
-  //       console.log("Company name set to:", data.results.company_name);
-  //     } catch (error) {
-  //       console.error("Ошибка при получении информации о компании:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const getCompanyInfo = async () => {
+      try {
+        const data = await fetchCompanySettings();
+        console.log("Company data:", data);
+        setCompanyName(data.results.company_name || "");
+        console.log("Company name set to:", data.results.company_name);
+      } catch (error) {
+        console.error("Ошибка при получении информации о компании:", error);
+      }
+    };
 
-  //   getCompanyInfo();
-  // }, []);
+    getCompanyInfo();
+  }, []);
     
 
   const handleLogoutClick = () => {
@@ -56,7 +56,7 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </div>
       <div className="App">
         <header className="App-header">
-          <h1 className="Logo">{companyName || "○○会社"}</h1>
+          <h1 className="Logo">{companyName || "○○○"}</h1>
           <div className="User-info" style={{ display: "flex", alignItems: "center" }}>
             <Select
               value={language}

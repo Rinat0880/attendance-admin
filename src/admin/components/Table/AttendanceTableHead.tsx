@@ -34,6 +34,7 @@ const AttendanceTableHead: React.FC<AttendanceTableHeadProps> = ({
   columns,
   filters,
   onFilterChange,
+  statusOptions,
   departments,
   positions,
 }) => {
@@ -42,7 +43,7 @@ const AttendanceTableHead: React.FC<AttendanceTableHeadProps> = ({
       <TableRow>
         {columns.map((column) => (
           <TableCell key={column.id}>
-            {["position", "department"].includes(column.id) ? (
+            {["status", "position", "department"].includes(column.id) ? (
               <Select
                 value={filters[column.id] || ""}
                 onChange={(e: SelectChangeEvent<string>) =>
@@ -67,6 +68,13 @@ const AttendanceTableHead: React.FC<AttendanceTableHeadProps> = ({
                 <MenuItem value="">
                   <em>すべて</em>
                 </MenuItem>
+                {column.id === "status" && statusOptions
+                  ? statusOptions.map((value) => (
+                      <MenuItem key={value} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))
+                  : null}
                 {column.id === "department"
                   ? departments.map((department) => (
                       <MenuItem key={department.id} value={department.name}>

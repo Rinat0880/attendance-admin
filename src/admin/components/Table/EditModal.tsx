@@ -76,6 +76,7 @@ const EditModal: React.FC<EditModalProps> = ({
       try {
         await updateUser(
           formData.id,
+          formData.employee_id!,
           formData.password!,
           formData.role!,
           formData.full_name,
@@ -95,7 +96,6 @@ const EditModal: React.FC<EditModalProps> = ({
 
   if (!formData) return null;
 
-  
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={{ ...modalStyle }}>
@@ -125,7 +125,7 @@ const EditModal: React.FC<EditModalProps> = ({
           <InputLabel shrink={Boolean(formData.role)}>役職</InputLabel>
           <Select
             name="role"
-            value={formData.role}
+            value={formData.role || ""}
             onChange={handleSelectChange}
           >
             <MenuItem value="">
