@@ -152,7 +152,7 @@ const adminResources = {
   en: {
     admin: {
       // Существующие переводы...
-      totalEmployee: 'Total Employees',
+      totalEmployee: 'Tootal Employees',
       onTime: 'Over Time',
       absent: 'Absent',
       lateArrival: 'Late Arrival',
